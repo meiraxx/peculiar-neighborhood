@@ -1,5 +1,5 @@
-import Converter from './Converter';
+import PixiTest from './pixitest';
 
 const rootElement = document.getElementById('rootElement');
-var conv = new Converter(rootElement, 1.11745);
-conv.render();
+var pixiTest = new PixiTest(rootElement);
+pixiTest.render();

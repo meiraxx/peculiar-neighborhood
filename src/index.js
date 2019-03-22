@@ -1,5 +1,5 @@
 import $ from 'pixi.js';
-import Dust from './dust';
+import Fog from './fog';
 import StaticMap from './staticMap';
 
 
@@ -29,12 +29,12 @@ PIXI.utils.sayHello(type);
 document.body.appendChild(app.view);
 	
 
-var dust = new Dust(rootElement,app);
+var fog = new Fog(rootElement,app);
 var staticMap = new StaticMap(rootElement,app);
 
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( (loader, resources) => {
 	staticMap.setupOnResourcesLoaded();	
-	dust.setupOnResourcesLoaded();
+	fog.setupOnResourcesLoaded();
 });
 
 

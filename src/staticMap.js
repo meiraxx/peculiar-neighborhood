@@ -2,8 +2,7 @@ import $ from 'pixi.js';
 
 
 export default class StaticMap {
-  
-  
+	
   constructor(rootElement, app) {
     this.rootElement = rootElement;
 	this.app = app;

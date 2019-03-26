@@ -2,6 +2,7 @@ import $ from 'pixi.js';
 import Fog from './fog';
 import StaticMap from './staticMap';
 import Player from './player';
+import Bush from './bush';
 
 function loadProgressHandler(loader,resource) {
   console.log("loading " + resource.url + " "  + loader.progress + "%");
@@ -33,14 +34,16 @@ PIXI.utils.sayHello(type);
 document.body.appendChild(app.view);
 
 var fog = new Fog(rootElement,app);
-var staticMap = new StaticMap(rootElement,app);
 var player = new Player(rootElement, app);
+var bush = new Bush(rootElement, app);
+var staticMap = new StaticMap(rootElement,app);
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( (loader, resources) => {
 	staticMap.setupOnResourcesLoaded();
 	// fog is really heavy on computation, my pc lags a lot when this is on
 	// TODO: try to mitigate this lag by having a ON and OFF button on the browser (removeChild and addChild, or using the visible property)
-	fog.setupOnResourcesLoaded();
 	player.setupOnResourcesLoaded(512,512);
+	bush.setupOnResourcesLoaded();
+	fog.setupOnResourcesLoaded();
 });
 
 

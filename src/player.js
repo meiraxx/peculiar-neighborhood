@@ -6,11 +6,11 @@ export default class Player {
 	constructor(rootElement, app) {
 		this.rootElement = rootElement;
 		this.app = app;
-		PIXI.loader.add("assets/brown-monster.png");
+		PIXI.loader.add("../assets/brown-monster.png");
 	}
 	
 	setupOnResourcesLoaded(x_pos, y_pos) {
-		let playerTexture = PIXI.loader.resources["assets/brown-monster.png"].texture;
+		let playerTexture = PIXI.loader.resources["../assets/brown-monster.png"].texture;
 		this.playerSprite = new PIXI.Sprite(playerTexture);
 		this.playerSprite.scale.x = 0.15;
 		this.playerSprite.scale.y = 0.15;

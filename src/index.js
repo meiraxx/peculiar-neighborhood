@@ -51,7 +51,7 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( (loader, res
 // background music is also heavy
 // TODO: maybe get a 20 second mp3 file instead of 2 minutes to try to improve this
 let music = document.createElement("audio");
-music.src = "assets/soundtrack.mp3";
+music.src = "../assets/soundtrack.mp3";
 music.setAttribute("preload", "auto");
 music.setAttribute("controls", "none");
 music.setAttribute("loop", "loop");

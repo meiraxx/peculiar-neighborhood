@@ -6,12 +6,19 @@ export default class Player {
 	constructor(rootElement, app) {
 		this.rootElement = rootElement;
 		this.app = app;
-		PIXI.loader.add("assets/brown-monster.png");
+		PIXI.loader.add("assets/character/characterFront.png");
+		PIXI.loader.add("assets/character/characterBack.png");
+		PIXI.loader.add("assets/character/characterRight.png");
+		PIXI.loader.add("assets/character/characterLeft.png");
 	}
 	
 	setupOnResourcesLoaded(x_pos, y_pos) {
-		let playerTexture = PIXI.loader.resources["assets/brown-monster.png"].texture;
-		this.playerSprite = new PIXI.Sprite(playerTexture);
+		let playerFrontTexture = PIXI.loader.resources["assets/character/characterFront.png"].texture;
+		let playerBackTexture = PIXI.loader.resources["assets/character/characterBack.png"].texture;
+		let playerRightTexture = PIXI.loader.resources["assets/character/characterRight.png"].texture;
+		let playerLeftTexture = PIXI.loader.resources["assets/character/characterLeft.png"].texture;
+
+		this.playerSprite = new PIXI.Sprite(playerFrontTexture);
 		this.playerSprite.scale.x = 0.15;
 		this.playerSprite.scale.y = 0.15;
 		this.playerSprite.x = x_pos - (this.playerSprite.width/2);
@@ -19,7 +26,7 @@ export default class Player {
 		this.playerSprite.vx = 0;
 		this.playerSprite.vy = 0;
 		this.app.stage.addChild(this.playerSprite);
-		console.log("player sprite :D");
+		console.log("front player sprite initialized :D");
 
 		// KEY STROKE EVENTS
 		this.leftKey = keyboard("ArrowLeft");
@@ -30,6 +37,7 @@ export default class Player {
 		// comment second conditions and movement resets on key press to obtain diagonal movements, but beware it's going to be
 		// a twice-as-fast movement, so there needs to be code to divide the speed by half on certain conditions 
 		this.leftKey.press = () => {
+			this.playerSprite.setTexture(playerLeftTexture)﻿;
 			this.playerSprite.vx = -3
 			this.playerSprite.vy = 0
 		};
@@ -40,6 +48,7 @@ export default class Player {
 		};
 
 		this.rightKey.press = () => {
+			this.playerSprite.setTexture(playerRightTexture)﻿;
 			this.playerSprite.vx = 3
 			this.playerSprite.vy = 0
 		};
@@ -50,6 +59,7 @@ export default class Player {
 		};
 
 		this.downKey.press = () => {
+			this.playerSprite.setTexture(playerFrontTexture)﻿;
 			this.playerSprite.vx = 0
 			this.playerSprite.vy = 3
 		};
@@ -60,6 +70,7 @@ export default class Player {
 		};
 
 		this.upKey.press = () => {
+			this.playerSprite.setTexture(playerBackTexture)﻿;
 			this.playerSprite.vx = 0
 			this.playerSprite.vy = -3
 		};

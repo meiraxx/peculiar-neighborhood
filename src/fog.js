@@ -6,11 +6,11 @@ export default class Fog {
   constructor(rootElement, app) {
     this.rootElement = rootElement;
 	this.app = app;
-	PIXI.loader.add("../assets/fog.png");
+	PIXI.loader.add("assets/fog.png");
   }
   
   setupOnResourcesLoaded() {
-	let fogTexture = PIXI.loader.resources["../assets/fog.png"].texture;
+	let fogTexture = PIXI.loader.resources["assets/fog.png"].texture;
 	this.fogSprite0 = new PIXI.Sprite(fogTexture);
 	this.fogSprite0.x = -1024;
 	this.fogSprite1 = new PIXI.Sprite(fogTexture);

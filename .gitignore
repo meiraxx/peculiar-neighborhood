@@ -1,7 +1,8 @@
-
-#binary game assets
+# binary game assets
 assets/
 
+# build file
+build/
 
 # Logs
 logs

@@ -90,5 +90,7 @@ export default class Player {
 		//console.log(this.playerSprite.vy)
 		this.playerSprite.x += this.playerSprite.vx;
 		this.playerSprite.y += this.playerSprite.vy;
+		this.app.stage.x -= this.playerSprite.vx;
+		this.app.stage.y -= this.playerSprite.vy;
 	}
 }

@@ -20,8 +20,8 @@ const rootElement = document.getElementById('rootElement');
 
 // pixi app object
 let app = new PIXI.Application({
-		width: 2048,         // default: 800
-		height: 1536,        // default: 600
+		width: 1024,         // default: 800
+		height: 1024,        // default: 600
 		antialias: false,    // default: false
 		transparent: true, // default: false
 		resolution: 1,       // default: 1

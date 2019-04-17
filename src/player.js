@@ -1,7 +1,6 @@
 import $ from 'pixi.js';
 import keyboard from './keyboard'
 
-
 export default class Player {
 	constructor(rootElement, app) {
 		this.rootElement = rootElement;
@@ -38,7 +37,7 @@ export default class Player {
 		// a twice-as-fast movement, so there needs to be code to divide the speed by half on certain conditions 
 		this.leftKey.press = () => {
 			this.playerSprite.setTexture(playerLeftTexture)﻿;
-			this.playerSprite.vx = -2;
+			this.playerSprite.vx = -1;
 			this.playerSprite.vy = 0;
 		};
 		this.leftKey.release = () => {
@@ -49,7 +48,7 @@ export default class Player {
 
 		this.rightKey.press = () => {
 			this.playerSprite.setTexture(playerRightTexture)﻿;
-			this.playerSprite.vx = 2;
+			this.playerSprite.vx = 1;
 			this.playerSprite.vy = 0;
 		};
 		this.rightKey.release = () => {
@@ -61,7 +60,7 @@ export default class Player {
 		this.downKey.press = () => {
 			this.playerSprite.setTexture(playerFrontTexture)﻿;
 			this.playerSprite.vx = 0;
-			this.playerSprite.vy = 2;
+			this.playerSprite.vy = 1;
 		};
 		this.downKey.release = () => {
 			if (!this.upKey.isDown && this.playerSprite.vx === 0) {
@@ -72,7 +71,7 @@ export default class Player {
 		this.upKey.press = () => {
 			this.playerSprite.setTexture(playerBackTexture)﻿;
 			this.playerSprite.vx = 0;
-			this.playerSprite.vy = -2;
+			this.playerSprite.vy = -1;
 		};
 		this.upKey.release = () => {
 			if (!this.downKey.isDown && this.playerSprite.vx === 0) {
@@ -84,13 +83,49 @@ export default class Player {
 		console.log("player loop initialized");
 	}
 
+	contain(sprite, container) {
+		let collision = undefined;
+		//Left
+		if (sprite.x < container.x) {
+			//sprite.x = container.x;
+			collision = "left";
+		}
+
+		//Top
+		if (sprite.y < container.y) {
+			//sprite.y = container.y;
+			collision = "top";
+		}
+
+		//Right
+		if (sprite.x + sprite.width > container.width) {
+			//sprite.x = container.width - sprite.width;
+			collision = "right";
+		}
+
+		//Bottom
+		if (sprite.y + sprite.height > container.height) {
+			//sprite.y = container.height - sprite.height;
+			collision = "bottom";
+		}
+
+		//Return the `collision` value
+		return collision;
+	}
+
 	playerLoop(delta) {
 		// use player's velocity to make him move
 		//console.log(this.playerSprite.vx)
 		//console.log(this.playerSprite.vy)
-		this.playerSprite.x += this.playerSprite.vx;
-		this.playerSprite.y += this.playerSprite.vy;
-		this.app.stage.x -= this.playerSprite.vx;
-		this.app.stage.y -= this.playerSprite.vy;
+		let playerHitsWall = this.contain(this.playerSprite, this.app.stage);
+		
+		if (playerHitsWall !== "top" && playerHitsWall !== "bottom") {
+			this.playerSprite.y += this.playerSprite.vy;
+			this.app.stage.y -= this.playerSprite.vy;
+		}
+		if (playerHitsWall !== "right" && playerHitsWall !== "left") {
+			this.playerSprite.x += this.playerSprite.vx;
+			this.app.stage.x -= this.playerSprite.vx;
+		}
 	}
 }

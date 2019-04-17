@@ -15,7 +15,7 @@ export default class Bush {
 	this.bushSprite.x = 10;
 	this.bushSprite.y = 400;
 	this.app.stage.addChild(this.bushSprite);
-	console.log("bush sprite");
+	console.log("bush initialized");
 	}
 
 }

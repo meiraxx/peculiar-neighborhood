@@ -26,7 +26,7 @@ export default class Player {
 		this.playerSprite.vx = 0;
 		this.playerSprite.vy = 0;
 		this.app.stage.addChild(this.playerSprite);
-		console.log("front player sprite initialized :D");
+		console.log("player character initialized");
 
 		// KEY STROKE EVENTS
 		this.leftKey = keyboard("ArrowLeft");
@@ -38,8 +38,8 @@ export default class Player {
 		// a twice-as-fast movement, so there needs to be code to divide the speed by half on certain conditions 
 		this.leftKey.press = () => {
 			this.playerSprite.setTexture(playerLeftTexture)﻿;
-			this.playerSprite.vx = -3
-			this.playerSprite.vy = 0
+			this.playerSprite.vx = -2;
+			this.playerSprite.vy = 0;
 		};
 		this.leftKey.release = () => {
 			if (!this.rightKey.isDown && this.playerSprite.vy === 0) {
@@ -49,8 +49,8 @@ export default class Player {
 
 		this.rightKey.press = () => {
 			this.playerSprite.setTexture(playerRightTexture)﻿;
-			this.playerSprite.vx = 3
-			this.playerSprite.vy = 0
+			this.playerSprite.vx = 2;
+			this.playerSprite.vy = 0;
 		};
 		this.rightKey.release = () => {
 			if (!this.leftKey.isDown && this.playerSprite.vy === 0) {
@@ -60,8 +60,8 @@ export default class Player {
 
 		this.downKey.press = () => {
 			this.playerSprite.setTexture(playerFrontTexture)﻿;
-			this.playerSprite.vx = 0
-			this.playerSprite.vy = 3
+			this.playerSprite.vx = 0;
+			this.playerSprite.vy = 2;
 		};
 		this.downKey.release = () => {
 			if (!this.upKey.isDown && this.playerSprite.vx === 0) {
@@ -71,17 +71,17 @@ export default class Player {
 
 		this.upKey.press = () => {
 			this.playerSprite.setTexture(playerBackTexture)﻿;
-			this.playerSprite.vx = 0
-			this.playerSprite.vy = -3
+			this.playerSprite.vx = 0;
+			this.playerSprite.vy = -2;
 		};
 		this.upKey.release = () => {
 			if (!this.downKey.isDown && this.playerSprite.vx === 0) {
 				this.playerSprite.vy = 0;
 			}
 		};
-
 		// start the player loop 
 		this.app.ticker.add(delta => this.playerLoop(delta));
+		console.log("player loop initialized");
 	}
 
 	playerLoop(delta) {

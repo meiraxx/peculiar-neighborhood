@@ -13,6 +13,7 @@ export default class StaticMap {
 	let backgroundTexture = PIXI.loader.resources["assets/background.png"].texture;
 	this.backgroundSprite = new PIXI.Sprite(backgroundTexture);
 	this.app.stage.addChild(this.backgroundSprite);
+	console.log("background initialized");
   }
   
 }

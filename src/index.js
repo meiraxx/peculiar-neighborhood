@@ -3,29 +3,31 @@ import Fog from './fog';
 import StaticMap from './staticMap';
 import Player from './player';
 import Bush from './bush';
+import Healthbar from './healthbar';
 
 function loadProgressHandler(loader,resource) {
   console.log("loading " + resource.url + " "  + loader.progress + "%");
 }
-  
-  
+
+let type = "WebGL";
+if(!PIXI.utils.isWebGLSupported()){
+  type = "Canvas";
+}
+
+// div objects:
+// dynamic
 const rootElement = document.getElementById('rootElement');
 
-//Create a Pixi Application
-let app = new PIXI.Application({ 
-	width: 1024,         // default: 800
-	height: 1024,        // default: 600
-	antialias: true,    // default: false
-	transparent: false, // default: false
-	resolution: 1,       // default: 1
-	forceCanvas: true 	// default: false
-  }
+// pixi app object
+let app = new PIXI.Application({
+		width: 2048,         // default: 800
+		height: 1536,        // default: 600
+		antialias: false,    // default: false
+		transparent: true, // default: false
+		resolution: 1,       // default: 1
+		forceCanvas: true 	// default: false
+	}
 );
-	
-let type = "WebGL"
-if(!PIXI.utils.isWebGLSupported()){
-  type = "Canvas"
-}
 
 // initial console logging: "PixiJS 4.8.6 - WebGL/Canvas - http://www.pixijs.com/"
 PIXI.utils.sayHello(type);
@@ -33,23 +35,55 @@ PIXI.utils.sayHello(type);
 //Add the canvas that Pixi automatically created for you to the HTML document
 document.body.appendChild(app.view);
 
-var fog = new Fog(rootElement,app);
-var player = new Player(rootElement, app);
-var bush = new Bush(rootElement, app);
 var staticMap = new StaticMap(rootElement,app);
-PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( (loader, resources) => {
+var player = new Player(rootElement, app);
+var healthbar = new Healthbar(rootElement, app);
+var bush = new Bush(rootElement, app);
+var fog = new Fog(rootElement,app);
+//TODO: make smooth scroll work
+
+PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	staticMap.setupOnResourcesLoaded();
-	// fog is really heavy on computation, my pc lags a lot when this is on
-	// TODO: try to mitigate this lag by having a ON and OFF button on the browser (removeChild and addChild, or using the visible property)
 	player.setupOnResourcesLoaded(512,512);
 	bush.setupOnResourcesLoaded();
-	fog.setupOnResourcesLoaded();
+
+	// TODO: make healthbar and other ui elements static
+	healthbar.setupOnResourcesLoaded(512, 4);
+	//TODO: integrate other UI elements such as cards and weapons which are already in dropbox folder
+	//fog.setupOnResourcesLoaded();
 });
 
+/*
+var viewWidth = (renderer.width / renderer.resolution);﻿
+var back = new PIXI.Container();
+back.scale.x = 1024 / viewWidth;
+back.scale.y = back.scale.x;
+app.stage.addChild(back);
+*/
 
+/*
+var renderer = PIXI.autoDetectRenderer(1024, 1024);
+document.body.appendChild(renderer.view);
 
-// background music is also heavy
-// TODO: maybe get a 20 second mp3 file instead of 2 minutes to try to improve this
+// create the root of the scene graph
+var stage = new PIXI.Container();
+// create a background...
+var background = PIXI.Sprite.fromImage('assets/background.png');
+background.width = renderer.width;
+background.height = renderer.height;
+
+// add background to stage...
+stage.addChild(background);
+animate();
+
+function animate() {
+	// render the stage
+	renderer.render(stage);
+
+	requestAnimationFrame(animate);
+}
+*/
+
 let music = document.createElement("audio");
 music.src = "assets/soundtrack.mp3";
 music.setAttribute("preload", "auto");

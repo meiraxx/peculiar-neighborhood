@@ -13,6 +13,7 @@ export default function keyboard(value) {
 				key.isDown = true;
 				key.isUp = false;
 			}
+			event.preventDefault();
 			// do not prevent default so that it scrolls into the hidden parts of the map (event.preventDefault();)
 		}
 	};
@@ -25,6 +26,7 @@ export default function keyboard(value) {
 				key.isDown = false;
 				key.isUp = true;
 			}
+			event.preventDefault();
 			// do not prevent default so that it scrolls into the hidden parts of the map (event.preventDefault();)
 		}
 	};

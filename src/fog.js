@@ -17,8 +17,8 @@ export default class Fog {
 	this.fogSprite1.x = 0;
 	this.app.stage.addChild(this.fogSprite0);
 	this.app.stage.addChild(this.fogSprite1);
-	console.log("staged the fog images");
 	this.app.ticker.add( (delta) => this.fogLoop(delta));
+	console.log("fog loop initialized");
   }
   
   // fog movement only works in Linux when we force Canvas mode instead of WebGL

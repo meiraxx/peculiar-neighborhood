@@ -1,8 +1,5 @@
-import $ from 'pixi.js';
-
 export default class Bush {
-	constructor(rootElement, app) {
-		this.rootElement = rootElement;
+	constructor(app) {
 		this.app = app;
 		PIXI.loader.add("assets/bush.png");
 	}

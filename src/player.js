@@ -1,9 +1,7 @@
-import $ from 'pixi.js';
 import keyboard from './keyboard'
 
 export default class Player {
-	constructor(rootElement, app) {
-		this.rootElement = rootElement;
+	constructor(app) {
 		this.app = app;
 		PIXI.loader.add("assets/character/characterFront.png");
 		PIXI.loader.add("assets/character/characterBack.png");
@@ -18,9 +16,9 @@ export default class Player {
 		let playerLeftTexture = PIXI.loader.resources["assets/character/characterLeft.png"].texture;
 
 		this.playerSprite = new PIXI.Sprite(playerFrontTexture);
-		this.playerSprite.scale.x = 0.15;
-		this.playerSprite.scale.y = 0.15;
-		this.playerSprite.x = x_pos - (this.playerSprite.width/2);
+		this.playerSprite.scale.x = 0.20;
+		this.playerSprite.scale.y = 0.20;
+		this.playerSprite.x = Math.round(x_pos - (this.playerSprite.width/2));
 		this.playerSprite.y = y_pos;
 		this.playerSprite.vx = 0;
 		this.playerSprite.vy = 0;
@@ -36,8 +34,10 @@ export default class Player {
 		// comment second conditions and movement resets on key press to obtain diagonal movements, but beware it's going to be
 		// a twice-as-fast movement, so there needs to be code to divide the speed by half on certain conditions 
 		this.leftKey.press = () => {
-			this.playerSprite.setTexture(playerLeftTexture)﻿;
-			this.playerSprite.vx = -1;
+			this.setPlayerTextureOnlyIfNeeded(this.playerSprite, 
+				this.playerSprite.texture, playerLeftTexture);
+			this.command = "left";
+			this.playerSprite.vx = -3;
 			this.playerSprite.vy = 0;
 		};
 		this.leftKey.release = () => {
@@ -47,8 +47,10 @@ export default class Player {
 		};
 
 		this.rightKey.press = () => {
-			this.playerSprite.setTexture(playerRightTexture)﻿;
-			this.playerSprite.vx = 1;
+			this.setPlayerTextureOnlyIfNeeded(this.playerSprite, 
+				this.playerSprite.texture, playerRightTexture);
+			this.command = "right";
+			this.playerSprite.vx = 3;
 			this.playerSprite.vy = 0;
 		};
 		this.rightKey.release = () => {
@@ -58,9 +60,11 @@ export default class Player {
 		};
 
 		this.downKey.press = () => {
-			this.playerSprite.setTexture(playerFrontTexture)﻿;
+			this.setPlayerTextureOnlyIfNeeded(this.playerSprite, 
+				this.playerSprite.texture, playerFrontTexture);
+			this.command = "down";
 			this.playerSprite.vx = 0;
-			this.playerSprite.vy = 1;
+			this.playerSprite.vy = 3;
 		};
 		this.downKey.release = () => {
 			if (!this.upKey.isDown && this.playerSprite.vx === 0) {
@@ -69,9 +73,11 @@ export default class Player {
 		};
 
 		this.upKey.press = () => {
-			this.playerSprite.setTexture(playerBackTexture)﻿;
+			this.setPlayerTextureOnlyIfNeeded(this.playerSprite, 
+				this.playerSprite.texture, playerBackTexture);
+			this.command = "up";
 			this.playerSprite.vx = 0;
-			this.playerSprite.vy = -1;
+			this.playerSprite.vy = -3;
 		};
 		this.upKey.release = () => {
 			if (!this.downKey.isDown && this.playerSprite.vx === 0) {
@@ -83,49 +89,73 @@ export default class Player {
 		console.log("player loop initialized");
 	}
 
-	contain(sprite, container) {
-		let collision = undefined;
-		//Left
-		if (sprite.x < container.x) {
-			//sprite.x = container.x;
-			collision = "left";
+	setPlayerTextureOnlyIfNeeded(sprite, currentTexture, newTexture) {
+		if (currentTexture !== newTexture) {
+			sprite.setTexture(newTexture);
 		}
+	}
 
-		//Top
-		if (sprite.y < container.y) {
-			//sprite.y = container.y;
+	contain(sprite, container, command) {
+		// this function accounts for new calculated position to define bounds
+		// NOTE (workaround):
+		// command argument is used for simple checks such as the
+		// ones done in the "bottom" and "right" conditions...
+
+		let collision = "none";
+		let unitvx = sprite.vx/Math.abs(sprite.vx);
+		let unitvy = sprite.vy/Math.abs(sprite.vy);
+
+		// top hit
+		if (sprite.y + unitvy <= container.y) {
+			console.log("Top hit: " + sprite.y);
+			sprite.y = container.y;
 			collision = "top";
 		}
 
-		//Right
-		if (sprite.x + sprite.width > container.width) {
-			//sprite.x = container.width - sprite.width;
-			collision = "right";
-		}
-
-		//Bottom
-		if (sprite.y + sprite.height > container.height) {
-			//sprite.y = container.height - sprite.height;
+		// bottom hit
+		if (sprite.y + sprite.height - unitvy >= container.height && command === "down") {
+			console.log("Bottom hit: " + sprite.y);
+			sprite.y = container.height - sprite.height + unitvy;
 			collision = "bottom";
 		}
 
-		//Return the `collision` value
+		// left hit
+		if (sprite.x + unitvx <= container.x) {
+			console.log("Left hit: " + sprite.x);
+			sprite.x = container.x;
+			collision = "left";
+		}
+
+		// right hit
+		if (sprite.x + sprite.width - unitvx >= container.width && command === "right") {
+			console.log("Right hit: " + sprite.x);
+			sprite.x = container.width - sprite.width + unitvx;
+			collision = "right";
+		}
+
 		return collision;
 	}
 
 	playerLoop(delta) {
 		// use player's velocity to make him move
-		//console.log(this.playerSprite.vx)
-		//console.log(this.playerSprite.vy)
-		let playerHitsWall = this.contain(this.playerSprite, this.app.stage);
-		
-		if (playerHitsWall !== "top" && playerHitsWall !== "bottom") {
+		let playerHitsWall = this.contain(this.playerSprite, 
+			{x: 0, y: 0, width: 1024, height: 1024}, this.command);
+
+		if (playerHitsWall !== "none") {
+			// character hit wall: do nothing, already contained
+		}
+		else if (this.playerSprite.vx !== 0) {
+			// walking horizontally
+			this.playerSprite.x += this.playerSprite.vx;
+			this.app.stage.x -= this.playerSprite.vx;
+		}
+		else if (this.playerSprite.vy !== 0) {
+			// walking vertically
 			this.playerSprite.y += this.playerSprite.vy;
 			this.app.stage.y -= this.playerSprite.vy;
 		}
-		if (playerHitsWall !== "right" && playerHitsWall !== "left") {
-			this.playerSprite.x += this.playerSprite.vx;
-			this.app.stage.x -= this.playerSprite.vx;
+		else {
+			// character isn't walking: do nothing
 		}
 	}
 }

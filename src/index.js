@@ -1,4 +1,3 @@
-import $ from 'pixi.js';
 import Fog from './fog';
 import StaticMap from './staticMap';
 import Player from './player';
@@ -9,80 +8,52 @@ function loadProgressHandler(loader,resource) {
   console.log("loading " + resource.url + " "  + loader.progress + "%");
 }
 
+var PIXI = require('pixi.js');
+
 let type = "WebGL";
 if(!PIXI.utils.isWebGLSupported()){
   type = "Canvas";
 }
 
-// div objects:
-// dynamic
-const rootElement = document.getElementById('rootElement');
+// initial console logging: "PixiJS 4.8.6 - WebGL/Canvas - http://www.pixijs.com/"
+PIXI.utils.sayHello(type);
+
+const appWidth = 2048;
+const appHeight = 1536;
 
 // pixi app object
 let app = new PIXI.Application({
-		width: 1024,         // default: 800
-		height: 1024,        // default: 600
+		width: appWidth,         // default: 800
+		height: appHeight,        // default: 600
 		antialias: false,    // default: false
-		transparent: true, // default: false
+		transparent: false, // default: false
 		resolution: 1,       // default: 1
 		forceCanvas: true 	// default: false
 	}
 );
 
-// initial console logging: "PixiJS 4.8.6 - WebGL/Canvas - http://www.pixijs.com/"
-PIXI.utils.sayHello(type);
-
 //Add the canvas that Pixi automatically created for you to the HTML document
 document.body.appendChild(app.view);
 
-var staticMap = new StaticMap(rootElement,app);
-var player = new Player(rootElement, app);
-var healthbar = new Healthbar(rootElement, app);
-var bush = new Bush(rootElement, app);
-var fog = new Fog(rootElement,app);
-//TODO: make smooth scroll work
+var staticMap = new StaticMap(app);
+var player = new Player(app);
+var healthbar = new Healthbar(app);
+var bush = new Bush(app);
+var fog = new Fog(app);
 
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	staticMap.setupOnResourcesLoaded();
-	player.setupOnResourcesLoaded(512,512);
+	let mapWidth = staticMap.backgroundSprite.width;
+	let mapHeight = staticMap.backgroundSprite.height;
+
+	player.setupOnResourcesLoaded(mapWidth/2,mapHeight/2);
 	bush.setupOnResourcesLoaded();
 
 	// TODO: make healthbar and other ui elements static
-	healthbar.setupOnResourcesLoaded(512, 4);
+	healthbar.setupOnResourcesLoaded(mapWidth/2, mapHeight - 32, 128, 16);
 	//TODO: integrate other UI elements such as cards and weapons which are already in dropbox folder
 	//fog.setupOnResourcesLoaded();
 });
-
-/*
-var viewWidth = (renderer.width / renderer.resolution);﻿
-var back = new PIXI.Container();
-back.scale.x = 1024 / viewWidth;
-back.scale.y = back.scale.x;
-app.stage.addChild(back);
-*/
-
-/*
-var renderer = PIXI.autoDetectRenderer(1024, 1024);
-document.body.appendChild(renderer.view);
-
-// create the root of the scene graph
-var stage = new PIXI.Container();
-// create a background...
-var background = PIXI.Sprite.fromImage('assets/background.png');
-background.width = renderer.width;
-background.height = renderer.height;
-
-// add background to stage...
-stage.addChild(background);
-animate();
-
-function animate() {
-	// render the stage
-	renderer.render(stage);
-
-	requestAnimationFrame(animate);
-}
-*/
 
 let music = document.createElement("audio");
 music.src = "assets/soundtrack.mp3";

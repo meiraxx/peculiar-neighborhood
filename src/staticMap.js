@@ -13,9 +13,8 @@ export default class StaticMap {
   }
 
   initObject() {
-  	console.log(this.backgroundSprite.texture);
   	this.app.stage.addChild(this.backgroundSprite);
-	console.log("background initialized");
+    console.log("background initialized");
   }
   
 }

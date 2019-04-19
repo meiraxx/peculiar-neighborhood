@@ -1,9 +1,10 @@
-import keyboard from './keyboard'
+import keyboard from './keyboard';
 import UserInterface from './userInterface';
 
 export default class Player {
-	constructor(app) {
+	constructor(app, viewport) {
 		this.app = app;
+		this.viewport = viewport;
 		this.ui = new UserInterface(app);
 		PIXI.loader.add("assets/character/characterFront.png");
 		PIXI.loader.add("assets/character/characterBack.png");
@@ -13,7 +14,8 @@ export default class Player {
 	
 	prepareObject(x_pos, y_pos) {
 		// SETUP player UI
-		this.ui.prepareHealthbar(x_pos, y_pos - 8, 64, 8);
+		//green: 0x4CBB17; red: 0xFF3300
+		this.ui.prepareHealthbar(x_pos, y_pos - 8, 64, 8, 0x4CBB17, 20);
 
 		// SETUP player
 		let playerFrontTexture = PIXI.loader.resources["assets/character/characterFront.png"].texture;
@@ -160,7 +162,8 @@ export default class Player {
 			// walking horizontally
 			this.playerSprite.x += this.playerSprite.vx;
 			// camera effect
-			this.app.stage.x -= this.playerSprite.vx;
+			this.viewport.move(this.playerSprite.vx, 0);
+			//this.app.stage.x -= this.playerSprite.vx;
 			// move healthbar
 			this.ui.healthBar.x += this.playerSprite.vx;
 		}
@@ -168,7 +171,8 @@ export default class Player {
 			// walking vertically
 			this.playerSprite.y += this.playerSprite.vy;
 			// camera effect
-			this.app.stage.y -= this.playerSprite.vy;
+			this.viewport.move(0, this.playerSprite.vy);
+			//this.app.stage.y -= this.playerSprite.vy;
 			// move healthbar
 			this.ui.healthBar.y += this.playerSprite.vy;
 		}

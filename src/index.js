@@ -2,6 +2,7 @@ import Fog from './fog';
 import StaticMap from './staticMap';
 import Player from './player';
 import Bush from './bush';
+import Viewport from './viewport';
 
 function loadProgressHandler(loader,resource) {
   console.log("loading " + resource.url + " "  + loader.progress + "%");
@@ -34,12 +35,16 @@ let app = new PIXI.Application({
 //Add the canvas that Pixi automatically created for you to the HTML document
 document.body.appendChild(app.view);
 
+//Viewport creation for easily controllable 2D camera
+var viewport = new Viewport(app.renderer, 700, 800, app.stage);
+viewport.moveTo(700, 800);
+viewport.zoom(700);
+
 // construct main objects
 var staticMap = new StaticMap(app);
-var player = new Player(app);
+var player = new Player(app, viewport);
 var bush = new Bush(app);
 //var fog = new Fog(app);
-
 
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// 1. SETUP OBJECTS
@@ -53,8 +58,7 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 
 	// setup other map elements
 	bush.prepareObject();
-
-	//fog.setupOnResourcesLoaded();
+	//fog.prepareObject();
 
 	// 2. INITIALIZE OBJECTS
 	// note: you can reorder everything very easily on the screen
@@ -62,21 +66,17 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	staticMap.initObject();
 	player.initObject();
 	bush.initObject();
+	//fog.initObject();
 
 	// ui stuff should always be above other elements
 	player.ui.initHealthbar();
 
 	// 3. PUT LOOPS RUNNING
 	player.initLoop();
+	//fog.initLoop();
 	//TODO: monster loop
 });
 
-/*
-staticMap.initObject();
-player.initObject();
-ui.initObject();
-bush.initObject();
-*/
 
 let music = document.createElement("audio");
 music.src = "assets/soundtrack.mp3";

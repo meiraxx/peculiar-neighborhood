@@ -1,20 +1,26 @@
 import keyboard from './keyboard'
+import UserInterface from './userInterface';
 
 export default class Player {
 	constructor(app) {
 		this.app = app;
+		this.ui = new UserInterface(app);
 		PIXI.loader.add("assets/character/characterFront.png");
 		PIXI.loader.add("assets/character/characterBack.png");
 		PIXI.loader.add("assets/character/characterRight.png");
 		PIXI.loader.add("assets/character/characterLeft.png");
 	}
 	
-	setupOnResourcesLoaded(x_pos, y_pos) {
+	prepareObject(x_pos, y_pos) {
+		// SETUP player UI
+		this.ui.prepareHealthbar(x_pos, y_pos - 8, 64, 8);
+
+		// SETUP player
 		let playerFrontTexture = PIXI.loader.resources["assets/character/characterFront.png"].texture;
 		let playerBackTexture = PIXI.loader.resources["assets/character/characterBack.png"].texture;
 		let playerRightTexture = PIXI.loader.resources["assets/character/characterRight.png"].texture;
 		let playerLeftTexture = PIXI.loader.resources["assets/character/characterLeft.png"].texture;
-
+		
 		this.playerSprite = new PIXI.Sprite(playerFrontTexture);
 		this.playerSprite.scale.x = 0.20;
 		this.playerSprite.scale.y = 0.20;
@@ -22,8 +28,6 @@ export default class Player {
 		this.playerSprite.y = y_pos;
 		this.playerSprite.vx = 0;
 		this.playerSprite.vy = 0;
-		this.app.stage.addChild(this.playerSprite);
-		console.log("player character initialized");
 
 		// KEY STROKE EVENTS
 		this.leftKey = keyboard("ArrowLeft");
@@ -84,7 +88,15 @@ export default class Player {
 				this.playerSprite.vy = 0;
 			}
 		};
-		// start the player loop 
+	}
+
+	initObject() {
+		this.app.stage.addChild(this.playerSprite);
+		console.log("player character initialized");
+	}
+
+	initLoop() {
+		// start the player loop
 		this.app.ticker.add(delta => this.playerLoop(delta));
 		console.log("player loop initialized");
 	}
@@ -147,12 +159,18 @@ export default class Player {
 		else if (this.playerSprite.vx !== 0) {
 			// walking horizontally
 			this.playerSprite.x += this.playerSprite.vx;
+			// camera effect
 			this.app.stage.x -= this.playerSprite.vx;
+			// move healthbar
+			this.ui.healthBar.x += this.playerSprite.vx;
 		}
 		else if (this.playerSprite.vy !== 0) {
 			// walking vertically
 			this.playerSprite.y += this.playerSprite.vy;
+			// camera effect
 			this.app.stage.y -= this.playerSprite.vy;
+			// move healthbar
+			this.ui.healthBar.y += this.playerSprite.vy;
 		}
 		else {
 			// character isn't walking: do nothing

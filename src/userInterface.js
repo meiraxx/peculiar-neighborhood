@@ -1,9 +1,9 @@
-export default class Healthbar {
+export default class UserInterface {
 	constructor(app) {
 		this.app = app;
 	}
 
-	setupOnResourcesLoaded(x_pos, y_pos, width, height) {
+	prepareHealthbar(x_pos, y_pos, width, height) {
 		//Create the health bar
 		this.healthBar = new PIXI.Container();
 
@@ -27,7 +27,10 @@ export default class Healthbar {
 		this.healthBar.addChild(outerBar);
 
 		this.healthBar.outer = outerBar;
+	}
 
+	initHealthbar() {
 		this.app.stage.addChild(this.healthBar);
+		console.log("healthBar initialized");
 	}
 }

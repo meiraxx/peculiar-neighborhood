@@ -2,7 +2,6 @@ import Fog from './fog';
 import StaticMap from './staticMap';
 import Player from './player';
 import Bush from './bush';
-import Healthbar from './healthbar';
 
 function loadProgressHandler(loader,resource) {
   console.log("loading " + resource.url + " "  + loader.progress + "%");
@@ -35,25 +34,49 @@ let app = new PIXI.Application({
 //Add the canvas that Pixi automatically created for you to the HTML document
 document.body.appendChild(app.view);
 
+// construct main objects
 var staticMap = new StaticMap(app);
 var player = new Player(app);
-var healthbar = new Healthbar(app);
 var bush = new Bush(app);
-var fog = new Fog(app);
+//var fog = new Fog(app);
+
 
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
-	staticMap.setupOnResourcesLoaded();
+	// 1. SETUP OBJECTS
+	// setup background map
+	staticMap.prepareObject();
 	let mapWidth = staticMap.backgroundSprite.width;
 	let mapHeight = staticMap.backgroundSprite.height;
 
-	player.setupOnResourcesLoaded(mapWidth/2,mapHeight/2);
-	bush.setupOnResourcesLoaded();
+	// setup player character and UI
+	player.prepareObject(mapWidth/2,mapHeight/2);
 
-	// TODO: make healthbar and other ui elements static
-	healthbar.setupOnResourcesLoaded(mapWidth/2, mapHeight - 32, 128, 16);
-	//TODO: integrate other UI elements such as cards and weapons which are already in dropbox folder
+	// setup other map elements
+	bush.prepareObject();
+
 	//fog.setupOnResourcesLoaded();
+
+	// 2. INITIALIZE OBJECTS
+	// note: you can reorder everything very easily on the screen
+	// by reordering the object initializations :)
+	staticMap.initObject();
+	player.initObject();
+	bush.initObject();
+
+	// ui stuff should always be above other elements
+	player.ui.initHealthbar();
+
+	// 3. PUT LOOPS RUNNING
+	player.initLoop();
+	//TODO: monster loop
 });
+
+/*
+staticMap.initObject();
+player.initObject();
+ui.initObject();
+bush.initObject();
+*/
 
 let music = document.createElement("audio");
 music.src = "assets/soundtrack.mp3";

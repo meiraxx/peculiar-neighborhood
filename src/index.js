@@ -66,21 +66,16 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	bush.prepareObject();
 
 	// 4. INITIALIZE OBJECTS
-	// note: you can reorder everything very easily on the screen
-	// by reordering the object initializations :)
 	staticMap.initObject();
 
 	player.initObject();
 	bush.initObject();
-	//fog.initObject();
 
-	// ui stuff should always be above other elements
 	player.ui.initHealthbar();
 	player.ui.initCards();
 
 	// 5. PUT LOOPS RUNNING
 	player.initLoop();
-	//TODO: monster loop
 });
 
 

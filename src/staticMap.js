@@ -10,8 +10,6 @@ export default class StaticMap {
   prepareObject() {
   	let backgroundTexture = PIXI.loader.resources["assets/background.png"].texture;
   	this.backgroundSprite = new PIXI.Sprite(backgroundTexture);
-  	this.backgroundSprite.x = 0;
-  	this.backgroundSprite.y = 0;
   }
 
   initObject() {

@@ -1,4 +1,4 @@
-import { keyboard } from "./lib/UtilMethods";
+import { keyboard, setTextureOnlyIfNeeded } from "./lib/UtilMethods";
 import UserInterface from './UserInterface';
 
 export default class Player {
@@ -50,7 +50,7 @@ export default class Player {
 		// but beware it's going to be a twice-as-fast movement, so there needs to be code to divide
 		// the speed by half on certain conditions
 		this.leftKey.press = () => {
-			this.setPlayerTextureOnlyIfNeeded(this.playerSprite, 
+			setTextureOnlyIfNeeded(this.playerSprite, 
 				this.playerSprite.texture, playerLeftTexture);
 			this.command = "left";
 			this.playerSprite.vx = -3;
@@ -63,7 +63,7 @@ export default class Player {
 		};
 
 		this.rightKey.press = () => {
-			this.setPlayerTextureOnlyIfNeeded(this.playerSprite, 
+			setTextureOnlyIfNeeded(this.playerSprite, 
 				this.playerSprite.texture, playerRightTexture);
 			this.command = "right";
 			this.playerSprite.vx = 3;
@@ -76,7 +76,7 @@ export default class Player {
 		};
 
 		this.downKey.press = () => {
-			this.setPlayerTextureOnlyIfNeeded(this.playerSprite, 
+			setTextureOnlyIfNeeded(this.playerSprite, 
 				this.playerSprite.texture, playerFrontTexture);
 			this.command = "down";
 			this.playerSprite.vx = 0;
@@ -89,7 +89,7 @@ export default class Player {
 		};
 
 		this.upKey.press = () => {
-			this.setPlayerTextureOnlyIfNeeded(this.playerSprite, 
+			setTextureOnlyIfNeeded(this.playerSprite, 
 				this.playerSprite.texture, playerBackTexture);
 			this.command = "up";
 			this.playerSprite.vx = 0;
@@ -105,18 +105,21 @@ export default class Player {
 		// zIndex: https://github.com/pixijs/pixi.js/issues/300
 		this.oneKey.press = () => {
 			this.ui.highlightCard("cardBat");
+			this.equipBat();
 		};
 		this.oneKey.release = () => {
 		};
 
 		this.twoKey.press = () => {
 			this.ui.highlightCard("cardPistol");
+			this.equipPistol();
 		};
 		this.twoKey.release = () => {
 		};
 
 		this.threeKey.press = () => {
 			this.ui.highlightCard("cardNetgun");
+			this.equipNetgun();
 		};
 		this.threeKey.release = () => {
 		};
@@ -133,16 +136,22 @@ export default class Player {
 		console.log("player loop initialized");
 	}
 
-	setPlayerTextureOnlyIfNeeded(sprite, currentTexture, newTexture) {
-		if (currentTexture !== newTexture) {
-			sprite.setTexture(newTexture);
-		}
+	equipBat() {
+		// do stuff
+	}
+
+	equipPistol() {
+		// do stuff
+	}
+
+	equipNetgun() {
+		// do stuff
 	}
 
 	contain(sprite, container, command) {
 		// this function accounts for new calculated position to define bounds
-		// NOTE (workaround):
-		// command argument is used for simple checks such as the
+		// WORKAROUND:
+		// 'command' argument is used for simple checks such as the
 		// ones done in the "bottom" and "right" conditions...
 
 		let collision = "none";

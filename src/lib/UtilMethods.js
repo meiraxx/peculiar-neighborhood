@@ -87,4 +87,10 @@ function textStyle(choice) {
 	return textStyle;
 }
 
-export {keyboard, textStyle};
+function setTextureOnlyIfNeeded(sprite, currentTexture, newTexture) {
+	if (currentTexture !== newTexture) {
+		sprite.setTexture(newTexture);
+	}
+}
+
+export {keyboard, textStyle, setTextureOnlyIfNeeded};

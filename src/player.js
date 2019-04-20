@@ -12,7 +12,15 @@ export default class Player {
 		PIXI.loader.add("assets/character/characterLeft.png");
 	}
 	
-	prepareObject(x_pos, y_pos) {
+	prepareObject(x_pos, y_pos, MATTER, physicsEngine) {
+		
+		this.matterPhysics = MATTER;
+		//player collider
+		this.collider = MATTER.Bodies.rectangle(this.playerSprite.x,this.playerSprite.y,
+				this.playerSprite.scale.x * this.playerSprite.width,this.playerSprite.scale.y * this.playerSprite.height);
+		MATTER.World.add(physicsEngine.world,this.collider);
+		
+		
 		// SETUP player
 		let playerFrontTexture = PIXI.loader.resources["assets/character/characterFront.png"].texture;
 		let playerBackTexture = PIXI.loader.resources["assets/character/characterBack.png"].texture;
@@ -49,12 +57,12 @@ export default class Player {
 			this.setPlayerTextureOnlyIfNeeded(this.playerSprite, 
 				this.playerSprite.texture, playerLeftTexture);
 			this.command = "left";
-			this.playerSprite.vx = -3;
-			this.playerSprite.vy = 0;
+			this.matterPhysics.Body.setVelocity(this.collider ,this.matterPhysics.Vector.createVector(-3,0));
+			
 		};
 		this.leftKey.release = () => {
-			if (!this.rightKey.isDown && this.playerSprite.vy === 0) {
-				this.playerSprite.vx = 0;
+			if (!this.rightKey.isDown) {
+				this.matterPhysics.Body.setVelocity(this.collider ,this.matterPhysics.Vector.createVector(0,this.collider.velocity.y));
 			}
 		};
 
@@ -62,12 +70,11 @@ export default class Player {
 			this.setPlayerTextureOnlyIfNeeded(this.playerSprite, 
 				this.playerSprite.texture, playerRightTexture);
 			this.command = "right";
-			this.playerSprite.vx = 3;
-			this.playerSprite.vy = 0;
+			this.matterPhysics.Body.setVelocity(this.collider ,this.matterPhysics.Vector.createVector(3,0));
 		};
 		this.rightKey.release = () => {
-			if (!this.leftKey.isDown && this.playerSprite.vy === 0) {
-				this.playerSprite.vx = 0;
+			if (!this.leftKey.isDown ) {
+				this.matterPhysics.Body.setVelocity(this.collider ,this.matterPhysics.Vector.createVector(0,this.collider.velocity.y));
 			}
 		};
 
@@ -75,12 +82,11 @@ export default class Player {
 			this.setPlayerTextureOnlyIfNeeded(this.playerSprite, 
 				this.playerSprite.texture, playerFrontTexture);
 			this.command = "down";
-			this.playerSprite.vx = 0;
-			this.playerSprite.vy = 3;
+			this.matterPhysics.Body.setVelocity(this.collider ,this.matterPhysics.Vector.createVector(0,3));
 		};
 		this.downKey.release = () => {
-			if (!this.upKey.isDown && this.playerSprite.vx === 0) {
-				this.playerSprite.vy = 0;
+			if (!this.upKey.isDown ) {
+				this.matterPhysics.Body.setVelocity(this.collider ,this.matterPhysics.Vector.createVector(this.collider.velocity.x,0));
 			}
 		};
 
@@ -88,12 +94,11 @@ export default class Player {
 			this.setPlayerTextureOnlyIfNeeded(this.playerSprite, 
 				this.playerSprite.texture, playerBackTexture);
 			this.command = "up";
-			this.playerSprite.vx = 0;
-			this.playerSprite.vy = -3;
+			this.matterPhysics.Body.setVelocity(this.collider ,this.matterPhysics.Vector.createVector(0,-3));
 		};
 		this.upKey.release = () => {
-			if (!this.downKey.isDown && this.playerSprite.vx === 0) {
-				this.playerSprite.vy = 0;
+			if (!this.downKey.isDown ) {
+				this.matterPhysics.Body.setVelocity(this.collider ,this.matterPhysics.Vector.createVector(this.collider.velocity.x,0));
 			}
 		};
 
@@ -143,6 +148,7 @@ export default class Player {
 		this.app.stage.addChild(this.playerSprite);
 		console.log("player character initialized");
 	}
+	
 
 	initLoop() {
 		// start the player loop
@@ -193,7 +199,7 @@ export default class Player {
 			sprite.x = container.width - sprite.width + unitvx;
 			collision = "right";
 		}
-
+			
 		return collision;
 	}
 
@@ -228,5 +234,7 @@ export default class Player {
 		else {
 			// character isn't walking: do nothing
 		}
+		this.playerSprite.y = this.collider.position.y;
+		this.playerSprite.x = this.collider.position.x;
 	}
 }

@@ -12,10 +12,8 @@ function loadProgressHandler(loader,resource) {
 var PIXI = require('pixi.js');
 PIXI.settings.RESOLUTION = 2;
 
-var Matter = require('matter-js');
-var physicsEngine = Matter.Engine.create();
-physicsEngine.world.gravity.x = 0;
-physicsEngine.world.gravity.y = 0;
+var MATTER = require('matter-js');
+var physicsEngine = MATTER.Engine.create();
 
 let type = "WebGL";
 if(!PIXI.utils.isWebGLSupported()){
@@ -48,7 +46,7 @@ viewport.moveTo(700, 800);
 viewport.zoom(700);
 
 // construct main objects
-var staticMap = new StaticMap(app,physicsEngine);
+var staticMap = new StaticMap(app);
 var player = new Player(app, viewport);
 var bush = new Bush(app);
 
@@ -82,7 +80,11 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// note: you can reorder everything very easily on the screen
 	// by reordering the object initializations :)
 	staticMap.initObject();
+	staticMap.initPhysicsColliders(MATTER,physicsEngine);
+	
 	player.initObject();
+	player.initPhysics(MATTER,physicsEngine);
+	
 	monsters.forEach(function(m) {
 		m.initObject();
 	});
@@ -98,7 +100,7 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	monsters.forEach(function(m) {		
 		m.initLoop();
 	});
-	Matter.Engine.run(physicsEngine);
+	MATTER.Engine.run(physicsEngine);
 	//fog.initLoop();
 	//TODO: monster loop
 });

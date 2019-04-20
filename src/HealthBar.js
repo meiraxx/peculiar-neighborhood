@@ -18,7 +18,7 @@ export default class HealthBar {
         this.container.currHealth = maxHealth;
 
         // healthbar global position
-        this.container.x = x_pos;
+        this.container.x = x_pos - 1;
         this.container.y = y_pos;
 
         // create the max-health rectangle

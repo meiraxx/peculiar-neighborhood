@@ -89,6 +89,11 @@ export default class Cards {
                 this.container.cardPistolSprite.y = 0;
             }
         }
+        else if (card === "none") {
+            this.container.cardNetgunSprite.y = 0;
+            this.container.cardBatSprite.y = 0;
+            this.container.cardPistolSprite.y = 0;
+        }
     }
   
 }

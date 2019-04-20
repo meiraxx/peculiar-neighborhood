@@ -3,10 +3,22 @@ import UserInterface from './UserInterface';
 
 export default class Player {
 	static loadResources() {
-		PIXI.loader.add("assets/character/characterFront.png");
-		PIXI.loader.add("assets/character/characterBack.png");
-		PIXI.loader.add("assets/character/characterRight.png");
-		PIXI.loader.add("assets/character/characterLeft.png");
+		PIXI.loader.add("assets/character/none/characterFront.png");
+		PIXI.loader.add("assets/character/none/characterBack.png");
+		PIXI.loader.add("assets/character/none/characterRight.png");
+		PIXI.loader.add("assets/character/none/characterLeft.png");
+		PIXI.loader.add("assets/character/bat/characterFront.png");
+		PIXI.loader.add("assets/character/bat/characterBack.png");
+		PIXI.loader.add("assets/character/bat/characterRight.png");
+		PIXI.loader.add("assets/character/bat/characterLeft.png");
+		PIXI.loader.add("assets/character/pistol/characterFront.png");
+		PIXI.loader.add("assets/character/pistol/characterBack.png");
+		PIXI.loader.add("assets/character/pistol/characterRight.png");
+		PIXI.loader.add("assets/character/pistol/characterLeft.png");
+		PIXI.loader.add("assets/character/netgun/characterFront.png");
+		PIXI.loader.add("assets/character/netgun/characterBack.png");
+		PIXI.loader.add("assets/character/netgun/characterRight.png");
+		PIXI.loader.add("assets/character/netgun/characterLeft.png");
 		UserInterface.loadResources();
 	}
 
@@ -18,11 +30,12 @@ export default class Player {
 	
 	prepareObject(x_pos, y_pos,MATTER,physicsEngine) {
 		// SETUP player
-		let playerFrontTexture = PIXI.loader.resources["assets/character/characterFront.png"].texture;
-		let playerBackTexture = PIXI.loader.resources["assets/character/characterBack.png"].texture;
-		let playerRightTexture = PIXI.loader.resources["assets/character/characterRight.png"].texture;
-		let playerLeftTexture = PIXI.loader.resources["assets/character/characterLeft.png"].texture;
-		
+		let playerFrontTexture = PIXI.loader.resources["assets/character/none/characterFront.png"].texture;
+		let playerBackTexture = PIXI.loader.resources["assets/character/none/characterBack.png"].texture;
+		let playerRightTexture = PIXI.loader.resources["assets/character/none/characterRight.png"].texture;
+		let playerLeftTexture = PIXI.loader.resources["assets/character/none/characterLeft.png"].texture;
+		this.currentItem = "none";
+
 		this.playerSprite = new PIXI.Sprite(playerFrontTexture);
 		this.playerSprite.scale.x = 0.20;
 		this.playerSprite.scale.y = 0.20;
@@ -49,6 +62,7 @@ export default class Player {
 		this.rightKey = keyboard("ArrowRight");
 		this.downKey = keyboard("ArrowDown");
 		this.upKey = keyboard("ArrowUp");
+		this.zeroKey = keyboard("0");
 		this.oneKey = keyboard("1");
 		this.twoKey = keyboard("2");
 		this.threeKey = keyboard("3");
@@ -58,11 +72,10 @@ export default class Player {
 		// but beware it's going to be a twice-as-fast movement, so there needs to be code to divide
 		// the speed by half on certain conditions
 		this.leftKey.press = () => {
-			setTextureOnlyIfNeeded(this.playerSprite, 
-				this.playerSprite.texture, playerLeftTexture);
 			this.command = "left";
 			this.playerSprite.vx = -3;
 			this.playerSprite.vy = 0;
+			this.updatePlayerSprite();
 		};
 		this.leftKey.release = () => {
 			if (!this.rightKey.isDown && this.playerSprite.vy === 0) {
@@ -71,11 +84,10 @@ export default class Player {
 		};
 
 		this.rightKey.press = () => {
-			setTextureOnlyIfNeeded(this.playerSprite, 
-				this.playerSprite.texture, playerRightTexture);
 			this.command = "right";
 			this.playerSprite.vx = 3;
 			this.playerSprite.vy = 0;
+			this.updatePlayerSprite();
 		};
 		this.rightKey.release = () => {
 			if (!this.leftKey.isDown && this.playerSprite.vy === 0) {
@@ -84,11 +96,10 @@ export default class Player {
 		};
 
 		this.downKey.press = () => {
-			setTextureOnlyIfNeeded(this.playerSprite, 
-				this.playerSprite.texture, playerFrontTexture);
 			this.command = "down";
 			this.playerSprite.vx = 0;
 			this.playerSprite.vy = 3;
+			this.updatePlayerSprite();
 		};
 		this.downKey.release = () => {
 			if (!this.upKey.isDown && this.playerSprite.vx === 0) {
@@ -97,11 +108,10 @@ export default class Player {
 		};
 
 		this.upKey.press = () => {
-			setTextureOnlyIfNeeded(this.playerSprite, 
-				this.playerSprite.texture, playerBackTexture);
 			this.command = "up";
 			this.playerSprite.vx = 0;
 			this.playerSprite.vy = -3;
+			this.updatePlayerSprite();
 		};
 		this.upKey.release = () => {
 			if (!this.downKey.isDown && this.playerSprite.vx === 0) {
@@ -111,23 +121,34 @@ export default class Player {
 
 		// UI KEYS
 		// zIndex: https://github.com/pixijs/pixi.js/issues/300
+		this.zeroKey.press = () => {
+			this.ui.highlightCard("none");
+			this.currentItem = "none";
+			this.updatePlayerSprite();
+		};
+		this.zeroKey.release = () => {
+		};
+
 		this.oneKey.press = () => {
 			this.ui.highlightCard("cardBat");
-			this.equipBat();
+			this.currentItem = "bat";
+			this.updatePlayerSprite();
 		};
 		this.oneKey.release = () => {
 		};
 
 		this.twoKey.press = () => {
 			this.ui.highlightCard("cardPistol");
-			this.equipPistol();
+			this.currentItem = "pistol";
+			this.updatePlayerSprite();
 		};
 		this.twoKey.release = () => {
 		};
 
 		this.threeKey.press = () => {
 			this.ui.highlightCard("cardNetgun");
-			this.equipNetgun();
+			this.currentItem = "netgun";
+			this.updatePlayerSprite();
 		};
 		this.threeKey.release = () => {
 		};
@@ -144,16 +165,83 @@ export default class Player {
 		console.log("player loop initialized");
 	}
 
-	equipBat() {
-		// do stuff
-	}
-
-	equipPistol() {
-		// do stuff
-	}
-
-	equipNetgun() {
-		// do stuff
+	updatePlayerSprite() {
+		switch(this.command) {
+			case "left":
+				switch(this.currentItem) {
+					case "none":
+						this.playerTexture = PIXI.loader.resources["assets/character/none/characterLeft.png"].texture;
+						break;
+					case "bat":
+						this.playerTexture = PIXI.loader.resources["assets/character/bat/characterLeft.png"].texture;
+						break;
+					case "pistol":
+						this.playerTexture = PIXI.loader.resources["assets/character/pistol/characterLeft.png"].texture;
+						break;
+					case "netgun":
+						this.playerTexture = PIXI.loader.resources["assets/character/netgun/characterLeft.png"].texture;
+						break;
+					default:
+						// do nothing
+				}
+				break;
+			case "right":
+				switch(this.currentItem) {
+					case "none":
+						this.playerTexture = PIXI.loader.resources["assets/character/none/characterRight.png"].texture;
+						break;
+					case "bat":
+						this.playerTexture = PIXI.loader.resources["assets/character/bat/characterRight.png"].texture;
+						break;
+					case "pistol":
+						this.playerTexture = PIXI.loader.resources["assets/character/pistol/characterRight.png"].texture;
+						break;
+					case "netgun":
+						this.playerTexture = PIXI.loader.resources["assets/character/netgun/characterRight.png"].texture;
+						break;
+					default:
+						// do nothing
+				}
+				break;
+			case "down":
+				switch(this.currentItem) {
+					case "none":
+						this.playerTexture = PIXI.loader.resources["assets/character/none/characterFront.png"].texture;
+						break;
+					case "bat":
+						this.playerTexture = PIXI.loader.resources["assets/character/bat/characterFront.png"].texture;
+						break;
+					case "pistol":
+						this.playerTexture = PIXI.loader.resources["assets/character/pistol/characterFront.png"].texture;
+						break;
+					case "netgun":
+						this.playerTexture = PIXI.loader.resources["assets/character/netgun/characterFront.png"].texture;
+						break;
+					default:
+						// do nothing
+				}
+				break;
+			case "up":
+				switch(this.currentItem) {
+					case "none":
+						this.playerTexture = PIXI.loader.resources["assets/character/none/characterBack.png"].texture;
+						break;
+					case "bat":
+						this.playerTexture = PIXI.loader.resources["assets/character/bat/characterBack.png"].texture;
+						break;
+					case "pistol":
+						this.playerTexture = PIXI.loader.resources["assets/character/pistol/characterBack.png"].texture;
+						break;
+					case "netgun":
+						this.playerTexture = PIXI.loader.resources["assets/character/netgun/characterBack.png"].texture;
+						break;
+					default:
+						// do nothing
+				}
+			default:
+				// do nothing
+		}
+		setTextureOnlyIfNeeded(this.playerSprite, this.playerTexture);
 	}
 
 	contain(sprite, container, command) {

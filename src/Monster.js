@@ -1,4 +1,4 @@
-import UserInterface from './userInterface';
+import UserInterface from './UserInterface';
 
 export default class Monster {
 	

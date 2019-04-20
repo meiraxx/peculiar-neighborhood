@@ -87,8 +87,8 @@ function textStyle(choice) {
 	return textStyle;
 }
 
-function setTextureOnlyIfNeeded(sprite, currentTexture, newTexture) {
-	if (currentTexture !== newTexture) {
+function setTextureOnlyIfNeeded(sprite, newTexture) {
+	if (sprite.texture !== newTexture) {
 		sprite.setTexture(newTexture);
 	}
 }

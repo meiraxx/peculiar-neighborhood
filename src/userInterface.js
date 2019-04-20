@@ -23,7 +23,6 @@ export default class UserInterface {
 
 	prepareCards(x_pos, y_pos) {
 		this.cards.prepareObject(x_pos, y_pos);
-
 	}
 
 	initCards() {

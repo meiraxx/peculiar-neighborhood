@@ -25,7 +25,6 @@ export default class Cards {
         let cardBatSprite = new PIXI.Sprite(cardBatTexture);
         cardBatSprite.scale.x = 0.10;
         cardBatSprite.scale.y = 0.10;
-        cardBatSprite.y = -10;
         cardBatSprite.name = "cardBat";
 
         let cardPistolSprite = new PIXI.Sprite(cardPistolTexture);

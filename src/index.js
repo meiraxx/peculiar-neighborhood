@@ -2,13 +2,14 @@ import Fog from './fog';
 import StaticMap from './staticMap';
 import Player from './player';
 import Bush from './bush';
-import Viewport from './viewport';
+import Viewport from './pixi-lib/viewport';
 
 function loadProgressHandler(loader,resource) {
   console.log("loading " + resource.url + " "  + loader.progress + "%");
 }
 
 var PIXI = require('pixi.js');
+PIXI.settings.RESOLUTION = 2;
 
 let type = "WebGL";
 if(!PIXI.utils.isWebGLSupported()){
@@ -70,6 +71,7 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 
 	// ui stuff should always be above other elements
 	player.ui.initHealthbar();
+	player.ui.initCards();
 
 	// 3. PUT LOOPS RUNNING
 	player.initLoop();

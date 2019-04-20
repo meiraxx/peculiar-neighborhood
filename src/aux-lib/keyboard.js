@@ -1,4 +1,5 @@
 export default function keyboard(value) {
+	// list of keys: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
 	let key = {};
 	key.value = value;
 	key.isDown = false;

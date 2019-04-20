@@ -1,4 +1,5 @@
 export default function textStyle(choice) {
+	// test here: https://pixijs.io/pixi-text-style/
 	let textStyle = undefined;
 	// healthbar
 	if (choice === "richText") {
@@ -21,8 +22,10 @@ export default function textStyle(choice) {
 	}
 	else if (choice === "healthText") {
 		textStyle = new PIXI.TextStyle({
-		    fontFamily: 'Arial',
+		    fontFamily: 'Courier New',
 		    fontSize: 14,
+		    //fontWeight: 'bold',
+		    //fontStyle: 'italic',
 		    fill: ['#ffffff'],
 		    stroke: '#000000',
 		    strokeThickness: 1,

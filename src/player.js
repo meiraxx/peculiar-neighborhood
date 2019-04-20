@@ -1,4 +1,4 @@
-import keyboard from './keyboard';
+import keyboard from './aux-lib/keyboard';
 import UserInterface from './userInterface';
 
 export default class Player {
@@ -13,10 +13,6 @@ export default class Player {
 	}
 	
 	prepareObject(x_pos, y_pos) {
-		// SETUP player UI
-		//green: 0x4CBB17; red: 0xFF3300
-		this.ui.prepareHealthbar(x_pos, y_pos - 8, 64, 8, 0x4CBB17, 20);
-
 		// SETUP player
 		let playerFrontTexture = PIXI.loader.resources["assets/character/characterFront.png"].texture;
 		let playerBackTexture = PIXI.loader.resources["assets/character/characterBack.png"].texture;
@@ -31,12 +27,21 @@ export default class Player {
 		this.playerSprite.vx = 0;
 		this.playerSprite.vy = 0;
 
+		// SETUP player UI
+		//green: 0x4CBB17; red: 0xFF3300
+		this.ui.prepareHealthbar(x_pos, y_pos - 4, 64, 8, 0x4CBB17, 20);
+		this.ui.prepareCards(this.playerSprite.x - 480, 690);
+
 		// KEY STROKE EVENTS
 		this.leftKey = keyboard("ArrowLeft");
 		this.rightKey = keyboard("ArrowRight");
 		this.downKey = keyboard("ArrowDown");
 		this.upKey = keyboard("ArrowUp");
-		
+		this.oneKey = keyboard("1");
+		this.twoKey = keyboard("2");
+		this.threeKey = keyboard("3");
+
+		// MOVEMENT KEYS
 		// comment second conditions and movement resets on key press to obtain diagonal movements, but beware it's going to be
 		// a twice-as-fast movement, so there needs to be code to divide the speed by half on certain conditions 
 		this.leftKey.press = () => {
@@ -89,6 +94,37 @@ export default class Player {
 			if (!this.downKey.isDown && this.playerSprite.vx === 0) {
 				this.playerSprite.vy = 0;
 			}
+		};
+
+		// UI KEYS
+		this.oneKey.press = () => {
+			if (this.ui.cardsContainer.cardBatSprite.y === 0) {
+				this.ui.cardsContainer.cardBatSprite.y -= 10;
+				this.ui.cardsContainer.cardPistolSprite.y = 0;
+				this.ui.cardsContainer.cardNetgunSprite.y = 0;
+			}
+		};
+		this.oneKey.release = () => {
+		};
+
+		this.twoKey.press = () => {
+			if (this.ui.cardsContainer.cardPistolSprite.y === 0) {
+				this.ui.cardsContainer.cardPistolSprite.y -= 10;
+				this.ui.cardsContainer.cardBatSprite.y = 0;
+				this.ui.cardsContainer.cardNetgunSprite.y = 0;
+			}
+		};
+		this.twoKey.release = () => {
+		};
+
+		this.threeKey.press = () => {
+			if (this.ui.cardsContainer.cardNetgunSprite.y === 0) {
+				this.ui.cardsContainer.cardNetgunSprite.y -= 10;
+				this.ui.cardsContainer.cardBatSprite.y = 0;
+				this.ui.cardsContainer.cardPistolSprite.y = 0;
+			}
+		};
+		this.threeKey.release = () => {
 		};
 	}
 
@@ -163,18 +199,20 @@ export default class Player {
 			this.playerSprite.x += this.playerSprite.vx;
 			// camera effect
 			this.viewport.move(this.playerSprite.vx, 0);
-			//this.app.stage.x -= this.playerSprite.vx;
 			// move healthbar
 			this.ui.healthBar.x += this.playerSprite.vx;
+			// move cards container
+			this.ui.cardsContainer.x += this.playerSprite.vx;
 		}
 		else if (this.playerSprite.vy !== 0) {
 			// walking vertically
 			this.playerSprite.y += this.playerSprite.vy;
 			// camera effect
 			this.viewport.move(0, this.playerSprite.vy);
-			//this.app.stage.y -= this.playerSprite.vy;
 			// move healthbar
 			this.ui.healthBar.y += this.playerSprite.vy;
+			// move cards container
+			this.ui.cardsContainer.y += this.playerSprite.vy;
 		}
 		else {
 			// character isn't walking: do nothing

@@ -10,6 +10,7 @@ function loadProgressHandler(loader,resource) {
 
 var PIXI = require('pixi.js');
 PIXI.settings.RESOLUTION = 2;
+PIXI.settings.SORTABLE_CHILDREN = true;
 
 let type = "WebGL";
 if(!PIXI.utils.isWebGLSupported()){

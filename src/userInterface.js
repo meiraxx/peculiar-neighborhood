@@ -78,44 +78,46 @@ export default class UserInterface {
 		let cardNetgunTexture = PIXI.loader.resources["assets/cards/cardNetgun.png"].texture;
 
 		// build sprites and scale them to 100x100
-		let cardBatContainer = new PIXI.DisplayObjectContainer();
 		let cardBatSprite = new PIXI.Sprite(cardBatTexture);
 		cardBatSprite.scale.x = 0.10;
 		cardBatSprite.scale.y = 0.10;
-		cardBatContainer.addChild(cardBatSprite);
+		cardBatSprite.name = "cardBat";
 
-		let cardPistolContainer = new PIXI.DisplayObjectContainer();
 		let cardPistolSprite = new PIXI.Sprite(cardPistolTexture);
 		cardPistolSprite.scale.x = 0.10;
 		cardPistolSprite.scale.y = 0.10;
-		cardPistolContainer.x = cardBatContainer.x + 30;
-		cardPistolContainer.addChild(cardPistolSprite);
+		cardPistolSprite.x = cardBatSprite.x + 30;
+		cardPistolSprite.name = "cardPistol";
 
-		let cardNetgunContainer = new PIXI.DisplayObjectContainer();
 		let cardNetgunSprite = new PIXI.Sprite(cardNetgunTexture);
 		cardNetgunSprite.scale.x = 0.10;
 		cardNetgunSprite.scale.y = 0.10;
-		cardNetgunContainer.x = cardPistolContainer.x + 30;
-		cardNetgunContainer.addChild(cardNetgunSprite);
+		cardNetgunSprite.x = cardPistolSprite.x + 30;
+		cardNetgunSprite.name = "cardNetgun";
 
-		// setup initial zIndexes
-		cardBatContainer.zIndex = 1;
-		cardPistolContainer.zIndex = 2;
-		cardNetgunContainer.zIndex = 3;
+		// add card sprites to cards container and sort them by zIndex
+		this.cardsContainer.addChild(cardBatSprite);
+		this.cardsContainer.addChild(cardPistolSprite);
+		this.cardsContainer.addChild(cardNetgunSprite);
 
-		// add card sprites to cards container
-		this.cardsContainer.addChild(cardBatContainer);
-		this.cardsContainer.addChild(cardPistolContainer);
-		this.cardsContainer.addChild(cardNetgunContainer);
+		this.resortCards(3, 2, 1);
 
 		// add the sprites to class for later use
-		this.cardsContainer.cardBatContainer = cardBatContainer;
-		this.cardsContainer.cardPistolContainer = cardPistolContainer;
-		this.cardsContainer.cardNetgunContainer = cardNetgunContainer;
+		this.cardsContainer.cardBatSprite = cardBatSprite;
+		this.cardsContainer.cardPistolSprite = cardPistolSprite;
+		this.cardsContainer.cardNetgunSprite = cardNetgunSprite;
+
 	}
 
 	initCards() {
 		this.app.stage.addChild(this.cardsContainer);
 		console.log("cards initialized");
+	}
+
+	resortCards(batZ, pistolZ, netgunZ) {
+		this.cardsContainer.getChildByName("cardBat").zIndex = batZ;
+		this.cardsContainer.getChildByName("cardPistol").zIndex = pistolZ;
+		this.cardsContainer.getChildByName("cardNetgun").zIndex = netgunZ;
+		this.cardsContainer.children.sort((itemA, itemB) => itemA.zIndex - itemB.zIndex);
 	}
 }

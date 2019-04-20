@@ -66,7 +66,7 @@ export default class UserInterface {
 	}
 
 	prepareCards(x_pos, y_pos) {
-		this.cardsContainer = new PIXI.display.Layer();
+		this.cardsContainer = new PIXI.Container();
 
 		// cards-container global position
 		this.cardsContainer.x = x_pos;
@@ -78,29 +78,40 @@ export default class UserInterface {
 		let cardNetgunTexture = PIXI.loader.resources["assets/cards/cardNetgun.png"].texture;
 
 		// build sprites and scale them to 100x100
+		let cardBatContainer = new PIXI.DisplayObjectContainer();
 		let cardBatSprite = new PIXI.Sprite(cardBatTexture);
 		cardBatSprite.scale.x = 0.10;
 		cardBatSprite.scale.y = 0.10;
+		cardBatContainer.addChild(cardBatSprite);
 
+		let cardPistolContainer = new PIXI.DisplayObjectContainer();
 		let cardPistolSprite = new PIXI.Sprite(cardPistolTexture);
 		cardPistolSprite.scale.x = 0.10;
 		cardPistolSprite.scale.y = 0.10;
-		cardPistolSprite.x = cardBatSprite.x + 30;
+		cardPistolContainer.x = cardBatContainer.x + 30;
+		cardPistolContainer.addChild(cardPistolSprite);
 
+		let cardNetgunContainer = new PIXI.DisplayObjectContainer();
 		let cardNetgunSprite = new PIXI.Sprite(cardNetgunTexture);
 		cardNetgunSprite.scale.x = 0.10;
 		cardNetgunSprite.scale.y = 0.10;
-		cardNetgunSprite.x = cardPistolSprite.x + 30;
+		cardNetgunContainer.x = cardPistolContainer.x + 30;
+		cardNetgunContainer.addChild(cardNetgunSprite);
+
+		// setup initial zIndexes
+		cardBatContainer.zIndex = 1;
+		cardPistolContainer.zIndex = 2;
+		cardNetgunContainer.zIndex = 3;
 
 		// add card sprites to cards container
-		this.cardsContainer.addChild(cardNetgunSprite);
-		this.cardsContainer.addChild(cardPistolSprite);
-		this.cardsContainer.addChild(cardBatSprite);
+		this.cardsContainer.addChild(cardBatContainer);
+		this.cardsContainer.addChild(cardPistolContainer);
+		this.cardsContainer.addChild(cardNetgunContainer);
 
 		// add the sprites to class for later use
-		this.cardsContainer.cardBatSprite = cardBatSprite;
-		this.cardsContainer.cardPistolSprite = cardPistolSprite;
-		this.cardsContainer.cardNetgunSprite = cardNetgunSprite;
+		this.cardsContainer.cardBatContainer = cardBatContainer;
+		this.cardsContainer.cardPistolContainer = cardPistolContainer;
+		this.cardsContainer.cardNetgunContainer = cardNetgunContainer;
 	}
 
 	initCards() {

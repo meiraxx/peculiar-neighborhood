@@ -98,31 +98,41 @@ export default class Player {
 		};
 
 		// UI KEYS
+		// zIndex: https://github.com/pixijs/pixi.js/issues/300
 		this.oneKey.press = () => {
-			if (this.ui.cardsContainer.cardBatSprite.y === 0) {
-				this.ui.cardsContainer.cardBatSprite.y -= 10;
-				this.ui.cardsContainer.cardPistolSprite.y = 0;
-				this.ui.cardsContainer.cardNetgunSprite.y = 0;
+			if (this.ui.cardsContainer.cardBatContainer.y === 0) {
+				this.ui.cardsContainer.cardBatContainer.zIndex = 3;
+				this.ui.cardsContainer.cardPistolContainer.zIndex = 2;
+				this.ui.cardsContainer.cardNetgunContainer.zIndex = 1;
+				this.ui.cardsContainer.cardBatContainer.y -= 10;
+				this.ui.cardsContainer.cardPistolContainer.y = 0;
+				this.ui.cardsContainer.cardNetgunContainer.y = 0;
 			}
 		};
 		this.oneKey.release = () => {
 		};
 
 		this.twoKey.press = () => {
-			if (this.ui.cardsContainer.cardPistolSprite.y === 0) {
-				this.ui.cardsContainer.cardPistolSprite.y -= 10;
-				this.ui.cardsContainer.cardBatSprite.y = 0;
-				this.ui.cardsContainer.cardNetgunSprite.y = 0;
+			if (this.ui.cardsContainer.cardPistolContainer.y === 0) {
+				this.ui.cardsContainer.cardBatContainer.zIndex = 2;
+				this.ui.cardsContainer.cardPistolContainer.zIndex = 3;
+				this.ui.cardsContainer.cardNetgunContainer.zIndex = 1;
+				this.ui.cardsContainer.cardPistolContainer.y -= 10;
+				this.ui.cardsContainer.cardBatContainer.y = 0;
+				this.ui.cardsContainer.cardNetgunContainer.y = 0;
 			}
 		};
 		this.twoKey.release = () => {
 		};
 
 		this.threeKey.press = () => {
-			if (this.ui.cardsContainer.cardNetgunSprite.y === 0) {
-				this.ui.cardsContainer.cardNetgunSprite.y -= 10;
-				this.ui.cardsContainer.cardBatSprite.y = 0;
-				this.ui.cardsContainer.cardPistolSprite.y = 0;
+			if (this.ui.cardsContainer.cardNetgunContainer.y === 0) {
+				this.ui.cardsContainer.cardBatContainer.zIndex = 2;
+				this.ui.cardsContainer.cardPistolContainer.zIndex = 1;
+				this.ui.cardsContainer.cardNetgunContainer.zIndex = 3;
+				this.ui.cardsContainer.cardNetgunContainer.y -= 10;
+				this.ui.cardsContainer.cardBatContainer.y = 0;
+				this.ui.cardsContainer.cardPistolContainer.y = 0;
 			}
 		};
 		this.threeKey.release = () => {

@@ -1,6 +1,7 @@
 import Fog from './fog';
 import StaticMap from './staticMap';
 import Player from './player';
+import Monster from './monster';
 import Bush from './bush';
 import Viewport from './pixi-lib/viewport';
 
@@ -45,6 +46,14 @@ viewport.zoom(700);
 var staticMap = new StaticMap(app);
 var player = new Player(app, viewport);
 var bush = new Bush(app);
+
+Monster.prepareResources();
+var m0 = new Monster(app);
+var m1 = new Monster(app);
+var m2 = new Monster(app);
+var m3 = new Monster(app);
+var monsters = [m0,m1,m2,m3];
+
 //var fog = new Fog(app);
 
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
@@ -60,21 +69,30 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// setup other map elements
 	bush.prepareObject();
 	//fog.prepareObject();
-
+	
+	monsters.forEach(function(m) {
+		m.prepareObject(mapWidth/2,mapHeight/2);
+	});
 	// 2. INITIALIZE OBJECTS
 	// note: you can reorder everything very easily on the screen
 	// by reordering the object initializations :)
 	staticMap.initObject();
 	player.initObject();
+	monsters.forEach(function(m) {
+		m.initObject();
+	});
 	bush.initObject();
 	//fog.initObject();
 
 	// ui stuff should always be above other elements
 	player.ui.initHealthbar();
 	player.ui.initCards();
-
+	
 	// 3. PUT LOOPS RUNNING
 	player.initLoop();
+	monsters.forEach(function(m) {		
+		m.initLoop();
+	});
 	//fog.initLoop();
 	//TODO: monster loop
 });

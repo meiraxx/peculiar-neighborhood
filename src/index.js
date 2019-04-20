@@ -11,6 +11,7 @@ function loadProgressHandler(loader,resource) {
 
 var PIXI = require('pixi.js');
 PIXI.settings.RESOLUTION = 2;
+PIXI.settings.SORTABLE_CHILDREN = true;
 
 var MATTER = require('matter-js');
 var physicsEngine = MATTER.Engine.create();
@@ -45,7 +46,12 @@ var viewport = new Viewport(app.renderer, 700, 800, app.stage);
 viewport.moveTo(700, 800);
 viewport.zoom(700);
 
-// construct main objects
+// 1. LOAD ALL RESOURCES
+StaticMap.loadResources();
+Player.loadResources();
+Bush.loadResources();
+
+// 2. CONSTRUCT MAIN OBJECTS
 var staticMap = new StaticMap(app);
 var player = new Player(app, viewport);
 var bush = new Bush(app);
@@ -57,10 +63,9 @@ var m2 = new Monster(app);
 var m3 = new Monster(app);
 var monsters = [m0,m1,m2,m3];
 
-//var fog = new Fog(app);
 
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
-	// 1. SETUP OBJECTS
+	// 3. SETUP OBJECTS
 	// setup background map
 	staticMap.prepareObject();
 	let mapWidth = staticMap.backgroundSprite.width;
@@ -81,7 +86,7 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// by reordering the object initializations :)
 	staticMap.initObject();
 	staticMap.initPhysicsColliders(MATTER,physicsEngine);
-	
+
 	player.initObject();
 	player.initPhysics(MATTER,physicsEngine);
 	
@@ -102,6 +107,7 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	});
 	MATTER.Engine.run(physicsEngine);
 	//fog.initLoop();
+
 	//TODO: monster loop
 });
 

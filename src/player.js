@@ -2,14 +2,18 @@ import keyboard from './aux-lib/keyboard';
 import UserInterface from './userInterface';
 
 export default class Player {
-	constructor(app, viewport) {
-		this.app = app;
-		this.viewport = viewport;
-		this.ui = new UserInterface(app);
+	static loadResources() {
 		PIXI.loader.add("assets/character/characterFront.png");
 		PIXI.loader.add("assets/character/characterBack.png");
 		PIXI.loader.add("assets/character/characterRight.png");
 		PIXI.loader.add("assets/character/characterLeft.png");
+		UserInterface.loadResources();
+	}
+
+	constructor(app, viewport) {
+		this.app = app;
+		this.viewport = viewport;
+		this.ui = new UserInterface(app);
 	}
 	
 	prepareObject(x_pos, y_pos, MATTER, physicsEngine) {
@@ -105,40 +109,19 @@ export default class Player {
 		// UI KEYS
 		// zIndex: https://github.com/pixijs/pixi.js/issues/300
 		this.oneKey.press = () => {
-			if (this.ui.cardsContainer.cardBatContainer.y === 0) {
-				this.ui.cardsContainer.cardBatContainer.zIndex = 3;
-				this.ui.cardsContainer.cardPistolContainer.zIndex = 2;
-				this.ui.cardsContainer.cardNetgunContainer.zIndex = 1;
-				this.ui.cardsContainer.cardBatContainer.y -= 10;
-				this.ui.cardsContainer.cardPistolContainer.y = 0;
-				this.ui.cardsContainer.cardNetgunContainer.y = 0;
-			}
+			this.ui.highlightCard("cardBat");
 		};
 		this.oneKey.release = () => {
 		};
 
 		this.twoKey.press = () => {
-			if (this.ui.cardsContainer.cardPistolContainer.y === 0) {
-				this.ui.cardsContainer.cardBatContainer.zIndex = 2;
-				this.ui.cardsContainer.cardPistolContainer.zIndex = 3;
-				this.ui.cardsContainer.cardNetgunContainer.zIndex = 1;
-				this.ui.cardsContainer.cardPistolContainer.y -= 10;
-				this.ui.cardsContainer.cardBatContainer.y = 0;
-				this.ui.cardsContainer.cardNetgunContainer.y = 0;
-			}
+			this.ui.highlightCard("cardPistol");
 		};
 		this.twoKey.release = () => {
 		};
 
 		this.threeKey.press = () => {
-			if (this.ui.cardsContainer.cardNetgunContainer.y === 0) {
-				this.ui.cardsContainer.cardBatContainer.zIndex = 2;
-				this.ui.cardsContainer.cardPistolContainer.zIndex = 1;
-				this.ui.cardsContainer.cardNetgunContainer.zIndex = 3;
-				this.ui.cardsContainer.cardNetgunContainer.y -= 10;
-				this.ui.cardsContainer.cardBatContainer.y = 0;
-				this.ui.cardsContainer.cardPistolContainer.y = 0;
-			}
+			this.ui.highlightCard("cardNetgun");
 		};
 		this.threeKey.release = () => {
 		};
@@ -217,7 +200,7 @@ export default class Player {
 			// camera effect
 			this.viewport.move(this.playerSprite.vx, 0);
 			// move healthbar
-			this.ui.healthBar.x += this.playerSprite.vx;
+			this.ui.healthBar.container.x += this.playerSprite.vx;
 			// move cards container
 			this.ui.cardsContainer.x += this.playerSprite.vx;
 		}
@@ -227,7 +210,7 @@ export default class Player {
 			// camera effect
 			this.viewport.move(0, this.playerSprite.vy);
 			// move healthbar
-			this.ui.healthBar.y += this.playerSprite.vy;
+			this.ui.healthBar.container.y += this.playerSprite.vy;
 			// move cards container
 			this.ui.cardsContainer.y += this.playerSprite.vy;
 		}

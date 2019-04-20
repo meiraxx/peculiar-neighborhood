@@ -3,18 +3,20 @@ export default class StaticMap {
 	
   constructor(app, MATTER,physicsEngine) {
 	console.log(MATTER);
-	
-	
 	this.app = app;
 	PIXI.loader.add("assets/background.png");
-	
   }
+  
+  static loadResources() {
+    PIXI.loader.add("assets/background.png");
+  }
+
   
   prepareObject() {
   	let backgroundTexture = PIXI.loader.resources["assets/background.png"].texture;
-	this.backgroundSprite = new PIXI.Sprite(backgroundTexture);
-	this.backgroundSprite.x = 0;
-	this.backgroundSprite.y = 0;
+  	this.backgroundSprite = new PIXI.Sprite(backgroundTexture);
+  	this.backgroundSprite.x = 0;
+  	this.backgroundSprite.y = 0;
   }
   initPhysicsColliders(MATTER,physicsEngine) { 
 	//top down map , so no gravity 

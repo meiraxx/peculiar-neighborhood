@@ -1,8 +1,8 @@
-import Fog from './fog';
-import StaticMap from './staticMap';
-import Player from './player';
-import Bush from './bush';
-import Viewport from './pixi-lib/viewport';
+import Fog from './Fog';
+import StaticMap from './StaticMap';
+import Player from './Player';
+import Bush from './Bush';
+import Viewport from './lib/viewport';
 
 function loadProgressHandler(loader,resource) {
   console.log("loading " + resource.url + " "  + loader.progress + "%");

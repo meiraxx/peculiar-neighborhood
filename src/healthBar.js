@@ -1,4 +1,4 @@
-import textStyle from "./aux-lib/textStyle";
+import { textStyle } from "./lib/UtilMethods";
 
 export default class HealthBar {
 	static loadResources() {

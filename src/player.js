@@ -1,5 +1,5 @@
-import keyboard from './aux-lib/keyboard';
-import UserInterface from './userInterface';
+import { keyboard } from "./lib/UtilMethods";
+import UserInterface from './UserInterface';
 
 export default class Player {
 	static loadResources() {

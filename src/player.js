@@ -2,14 +2,18 @@ import keyboard from './aux-lib/keyboard';
 import UserInterface from './userInterface';
 
 export default class Player {
-	constructor(app, viewport) {
-		this.app = app;
-		this.viewport = viewport;
-		this.ui = new UserInterface(app);
+	static loadResources() {
 		PIXI.loader.add("assets/character/characterFront.png");
 		PIXI.loader.add("assets/character/characterBack.png");
 		PIXI.loader.add("assets/character/characterRight.png");
 		PIXI.loader.add("assets/character/characterLeft.png");
+		UserInterface.loadResources();
+	}
+
+	constructor(app, viewport) {
+		this.app = app;
+		this.viewport = viewport;
+		this.ui = new UserInterface(app);
 	}
 	
 	prepareObject(x_pos, y_pos) {
@@ -100,34 +104,19 @@ export default class Player {
 		// UI KEYS
 		// zIndex: https://github.com/pixijs/pixi.js/issues/300
 		this.oneKey.press = () => {
-			if (this.ui.cardsContainer.cardBatSprite.y === 0) {
-				this.ui.resortCards(3, 2, 1);
-				this.ui.cardsContainer.cardBatSprite.y -= 10;
-				this.ui.cardsContainer.cardPistolSprite.y = 0;
-				this.ui.cardsContainer.cardNetgunSprite.y = 0;
-			}
+			this.ui.highlightCard("cardBat");
 		};
 		this.oneKey.release = () => {
 		};
 
 		this.twoKey.press = () => {
-			if (this.ui.cardsContainer.cardPistolSprite.y === 0) {
-				this.ui.resortCards(1, 3, 2);
-				this.ui.cardsContainer.cardPistolSprite.y -= 10;
-				this.ui.cardsContainer.cardBatSprite.y = 0;
-				this.ui.cardsContainer.cardNetgunSprite.y = 0;
-			}
+			this.ui.highlightCard("cardPistol");
 		};
 		this.twoKey.release = () => {
 		};
 
 		this.threeKey.press = () => {
-			if (this.ui.cardsContainer.cardNetgunSprite.y === 0) {
-				this.ui.resortCards(1, 2, 3);
-				this.ui.cardsContainer.cardNetgunSprite.y -= 10;
-				this.ui.cardsContainer.cardBatSprite.y = 0;
-				this.ui.cardsContainer.cardPistolSprite.y = 0;
-			}
+			this.ui.highlightCard("cardNetgun");
 		};
 		this.threeKey.release = () => {
 		};

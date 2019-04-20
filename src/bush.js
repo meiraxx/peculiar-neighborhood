@@ -1,7 +1,10 @@
 export default class Bush {
+	static loadResources() {
+		PIXI.loader.add("assets/bush.png");
+	}
+	
 	constructor(app) {
 		this.app = app;
-		PIXI.loader.add("assets/bush.png");
 	}
 
 	prepareObject() {

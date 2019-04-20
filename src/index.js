@@ -42,14 +42,18 @@ var viewport = new Viewport(app.renderer, 700, 800, app.stage);
 viewport.moveTo(700, 800);
 viewport.zoom(700);
 
-// construct main objects
+// 1. LOAD ALL RESOURCES
+StaticMap.loadResources();
+Player.loadResources();
+Bush.loadResources();
+
+// 2. CONSTRUCT MAIN OBJECTS
 var staticMap = new StaticMap(app);
 var player = new Player(app, viewport);
 var bush = new Bush(app);
-//var fog = new Fog(app);
 
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
-	// 1. SETUP OBJECTS
+	// 3. SETUP OBJECTS
 	// setup background map
 	staticMap.prepareObject();
 	let mapWidth = staticMap.backgroundSprite.width;
@@ -60,12 +64,12 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 
 	// setup other map elements
 	bush.prepareObject();
-	//fog.prepareObject();
 
-	// 2. INITIALIZE OBJECTS
+	// 4. INITIALIZE OBJECTS
 	// note: you can reorder everything very easily on the screen
 	// by reordering the object initializations :)
 	staticMap.initObject();
+
 	player.initObject();
 	bush.initObject();
 	//fog.initObject();
@@ -74,9 +78,8 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	player.ui.initHealthbar();
 	player.ui.initCards();
 
-	// 3. PUT LOOPS RUNNING
+	// 5. PUT LOOPS RUNNING
 	player.initLoop();
-	//fog.initLoop();
 	//TODO: monster loop
 });
 

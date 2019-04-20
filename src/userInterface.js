@@ -1,11 +1,14 @@
 import textStyle from "./aux-lib/textStyle";
 
 export default class UserInterface {
-	constructor(app) {
-		this.app = app;
+	static loadResources() {
 		PIXI.loader.add("assets/cards/cardBat.png"); //1
 		PIXI.loader.add("assets/cards/cardPistol.png"); //2
 		PIXI.loader.add("assets/cards/cardNetgun.png"); //3
+	}
+	
+	constructor(app) {
+		this.app = app;
 	}
 
 	prepareHealthbar(x_pos, y_pos, width, height, colorCode, maxHealth) {
@@ -81,6 +84,7 @@ export default class UserInterface {
 		let cardBatSprite = new PIXI.Sprite(cardBatTexture);
 		cardBatSprite.scale.x = 0.10;
 		cardBatSprite.scale.y = 0.10;
+		cardBatSprite.y = -10;
 		cardBatSprite.name = "cardBat";
 
 		let cardPistolSprite = new PIXI.Sprite(cardPistolTexture);
@@ -119,5 +123,32 @@ export default class UserInterface {
 		this.cardsContainer.getChildByName("cardPistol").zIndex = pistolZ;
 		this.cardsContainer.getChildByName("cardNetgun").zIndex = netgunZ;
 		this.cardsContainer.children.sort((itemA, itemB) => itemA.zIndex - itemB.zIndex);
+	}
+
+	highlightCard(card) {
+		if (card === "cardBat") {
+			this.resortCards(3, 2, 1);
+			if (this.cardsContainer.cardBatSprite.y === 0) {
+				this.cardsContainer.cardBatSprite.y -= 10;
+				this.cardsContainer.cardPistolSprite.y = 0;
+				this.cardsContainer.cardNetgunSprite.y = 0;
+			}
+		}
+		else if (card === "cardPistol") {
+			this.resortCards(1, 3, 2);
+			if (this.cardsContainer.cardPistolSprite.y === 0) {
+				this.cardsContainer.cardPistolSprite.y -= 10;
+				this.cardsContainer.cardBatSprite.y = 0;
+				this.cardsContainer.cardNetgunSprite.y = 0;
+			}
+		}
+		else if (card === "cardNetgun") {
+			this.resortCards(1, 2, 3);
+			if (this.cardsContainer.cardNetgunSprite.y === 0) {
+				this.cardsContainer.cardNetgunSprite.y -= 10;
+				this.cardsContainer.cardBatSprite.y = 0;
+				this.cardsContainer.cardPistolSprite.y = 0;
+			}
+		}
 	}
 }

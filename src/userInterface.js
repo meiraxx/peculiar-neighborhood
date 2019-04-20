@@ -66,7 +66,7 @@ export default class UserInterface {
 	}
 
 	prepareCards(x_pos, y_pos) {
-		this.cardsContainer = new PIXI.Container();
+		this.cardsContainer = new PIXI.display.Layer();
 
 		// cards-container global position
 		this.cardsContainer.x = x_pos;
@@ -81,7 +81,6 @@ export default class UserInterface {
 		let cardBatSprite = new PIXI.Sprite(cardBatTexture);
 		cardBatSprite.scale.x = 0.10;
 		cardBatSprite.scale.y = 0.10;
-		console.log("Card width: " + cardBatSprite.width);
 
 		let cardPistolSprite = new PIXI.Sprite(cardPistolTexture);
 		cardPistolSprite.scale.x = 0.10;
@@ -94,9 +93,9 @@ export default class UserInterface {
 		cardNetgunSprite.x = cardPistolSprite.x + 30;
 
 		// add card sprites to cards container
-		this.cardsContainer.addChild(cardBatSprite);
-		this.cardsContainer.addChild(cardPistolSprite);
 		this.cardsContainer.addChild(cardNetgunSprite);
+		this.cardsContainer.addChild(cardPistolSprite);
+		this.cardsContainer.addChild(cardBatSprite);
 
 		// add the sprites to class for later use
 		this.cardsContainer.cardBatSprite = cardBatSprite;

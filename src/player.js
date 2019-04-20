@@ -42,8 +42,9 @@ export default class Player {
 		this.threeKey = keyboard("3");
 
 		// MOVEMENT KEYS
-		// comment second conditions and movement resets on key press to obtain diagonal movements, but beware it's going to be
-		// a twice-as-fast movement, so there needs to be code to divide the speed by half on certain conditions 
+		// note: comment second conditions and movement resets on key press to obtain diagonal movements,
+		// but beware it's going to be a twice-as-fast movement, so there needs to be code to divide
+		// the speed by half on certain conditions
 		this.leftKey.press = () => {
 			this.setPlayerTextureOnlyIfNeeded(this.playerSprite, 
 				this.playerSprite.texture, playerLeftTexture);

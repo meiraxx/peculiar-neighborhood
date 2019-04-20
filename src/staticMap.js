@@ -4,7 +4,6 @@ export default class StaticMap {
   constructor(app, MATTER,physicsEngine) {
 	console.log(MATTER);
 	this.app = app;
-	PIXI.loader.add("assets/background.png");
   }
   
   static loadResources() {
@@ -23,7 +22,7 @@ export default class StaticMap {
 	physicsEngine.world.gravity.x = 0;
 	physicsEngine.world.gravity.y = 0;
 	//house box
-	this.testBox = MATTER.Bodies.rectangle(5,5,200,200);
+	this.testBox = MATTER.Bodies.rectangle(1,1,1,1);
 	MATTER.Body.setStatic(this.testBox, true);
 	
 	MATTER.World.add(physicsEngine.world,this.testBox);

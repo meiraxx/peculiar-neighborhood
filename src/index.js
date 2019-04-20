@@ -72,7 +72,7 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	let mapHeight = staticMap.backgroundSprite.height;
 
 	// setup player character and UI
-	player.prepareObject(mapWidth/2,mapHeight/2);
+	player.prepareObject(mapWidth/2,mapHeight/2,MATTER,physicsEngine);
 
 	// setup other map elements
 	bush.prepareObject();
@@ -88,7 +88,6 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	staticMap.initPhysicsColliders(MATTER,physicsEngine);
 
 	player.initObject();
-	player.initPhysics(MATTER,physicsEngine);
 	
 	monsters.forEach(function(m) {
 		m.initObject();

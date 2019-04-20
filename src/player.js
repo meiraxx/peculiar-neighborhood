@@ -194,7 +194,7 @@ export default class Player {
 			// camera effect
 			this.viewport.move(this.playerSprite.vx, 0);
 			// move healthbar
-			this.ui.healthBar.x += this.playerSprite.vx;
+			this.ui.healthBar.container.x += this.playerSprite.vx;
 			// move cards container
 			this.ui.cardsContainer.x += this.playerSprite.vx;
 		}
@@ -204,7 +204,7 @@ export default class Player {
 			// camera effect
 			this.viewport.move(0, this.playerSprite.vy);
 			// move healthbar
-			this.ui.healthBar.y += this.playerSprite.vy;
+			this.ui.healthBar.container.y += this.playerSprite.vy;
 			// move cards container
 			this.ui.cardsContainer.y += this.playerSprite.vy;
 		}

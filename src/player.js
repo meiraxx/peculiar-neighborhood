@@ -196,7 +196,7 @@ export default class Player {
 			// move healthbar
 			this.ui.healthBar.container.x += this.playerSprite.vx;
 			// move cards container
-			this.ui.cardsContainer.x += this.playerSprite.vx;
+			this.ui.cards.container.x += this.playerSprite.vx;
 		}
 		else if (this.playerSprite.vy !== 0) {
 			// walking vertically
@@ -206,7 +206,7 @@ export default class Player {
 			// move healthbar
 			this.ui.healthBar.container.y += this.playerSprite.vy;
 			// move cards container
-			this.ui.cardsContainer.y += this.playerSprite.vy;
+			this.ui.cards.container.y += this.playerSprite.vy;
 		}
 		else {
 			// character isn't walking: do nothing

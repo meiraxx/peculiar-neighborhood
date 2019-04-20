@@ -1,5 +1,5 @@
-import keyboard from './aux-lib/keyboard';
-import UserInterface from './userInterface';
+import { keyboard } from "./lib/UtilMethods";
+import UserInterface from './UserInterface';
 
 export default class Player {
 	static loadResources() {
@@ -201,7 +201,7 @@ export default class Player {
 			// character hit wall: do nothing, already contained
 		}
 		else if (collisions == undefined || collisions.length == 0) {
-			if (this.playerSprite.vx !== 0 ) {
+			if (this.playerSprite.vx !== 0) {
 				// walking horizontally
 				this.playerSprite.x += this.playerSprite.vx;
 				// camera effect
@@ -209,9 +209,9 @@ export default class Player {
 				// move healthbar
 				this.ui.healthBar.container.x += this.playerSprite.vx;
 				// move cards container
-				this.ui.cardsContainer.x += this.playerSprite.vx;
+				this.ui.cards.container.x += this.playerSprite.vx;
 			}
-			else if (this.playerSprite.vy !== 0 ) {
+			else if (this.playerSprite.vy !== 0) {
 				// walking vertically
 				this.playerSprite.y += this.playerSprite.vy;
 				// camera effect
@@ -219,7 +219,7 @@ export default class Player {
 				// move healthbar
 				this.ui.healthBar.container.y += this.playerSprite.vy;
 				// move cards container
-				this.ui.cardsContainer.y += this.playerSprite.vy;
+				this.ui.cards.container.y += this.playerSprite.vy;
 			}
 		}
 		else {

@@ -1,9 +1,9 @@
-import Fog from './fog';
-import StaticMap from './staticMap';
-import Player from './player';
-import Monster from './monster';
-import Bush from './bush';
-import Viewport from './pixi-lib/viewport';
+import Fog from './Fog';
+import StaticMap from './StaticMap';
+import Player from './Player';
+import Bush from './Bush';
+import Viewport from './lib/viewport';
+import Monster from './Monster';
 
 function loadProgressHandler(loader,resource) {
   console.log("loading " + resource.url + " "  + loader.progress + "%");
@@ -84,6 +84,7 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// 2. INITIALIZE OBJECTS
 	// note: you can reorder everything very easily on the screen
 	// by reordering the object initializations :)
+
 	staticMap.initObject();
 	staticMap.initPhysicsColliders(MATTER,physicsEngine);
 
@@ -93,9 +94,7 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 		m.initObject();
 	});
 	bush.initObject();
-	//fog.initObject();
 
-	// ui stuff should always be above other elements
 	player.ui.initHealthbar();
 	player.ui.initCards();
 	
@@ -108,6 +107,7 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	//fog.initLoop();
 
 	//TODO: monster loop
+
 });
 
 

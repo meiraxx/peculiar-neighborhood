@@ -1,8 +1,10 @@
 export default class StaticMap {
 	
-  constructor(app) {
+  constructor(app, physicsEngine) {
 	this.app = app;
 	PIXI.loader.add("assets/background.png");
+	//this.testBox = Matter.Bodies.rectangle(5,5,200,200);
+	//Matter.World.add(physicsEngine,this.testBox);
   }
   
   prepareObject() {

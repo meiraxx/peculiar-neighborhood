@@ -11,7 +11,6 @@ export default class Monster {
 		this.app = app;
 		this.newDirTimeStep = 100.0;
 		this.timeSinceNewDir = 0.0;
-		this.speedFactor = 0.01;
 	}
 	
 	prepareObject(x_pos, y_pos, MATTER, physicsEngine) {
@@ -51,7 +50,7 @@ export default class Monster {
 		this.timeSinceNewDir += delta;
 		if(this.timeSinceNewDir > this.newDirTimeStep) {
 			this.timeSinceNewDir = 0.0;
-			
+
 			let randomNumber = Math.random();
 			if (randomNumber >= 0 && randomNumber < 0.25) {
 				this.velocity = this.matter.Vector.create(1, 0);

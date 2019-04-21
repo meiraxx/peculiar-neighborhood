@@ -1,4 +1,5 @@
-import { keyboard, setTextureOnlyIfNeeded } from "./lib/UtilMethods";
+import { keyboard } from "./lib/UtilMethods";
+import { setTextureOnlyIfNeeded } from "./lib/PixiUtilMethods";
 import UserInterface from './UserInterface';
 
 export default class Player {

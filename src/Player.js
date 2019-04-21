@@ -46,6 +46,7 @@ export default class Player {
 		this.playerSprite.vx = 0;
 		this.playerSprite.vy = 0;
 		
+		// PLAYER PHYSICS
 		this.matter = MATTER;
 		this.physicsEngine = physicsEngine;
 		this.velocity = this.matter.Vector.create(0, 0);
@@ -53,7 +54,6 @@ export default class Player {
  		this.collider = MATTER.Bodies.rectangle(this.playerSprite.x + this.playerSprite.width/2,
  			this.playerSprite.y + this.playerSprite.height, this.playerSprite.width, 
  			this.playerSprite.height);
-
  		MATTER.World.add(physicsEngine.world,this.collider);
  		
  
@@ -282,9 +282,9 @@ export default class Player {
 	playerLoop(delta) {
 		if (!this.ui.isPaused()) {
 			//get possible collisions
-			//var collisions = this.matter.Query.point(this.physicsEngine.world.bodies, 
-			//	this.matter.Vector.create(this.playerSprite.x + this.playerSprite.width/2 + this.playerSprite.vx, 
-			//	this.playerSprite.y + this.playerSprite.height + this.playerSprite.vy));
+			var collisions = this.matter.Query.point(this.physicsEngine.world.bodies, 
+				this.matter.Vector.create(this.playerSprite.x + this.playerSprite.width/2 + this.playerSprite.vx, 
+				this.playerSprite.y + this.playerSprite.height + this.playerSprite.vy));
 
 			// if no collisions were detected...
 			if (this.playerSprite.vx !== 0) {
@@ -296,28 +296,30 @@ export default class Player {
 				// camera effect
 				console.log(this.collider.position.x + "," + this.collider.position.y);
 				console.log(this.playerSprite.x + "," + this.playerSprite.y);
-				this.viewport.moveTo(700, 800);
+				console.log(this.viewport.center.x + "," + this.viewport.center.y);
+
+				this.viewport.move(this.collider.velocity.x, 0);
 				// move healthbar
-				this.ui.healthBar.container.x = this.collider.position.x - 1;
+				this.ui.healthBar.container.x += this.collider.velocity.x;
 				// move cards container
-				this.ui.cards.container.x = this.collider.position.x - 530;
+				this.ui.cards.container.x += this.collider.velocity.x;
 				// move invisible pause screen
-				this.ui.pauseScreen.container.x = this.collider.position.x;
+				this.ui.pauseScreen.container.x += this.collider.velocity.x;
 			}
 			else if (this.playerSprite.vy !== 0) {
 				// walking vertically
-				//this.playerSprite.y += this.playerSprite.vy;
+				this.playerSprite.y += this.playerSprite.vy;
 				// move collider position
-				this.playerSprite.y = this.collider.position.y - this.playerSprite.height;
+				//this.playerSprite.y = this.collider.position.y - this.playerSprite.height;
 				this.velocity = this.matter.Vector.create(0, this.playerSprite.vy);
 				// camera effect
-				this.viewport.moveTo(700, 800);
+				this.viewport.move(0, this.collider.velocity.y);
 				// move healthbar
-				this.ui.healthBar.container.y = this.playerSprite.y - 4;
+				this.ui.healthBar.container.y += this.collider.velocity.y;
 				// move cards container
-				this.ui.cards.container.y = this.playerSprite.y + 200;
+				this.ui.cards.container.y += this.collider.velocity.y;
 				// move invisible pause screen
-				this.ui.pauseScreen.container.y = this.playerSprite.y;
+				this.ui.pauseScreen.container.y += this.collider.velocity.y;
 			}
 			else if (this.playerSprite.vy === 0 && this.playerSprite.vx === 0) {
 				this.velocity = this.matter.Vector.create(0, 0);

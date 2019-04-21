@@ -49,6 +49,7 @@ document.body.appendChild(app.view);
 var viewport = new Viewport(app.renderer, 700, 800, app.stage);
 viewport.moveTo(700, 800);
 viewport.zoom(700);
+//viewport.zoomToFit(700, 800, new PIXI.Point(600, 800));
 
 // 1. LOAD ALL RESOURCES
 StaticMap.loadResources();

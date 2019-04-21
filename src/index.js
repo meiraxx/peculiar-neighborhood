@@ -75,7 +75,7 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	let mapWidth = staticMap.backgroundSprite.width;
 	let mapHeight = staticMap.backgroundSprite.height;
 	let colliderThickness = 100;
-	
+
 	// setup player character and UI
 	player.prepareObject(mapWidth/2,mapHeight/2,MATTER,physicsEngine);
 
@@ -100,20 +100,22 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	monsters.forEach(function(m) {
 		m.initObject();
 	});
+
 	bush.initObject();
 
 	player.ui.initHealthbar();
 	player.ui.initCards();
 	player.ui.initPauseScreen();
-	
+
 	// 3. PUT LOOPS RUNNING
+	// first initialize physics engine loop
+	MATTER.Engine.run(physicsEngine);
+
+	// then all other loops
 	player.initLoop();
 	monsters.forEach(function(m) {		
 		m.initLoop();
 	});
-	MATTER.Engine.run(physicsEngine);
-
-
 });
 
 

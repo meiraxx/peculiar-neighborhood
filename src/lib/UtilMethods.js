@@ -93,4 +93,12 @@ function setTextureOnlyIfNeeded(sprite, newTexture) {
 	}
 }
 
-export {keyboard, textStyle, setTextureOnlyIfNeeded};
+function getRandomArbitraryFloat(min, max) {
+	return Math.random() * (max - min) + min;
+}
+
+function getRectangle() {
+	return undefined;
+}
+
+export {keyboard, textStyle, setTextureOnlyIfNeeded, getRandomArbitraryFloat, getRectangle};

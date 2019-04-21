@@ -1,4 +1,5 @@
 import UserInterface from './UserInterface';
+import { getRandomArbitraryFloat } from "./lib/UtilMethods";
 
 export default class Monster {
 	
@@ -16,7 +17,7 @@ export default class Monster {
 	prepareObject(x_pos, y_pos, MATTER, physicsEngine) {
 		this.matter = MATTER;
 		this.physicsEngine = physicsEngine;
-		this.velocity = this.matter.Vector.create(0 ,0);
+		this.velocity = this.matter.Vector.create(0, 0);
  		
 		// SETUP monster
 		let frontTexture = PIXI.loader.resources["assets/brown-monster.png"].texture;
@@ -33,9 +34,6 @@ export default class Monster {
 		this.monsterCollider = MATTER.Bodies.rectangle(this.monsterSprite.x,this.monsterSprite.y,
 		this.monsterSprite.scale.x * this.monsterSprite.width,this.monsterSprite.scale.y * this.monsterSprite.height, {mass: 80.0});
  		MATTER.World.add(physicsEngine.world,this.monsterCollider);
- 		
-		
-		
 	}
 
 	initObject() {
@@ -53,8 +51,21 @@ export default class Monster {
 		this.timeSinceNewDir += delta;
 		if(this.timeSinceNewDir > this.newDirTimeStep) {
 			this.timeSinceNewDir = 0.0;
-			this.velocity = Math.random() > 0.5 ?  this.matter.Vector.create(this.speedFactor * Math.random() * 2 - 0.5 ,0) :   this.matter.Vector.create(0,this.speedFactor * Math.random() * 2 - 0.5 );
 			
+			let randomNumber = Math.random();
+			if (randomNumber >= 0 && randomNumber < 0.25) {
+				this.velocity = this.matter.Vector.create(1, 0);
+			}
+			else if (randomNumber >= 0.25 && randomNumber < 0.50) {
+				this.velocity = this.matter.Vector.create(0, 1);
+			}
+			else if (randomNumber >= 0.50 && randomNumber < 0.75) {
+				this.velocity = this.matter.Vector.create(-1, 0);
+			}
+			else if (randomNumber >= 0.75 && randomNumber < 1) {
+				this.velocity = this.matter.Vector.create(0, -1);
+			}
+
 			//this.matter.Body.applyForce(this.monsterCollider ,this.monsterCollider.position, this.force);
 		}
 		this.matter.Body.setVelocity(this.monsterCollider ,this.velocity);

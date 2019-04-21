@@ -275,61 +275,14 @@ export default class Player {
 		setTextureOnlyIfNeeded(this.playerSprite, this.playerTexture);
 	}
 
-	contain(sprite, container, command) {
-		// this function accounts for new calculated position to define bounds
-		// WORKAROUND:
-		// 'command' argument is used for simple checks such as the
-		// ones done in the "bottom" and "right" conditions...
-
-		let collision = "none";
-		let unitvx = sprite.vx/Math.abs(sprite.vx);
-		let unitvy = sprite.vy/Math.abs(sprite.vy);
-
-		// top hit
-		if (sprite.y + unitvy <= container.y) {
-			console.log("Top hit: " + sprite.y);
-			sprite.y = container.y;
-			collision = "top";
-		}
-
-		// bottom hit
-		if (sprite.y + sprite.height - unitvy >= container.height && command === "down") {
-			console.log("Bottom hit: " + sprite.y);
-			sprite.y = container.height - sprite.height + unitvy;
-			collision = "bottom";
-		}
-
-		// left hit
-		if (sprite.x + unitvx <= container.x) {
-			console.log("Left hit: " + sprite.x);
-			sprite.x = container.x;
-			collision = "left";
-		}
-
-		// right hit
-		if (sprite.x + sprite.width - unitvx >= container.width && command === "right") {
-			console.log("Right hit: " + sprite.x);
-			sprite.x = container.width - sprite.width + unitvx;
-			collision = "right";
-		}
-
-		return collision;
-	}
-
 	playerLoop(delta) {
 		if (!this.ui.isPaused()) {
-			// use player's velocity to make him move
-			let playerHitsWall = this.contain(this.playerSprite, 
-				{x: 0, y: 0, width: 1024, height: 1024}, this.command);
-			
+
 			//get possible collisions
 			var collisions = this.matter.Query.point(this.physicsEngine.world.bodies, 
 			this.matter.Vector.create( this.playerSprite.x + this.playerSprite.vx, this.playerSprite.y + this.playerSprite.vy));
 			
-			if (playerHitsWall !== "none") {
-				// character hit wall: do nothing, already contained
-			}
-			else if (collisions == undefined || collisions.length == 0) {
+			if (collisions == undefined || collisions.length == 0) {
 				if (this.playerSprite.vx !== 0) {
 					// walking horizontally
 					this.playerSprite.x += this.playerSprite.vx;
@@ -355,9 +308,7 @@ export default class Player {
 					this.ui.pauseScreen.container.y += this.playerSprite.vy;
 				}
 			}
-			else {
-				// character isn't walking: do nothing
-			}
+			
 		}
 	}
 }

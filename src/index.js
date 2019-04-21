@@ -13,8 +13,12 @@ var PIXI = require('pixi.js');
 PIXI.settings.RESOLUTION = 2;
 PIXI.settings.SORTABLE_CHILDREN = true;
 
+
+
 var MATTER = require('matter-js');
 var physicsEngine = MATTER.Engine.create();
+
+
 
 let type = "WebGL";
 if(!PIXI.utils.isWebGLSupported()){
@@ -78,10 +82,10 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	bush.prepareObject();
 	
 	// setup monsters in the corners
-	m0.prepareObject(0, 0);
-	m1.prepareObject(0, mapHeight - m0.monsterSprite.height);
-	m2.prepareObject(mapWidth - m0.monsterSprite.width, 0);
-	m3.prepareObject(mapWidth - m0.monsterSprite.width, mapHeight - m0.monsterSprite.height);
+	m0.prepareObject(100, 100,MATTER,physicsEngine);
+	m1.prepareObject(100, mapHeight - 100 - m0.monsterSprite.height,MATTER,physicsEngine);
+	m2.prepareObject(mapWidth - 100 - m0.monsterSprite.width, 100,MATTER,physicsEngine);
+	m3.prepareObject(mapWidth - 100 - m0.monsterSprite.width, mapHeight - 100 - m0.monsterSprite.height,MATTER,physicsEngine);
 
 	// 2. INITIALIZE OBJECTS
 	// note: you can reorder everything very easily on the screen
@@ -103,12 +107,11 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	
 	// 3. PUT LOOPS RUNNING
 	player.initLoop();
-	//monsters.forEach(function(m) {		
-	//	m.initLoop();
-	//});
+	monsters.forEach(function(m) {		
+		m.initLoop();
+	});
 	MATTER.Engine.run(physicsEngine);
 
-	//TODO: monster loop
 
 });
 

@@ -20,10 +20,20 @@ export default class StaticMap {
 	physicsEngine.world.gravity.x = 0;
 	physicsEngine.world.gravity.y = 0;
 	//house box
-	this.testBox = MATTER.Bodies.rectangle(44,44,100,100);
-	MATTER.Body.setStatic(this.testBox, true);
+	//this.testBox = MATTER.Bodies.rectangle(800,800,100,100);
 	
-	MATTER.World.add(physicsEngine.world,this.testBox);
+	//outer  bounds
+	this.outerBoundLeft = MATTER.Bodies.rectangle(0,512,100,1024);
+	this.outerBoundRight = MATTER.Bodies.rectangle(1024,512,100,1024);
+	this.outerBoundBottom = MATTER.Bodies.rectangle(512,1024 ,1024,100);
+	this.outerBoundTop = MATTER.Bodies.rectangle(512,-50,1024,100);
+	//MATTER.Body.setStatic(this.testBox, true);
+	MATTER.Body.setStatic(this.outerBoundLeft, true);
+	MATTER.Body.setStatic(this.outerBoundRight, true);
+	MATTER.Body.setStatic(this.outerBoundTop, true);
+	MATTER.Body.setStatic(this.outerBoundBottom, true);
+	
+	MATTER.World.add(physicsEngine.world,[this.outerBoundLeft,this.outerBoundRight,this.outerBoundTop,this.outerBoundBottom]);
   }
   initObject() {
   	this.app.stage.addChild(this.backgroundSprite);

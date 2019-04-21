@@ -78,6 +78,8 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 
 	// setup player character and UI
 	player.prepareObject(mapWidth/2,mapHeight/2,MATTER,physicsEngine);
+	let playerWidth = player.playerSprite.height;
+	let playerHeight = player.playerSprite.height;
 
 	// setup other map elements
 	bush.prepareObject();
@@ -89,11 +91,9 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	m3.prepareObject(mapWidth - 100 - m0.monsterSprite.width, mapHeight - 100 - m0.monsterSprite.height, MATTER, physicsEngine);
 
 	// 2. INITIALIZE OBJECTS
-	// note: you can reorder everything very easily on the screen
-	// by reordering the object initializations :)
-
 	staticMap.initObject();
-	staticMap.initPhysicsColliders(MATTER, physicsEngine, mapWidth, mapHeight, colliderThickness);
+	staticMap.initPhysicsColliders(MATTER, physicsEngine, mapWidth, 
+		mapHeight, playerWidth, playerHeight, colliderThickness);
 
 	player.initObject();
 	

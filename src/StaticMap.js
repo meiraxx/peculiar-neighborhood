@@ -16,19 +16,16 @@ export default class StaticMap {
   	this.backgroundSprite = new PIXI.Sprite(backgroundTexture);
   }
 
-  initPhysicsColliders(MATTER, physicsEngine, mapWidth, mapHeight, colliderThickness) { 
+  initPhysicsColliders(MATTER, physicsEngine, mapWidth, mapHeight, playerWidth, playerHeight, colliderThickness) { 
 	//top down map , so no gravity 
 	physicsEngine.world.gravity.x = 0;
 	physicsEngine.world.gravity.y = 0;
-	//house box
-	//this.testBox = MATTER.Bodies.rectangle(800,800,100,100);
 	
 	//outer  bounds
-	this.outerBoundLeft = MATTER.Bodies.rectangle(-50, mapHeight/2, colliderThickness, mapHeight, {isStatic: true});
-	this.outerBoundRight = MATTER.Bodies.rectangle(mapWidth - 50, mapHeight/2, colliderThickness, mapHeight, {isStatic: true});
-	this.outerBoundBottom = MATTER.Bodies.rectangle(mapWidth/2, mapHeight - 50, mapWidth, colliderThickness, {isStatic: true});
-	this.outerBoundTop = MATTER.Bodies.rectangle(mapWidth/2, -50, mapWidth, colliderThickness, {isStatic: true});
-	//MATTER.Body.setStatic(this.testBox, true);
+	this.outerBoundLeft = MATTER.Bodies.rectangle(-50 + playerWidth/2, mapHeight/2, colliderThickness, mapHeight, {isStatic: true});
+	this.outerBoundRight = MATTER.Bodies.rectangle(mapWidth + 50 - playerWidth/2, mapHeight/2, colliderThickness, mapHeight, {isStatic: true});
+	this.outerBoundBottom = MATTER.Bodies.rectangle(mapWidth/2, mapHeight + 50, mapWidth, colliderThickness, {isStatic: true});
+	this.outerBoundTop = MATTER.Bodies.rectangle(mapWidth/2, -50 + playerHeight, mapWidth, colliderThickness, {isStatic: true});
 	
 	MATTER.World.add(physicsEngine.world,[this.outerBoundLeft,this.outerBoundRight,this.outerBoundTop,this.outerBoundBottom]);
   }

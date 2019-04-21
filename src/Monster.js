@@ -9,7 +9,7 @@ export default class Monster {
 	
 	constructor(app) {
 		this.app = app;
-		this.newDirTimeStep = 100.0;
+		this.newDirTimeStep = 50.0;
 		this.timeSinceNewDir = 0.0;
 	}
 	
@@ -29,9 +29,9 @@ export default class Monster {
 		this.monsterSprite.scale.y = 0.05;
 		this.monsterSprite.x = x_pos;
 		this.monsterSprite.y = y_pos;
-		
-		this.monsterCollider = MATTER.Bodies.rectangle(this.monsterSprite.x,this.monsterSprite.y,
-		this.monsterSprite.width, this.monsterSprite.height, {mass: 80.0});
+
+		this.monsterCollider = MATTER.Bodies.rectangle(this.monsterSprite.x + this.monsterSprite.width/2,
+			this.monsterSprite.y + this.monsterSprite.height, this.monsterSprite.width, this.monsterSprite.height/*, {mass: 80.0}*/);
  		MATTER.World.add(physicsEngine.world,this.monsterCollider);
 	}
 
@@ -68,7 +68,7 @@ export default class Monster {
 			//this.matter.Body.applyForce(this.monsterCollider ,this.monsterCollider.position, this.force);
 		}
 		this.matter.Body.setVelocity(this.monsterCollider ,this.velocity);
-		this.monsterSprite.x = this.monsterCollider.position.x;
-		this.monsterSprite.y = this.monsterCollider.position.y;
+		this.monsterSprite.x = this.monsterCollider.position.x - this.monsterSprite.width/2;
+		this.monsterSprite.y = this.monsterCollider.position.y - this.monsterSprite.height;
 	}
 }

@@ -92,7 +92,7 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// by reordering the object initializations :)
 
 	staticMap.initObject();
-	staticMap.initPhysicsColliders(MATTER,physicsEngine);
+	staticMap.initPhysicsColliders(MATTER, physicsEngine, mapWidth, mapHeight);
 
 	player.initObject();
 	

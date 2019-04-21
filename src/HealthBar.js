@@ -1,4 +1,4 @@
-import { textStyle } from "./lib/UtilMethods";
+import { textStyle, getRoundedRectangle } from "./lib/PixiUtilMethods";
 
 export default class HealthBar {
 	static loadResources() {
@@ -23,23 +23,15 @@ export default class HealthBar {
         this.container.y = y_pos;
 
         // create the max-health rectangle
-        let innerBar = new PIXI.Graphics();
-        innerBar.beginFill(0x000000);
-        innerBar.drawRoundedRect(-width/2, 0, width, height, 5);
-        innerBar.endFill();
+        let innerBar = getRoundedRectangle(-width/2, 0, width, height, 5, 0x000000);
         this.container.addChild(innerBar);
-        // save innerbar reference
         this.container.innerBar = innerBar;
 
         // create the current-health rectangle with an outline effect
-        let outerBar = new PIXI.Graphics();
         let diffValue = width/32;
-
-        outerBar.beginFill(colorCode);
-        outerBar.drawRoundedRect(-width/2 + diffValue/2, diffValue/2, width-diffValue, height-diffValue, 5);
-        outerBar.endFill();
+        let outerBar = getRoundedRectangle(-width/2 + diffValue/2, diffValue/2, width - diffValue,
+            height - diffValue, 5, colorCode);
         this.container.addChild(outerBar);
-        // save outerbar reference
         this.container.outerBar = outerBar;
 
         let style = textStyle("healthText");

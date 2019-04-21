@@ -23,15 +23,11 @@ export default class StaticMap {
 	//this.testBox = MATTER.Bodies.rectangle(800,800,100,100);
 	
 	//outer  bounds
-	this.outerBoundLeft = MATTER.Bodies.rectangle(0,512,100,1024);
-	this.outerBoundRight = MATTER.Bodies.rectangle(1024,512,100,1024);
-	this.outerBoundBottom = MATTER.Bodies.rectangle(512,1024 ,1024,100);
-	this.outerBoundTop = MATTER.Bodies.rectangle(512,-50,1024,100);
+	this.outerBoundLeft = MATTER.Bodies.rectangle(0,512,100,1024,{isStatic: true});
+	this.outerBoundRight = MATTER.Bodies.rectangle(1024,512,100,1024,{isStatic: true});
+	this.outerBoundBottom = MATTER.Bodies.rectangle(512,1024 ,1024,100,{isStatic: true});
+	this.outerBoundTop = MATTER.Bodies.rectangle(512,-50,1024,100,{isStatic: true});
 	//MATTER.Body.setStatic(this.testBox, true);
-	MATTER.Body.setStatic(this.outerBoundLeft, true);
-	MATTER.Body.setStatic(this.outerBoundRight, true);
-	MATTER.Body.setStatic(this.outerBoundTop, true);
-	MATTER.Body.setStatic(this.outerBoundBottom, true);
 	
 	MATTER.World.add(physicsEngine.world,[this.outerBoundLeft,this.outerBoundRight,this.outerBoundTop,this.outerBoundBottom]);
   }

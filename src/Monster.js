@@ -10,7 +10,7 @@ export default class Monster {
 		this.app = app;
 		this.newDirTimeStep = 100.0;
 		this.timeSinceNewDir = 0.0;
-		
+		this.speedFactor = 0.01;
 	}
 	
 	prepareObject(x_pos, y_pos, MATTER, physicsEngine) {
@@ -31,7 +31,7 @@ export default class Monster {
 		this.monsterSprite.y = y_pos;
 		
 		this.monsterCollider = MATTER.Bodies.rectangle(this.monsterSprite.x,this.monsterSprite.y,
-		this.monsterSprite.scale.x * this.monsterSprite.width,this.monsterSprite.scale.y * this.monsterSprite.height);
+		this.monsterSprite.scale.x * this.monsterSprite.width,this.monsterSprite.scale.y * this.monsterSprite.height, {mass: 80.0});
  		MATTER.World.add(physicsEngine.world,this.monsterCollider);
  		
 		
@@ -53,7 +53,9 @@ export default class Monster {
 		this.timeSinceNewDir += delta;
 		if(this.timeSinceNewDir > this.newDirTimeStep) {
 			this.timeSinceNewDir = 0.0;
-			this.velocity = Math.random() > 0.5 ?  this.matter.Vector.create(Math.random() * 2 - 0.5 ,0) :   this.matter.Vector.create(0,Math.random() * 2 - 0.5 );
+			this.velocity = Math.random() > 0.5 ?  this.matter.Vector.create(this.speedFactor * Math.random() * 2 - 0.5 ,0) :   this.matter.Vector.create(0,this.speedFactor * Math.random() * 2 - 0.5 );
+			
+			//this.matter.Body.applyForce(this.monsterCollider ,this.monsterCollider.position, this.force);
 		}
 		this.matter.Body.setVelocity(this.monsterCollider ,this.velocity);
 		this.monsterSprite.x = this.monsterCollider.position.x;

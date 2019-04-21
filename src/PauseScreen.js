@@ -34,10 +34,30 @@ export default class PauseScreen {
 		// TODO: darken all sprites
 		// TODO: pause screen with command information
 		if (this.container.visible) {
+			var colorMatrix = [
+			    1,0,0,0.5,
+			    0,1,0,0.5,
+			    0,0,1,0.5,
+			    0,0,0,1
+			];
+			var filter = new PIXI.ColorMatrixFilter();
+			filter.matrix = colorMatrix;
+			this.app.stage.filters = [filter];
+
 			this.container.visible = false;
 			console.log("Game unpaused");
 		}
 		else {
+			var colorMatrix =  [
+			    1,0,0,-0.5,
+			    0,1,0,-0.5,
+			    0,0,1,-0.5,
+			    0,0,0,1
+			];
+			var filter = new PIXI.ColorMatrixFilter();
+			filter.matrix = colorMatrix;
+			this.app.stage.filters = [filter];
+
 			this.container.visible = true;
 			console.log("Game paused");
 		}

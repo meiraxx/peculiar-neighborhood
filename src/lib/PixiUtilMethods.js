@@ -48,4 +48,7 @@ function getRoundedRectangle(x_pos, y_pos, width, height, roundFactor, colorcode
 	return roundedRectangle;
 }
 
-export {textStyle, setTextureOnlyIfNeeded, getRoundedRectangle};
+function convertPixiCoordinatesToPhysicsCoordinates(sprite) {
+	//
+}
+export {textStyle, setTextureOnlyIfNeeded, getRoundedRectangle, convertPixiCoordinatesToPhysicsCoordinates};

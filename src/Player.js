@@ -42,7 +42,7 @@ export default class Player {
 		this.playerSprite.scale.x = 0.20;
 		this.playerSprite.scale.y = 0.20;
 		this.playerSprite.x = Math.round(x_pos - (this.playerSprite.width/2));
-		this.playerSprite.y = y_pos;
+		this.playerSprite.y = Math.round(y_pos - (this.playerSprite.height/2));
 		this.playerSprite.vx = 0;
 		this.playerSprite.vy = 0;
 		
@@ -281,9 +281,9 @@ export default class Player {
 
 			//get possible collisions
 			var collisions = this.matter.Query.point(this.physicsEngine.world.bodies, 
-				this.matter.Vector.create(this.playerSprite.x + this.playerSprite.vx, 
-					this.playerSprite.y + this.playerSprite.vy));
-			
+				this.matter.Vector.create(this.playerSprite.x + this.playerSprite.width/2 + this.playerSprite.vx, 
+					this.playerSprite.y + this.playerSprite.height/2 + this.playerSprite.vy));
+
 			// if no collisions were detected...
 			if (collisions == undefined || collisions.length == 0) {
 				if (this.playerSprite.vx !== 0) {

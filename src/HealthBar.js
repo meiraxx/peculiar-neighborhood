@@ -10,6 +10,7 @@ export default class HealthBar {
     }
 
     prepareObject(x_pos, y_pos, width, height, colorCode, maxHealth) {
+        //green: 0x4CBB17; red: 0xFF3300
         // create the health bar
         this.container = new PIXI.Container();
 

@@ -25,19 +25,19 @@ export default class Cards {
         let cardBatSprite = new PIXI.Sprite(cardBatTexture);
         cardBatSprite.scale.x = 0.10;
         cardBatSprite.scale.y = 0.10;
-        cardBatSprite.name = "cardBat";
+        cardBatSprite.name = "bat";
 
         let cardPistolSprite = new PIXI.Sprite(cardPistolTexture);
         cardPistolSprite.scale.x = 0.10;
         cardPistolSprite.scale.y = 0.10;
         cardPistolSprite.x = cardBatSprite.x + 30;
-        cardPistolSprite.name = "cardPistol";
+        cardPistolSprite.name = "pistol";
 
         let cardNetgunSprite = new PIXI.Sprite(cardNetgunTexture);
         cardNetgunSprite.scale.x = 0.10;
         cardNetgunSprite.scale.y = 0.10;
         cardNetgunSprite.x = cardPistolSprite.x + 30;
-        cardNetgunSprite.name = "cardNetgun";
+        cardNetgunSprite.name = "netgun";
 
         // add card sprites to cards container and sort them by zIndex
         this.container.addChild(cardBatSprite);
@@ -58,14 +58,14 @@ export default class Cards {
     }
 
     resortCards(batZ, pistolZ, netgunZ) {
-        this.container.getChildByName("cardBat").zIndex = batZ;
-        this.container.getChildByName("cardPistol").zIndex = pistolZ;
-        this.container.getChildByName("cardNetgun").zIndex = netgunZ;
+        this.container.getChildByName("bat").zIndex = batZ;
+        this.container.getChildByName("pistol").zIndex = pistolZ;
+        this.container.getChildByName("netgun").zIndex = netgunZ;
         this.container.children.sort((itemA, itemB) => itemA.zIndex - itemB.zIndex);
     }
 
     highlightCard(card) {
-        if (card === "cardBat") {
+        if (card === "bat") {
             this.resortCards(3, 2, 1);
             if (this.container.cardBatSprite.y === 0) {
                 this.container.cardBatSprite.y -= 10;
@@ -73,7 +73,7 @@ export default class Cards {
                 this.container.cardNetgunSprite.y = 0;
             }
         }
-        else if (card === "cardPistol") {
+        else if (card === "pistol") {
             this.resortCards(1, 3, 2);
             if (this.container.cardPistolSprite.y === 0) {
                 this.container.cardPistolSprite.y -= 10;
@@ -81,7 +81,7 @@ export default class Cards {
                 this.container.cardNetgunSprite.y = 0;
             }
         }
-        else if (card === "cardNetgun") {
+        else if (card === "netgun") {
             this.resortCards(1, 2, 3);
             if (this.container.cardNetgunSprite.y === 0) {
                 this.container.cardNetgunSprite.y -= 10;

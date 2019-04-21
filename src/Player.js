@@ -34,8 +34,9 @@ export default class Player {
 		let playerBackTexture = PIXI.loader.resources["assets/character/none/characterBack.png"].texture;
 		let playerRightTexture = PIXI.loader.resources["assets/character/none/characterRight.png"].texture;
 		let playerLeftTexture = PIXI.loader.resources["assets/character/none/characterLeft.png"].texture;
-		this.currentItem = "none";
-
+		this.ui.currentItem = "none";
+		this.command = "down";
+		
 		this.playerSprite = new PIXI.Sprite(playerFrontTexture);
 		this.playerSprite.scale.x = 0.20;
 		this.playerSprite.scale.y = 0.20;
@@ -53,29 +54,35 @@ export default class Player {
  		
  
 		// SETUP player UI
-		//green: 0x4CBB17; red: 0xFF3300
-		this.ui.prepareHealthbar(x_pos, y_pos - 4, 64, 8, 0x4CBB17, 20);
-		this.ui.prepareCards(this.playerSprite.x - 480, 690);
+		this.ui.prepareHealthbar(x_pos, y_pos - 4);
+		this.ui.prepareCards(x_pos - 530, 690);
+		this.ui.preparePauseScreen(x_pos, y_pos);
 
 		// KEY STROKE EVENTS
 		this.leftKey = keyboard("ArrowLeft");
 		this.rightKey = keyboard("ArrowRight");
 		this.downKey = keyboard("ArrowDown");
 		this.upKey = keyboard("ArrowUp");
+
 		this.zeroKey = keyboard("0");
 		this.oneKey = keyboard("1");
 		this.twoKey = keyboard("2");
 		this.threeKey = keyboard("3");
+
+		this.pKey = keyboard("p");
+		this.escKey = keyboard("Escape");
 
 		// MOVEMENT KEYS
 		// note: comment second conditions and movement resets on key press to obtain diagonal movements,
 		// but beware it's going to be a twice-as-fast movement, so there needs to be code to divide
 		// the speed by half on certain conditions
 		this.leftKey.press = () => {
-			this.command = "left";
-			this.playerSprite.vx = -3;
-			this.playerSprite.vy = 0;
-			this.updatePlayerSprite();
+			if (!this.ui.isPaused()) {
+				this.command = "left";
+				this.playerSprite.vx = -3;
+				this.playerSprite.vy = 0;
+				this.updatePlayerSprite();
+			}
 		};
 		this.leftKey.release = () => {
 			if (!this.rightKey.isDown && this.playerSprite.vy === 0) {
@@ -84,10 +91,12 @@ export default class Player {
 		};
 
 		this.rightKey.press = () => {
-			this.command = "right";
-			this.playerSprite.vx = 3;
-			this.playerSprite.vy = 0;
-			this.updatePlayerSprite();
+			if (!this.ui.isPaused()) {
+				this.command = "right";
+				this.playerSprite.vx = 3;
+				this.playerSprite.vy = 0;
+				this.updatePlayerSprite();
+			}
 		};
 		this.rightKey.release = () => {
 			if (!this.leftKey.isDown && this.playerSprite.vy === 0) {
@@ -96,10 +105,12 @@ export default class Player {
 		};
 
 		this.downKey.press = () => {
-			this.command = "down";
-			this.playerSprite.vx = 0;
-			this.playerSprite.vy = 3;
-			this.updatePlayerSprite();
+			if (!this.ui.isPaused()) {
+				this.command = "down";
+				this.playerSprite.vx = 0;
+				this.playerSprite.vy = 3;
+				this.updatePlayerSprite();
+			}
 		};
 		this.downKey.release = () => {
 			if (!this.upKey.isDown && this.playerSprite.vx === 0) {
@@ -108,10 +119,12 @@ export default class Player {
 		};
 
 		this.upKey.press = () => {
-			this.command = "up";
-			this.playerSprite.vx = 0;
-			this.playerSprite.vy = -3;
-			this.updatePlayerSprite();
+			if (!this.ui.isPaused()) {
+				this.command = "up";
+				this.playerSprite.vx = 0;
+				this.playerSprite.vy = -3;
+				this.updatePlayerSprite();
+			}
 		};
 		this.upKey.release = () => {
 			if (!this.downKey.isDown && this.playerSprite.vx === 0) {
@@ -122,36 +135,54 @@ export default class Player {
 		// UI KEYS
 		// zIndex: https://github.com/pixijs/pixi.js/issues/300
 		this.zeroKey.press = () => {
-			this.ui.highlightCard("none");
-			this.currentItem = "none";
-			this.updatePlayerSprite();
+			if (!this.ui.isPaused()) {
+				this.ui.highlightCard("none");
+				this.updatePlayerSprite();
+			}
 		};
 		this.zeroKey.release = () => {
 		};
 
 		this.oneKey.press = () => {
-			this.ui.highlightCard("cardBat");
-			this.currentItem = "bat";
-			this.updatePlayerSprite();
+			if (!this.ui.isPaused()) {
+				this.ui.highlightCard("bat");
+				this.updatePlayerSprite();
+			}
 		};
 		this.oneKey.release = () => {
 		};
 
 		this.twoKey.press = () => {
-			this.ui.highlightCard("cardPistol");
-			this.currentItem = "pistol";
-			this.updatePlayerSprite();
+			if (!this.ui.isPaused()) {
+				this.ui.highlightCard("pistol");
+				this.updatePlayerSprite();
+			}
 		};
 		this.twoKey.release = () => {
 		};
 
 		this.threeKey.press = () => {
-			this.ui.highlightCard("cardNetgun");
-			this.currentItem = "netgun";
-			this.updatePlayerSprite();
+			if (!this.ui.isPaused()) {
+				this.ui.highlightCard("netgun");
+				this.updatePlayerSprite();
+			}
 		};
 		this.threeKey.release = () => {
 		};
+
+		// PAUSE: "P" or "Esc"
+		this.pKey.press = () => {
+			this.ui.togglePause();
+		};
+		this.pKey.release = () => {
+		};
+
+		this.escKey.press = () => {
+			this.ui.togglePause();
+		};
+		this.escKey.release = () => {
+		};
+
 	}
 
 	initObject() {
@@ -168,7 +199,7 @@ export default class Player {
 	updatePlayerSprite() {
 		switch(this.command) {
 			case "left":
-				switch(this.currentItem) {
+				switch(this.ui.currentItem) {
 					case "none":
 						this.playerTexture = PIXI.loader.resources["assets/character/none/characterLeft.png"].texture;
 						break;
@@ -186,7 +217,7 @@ export default class Player {
 				}
 				break;
 			case "right":
-				switch(this.currentItem) {
+				switch(this.ui.currentItem) {
 					case "none":
 						this.playerTexture = PIXI.loader.resources["assets/character/none/characterRight.png"].texture;
 						break;
@@ -204,7 +235,7 @@ export default class Player {
 				}
 				break;
 			case "down":
-				switch(this.currentItem) {
+				switch(this.ui.currentItem) {
 					case "none":
 						this.playerTexture = PIXI.loader.resources["assets/character/none/characterFront.png"].texture;
 						break;
@@ -222,7 +253,7 @@ export default class Player {
 				}
 				break;
 			case "up":
-				switch(this.currentItem) {
+				switch(this.ui.currentItem) {
 					case "none":
 						this.playerTexture = PIXI.loader.resources["assets/character/none/characterBack.png"].texture;
 						break;
@@ -286,41 +317,47 @@ export default class Player {
 	}
 
 	playerLoop(delta) {
-		// use player's velocity to make him move
-		let playerHitsWall = this.contain(this.playerSprite, 
-			{x: 0, y: 0, width: 1024, height: 1024}, this.command);
-		
-		//get possible collisions
-		var collisions = this.matter.Query.point(this.physicsEngine.world.bodies, 
-		this.matter.Vector.create( this.playerSprite.x + this.playerSprite.vx, this.playerSprite.y + this.playerSprite.vy));
-		
-		if (playerHitsWall !== "none") {
-			// character hit wall: do nothing, already contained
-		}
-		else if (collisions == undefined || collisions.length == 0) {
-			if (this.playerSprite.vx !== 0) {
-				// walking horizontally
-				this.playerSprite.x += this.playerSprite.vx;
-				// camera effect
-				this.viewport.move(this.playerSprite.vx, 0);
-				// move healthbar
-				this.ui.healthBar.container.x += this.playerSprite.vx;
-				// move cards container
-				this.ui.cards.container.x += this.playerSprite.vx;
+		if (!this.ui.isPaused()) {
+			// use player's velocity to make him move
+			let playerHitsWall = this.contain(this.playerSprite, 
+				{x: 0, y: 0, width: 1024, height: 1024}, this.command);
+			
+			//get possible collisions
+			var collisions = this.matter.Query.point(this.physicsEngine.world.bodies, 
+			this.matter.Vector.create( this.playerSprite.x + this.playerSprite.vx, this.playerSprite.y + this.playerSprite.vy));
+			
+			if (playerHitsWall !== "none") {
+				// character hit wall: do nothing, already contained
 			}
-			else if (this.playerSprite.vy !== 0) {
-				// walking vertically
-				this.playerSprite.y += this.playerSprite.vy;
-				// camera effect
-				this.viewport.move(0, this.playerSprite.vy);
-				// move healthbar
-				this.ui.healthBar.container.y += this.playerSprite.vy;
-				// move cards container
-				this.ui.cards.container.y += this.playerSprite.vy;
+			else if (collisions == undefined || collisions.length == 0) {
+				if (this.playerSprite.vx !== 0) {
+					// walking horizontally
+					this.playerSprite.x += this.playerSprite.vx;
+					// camera effect
+					this.viewport.move(this.playerSprite.vx, 0);
+					// move healthbar
+					this.ui.healthBar.container.x += this.playerSprite.vx;
+					// move cards container
+					this.ui.cards.container.x += this.playerSprite.vx;
+					// move invisible pause screen
+					this.ui.pauseScreen.container.x += this.playerSprite.vx;
+				}
+				else if (this.playerSprite.vy !== 0) {
+					// walking vertically
+					this.playerSprite.y += this.playerSprite.vy;
+					// camera effect
+					this.viewport.move(0, this.playerSprite.vy);
+					// move healthbar
+					this.ui.healthBar.container.y += this.playerSprite.vy;
+					// move cards container
+					this.ui.cards.container.y += this.playerSprite.vy;
+					// move invisible pause screen
+					this.ui.pauseScreen.container.y += this.playerSprite.vy;
+				}
 			}
-		}
-		else {
-			// character isn't walking: do nothing
+			else {
+				// character isn't walking: do nothing
+			}
 		}
 	}
 }

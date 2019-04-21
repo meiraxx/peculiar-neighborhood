@@ -76,11 +76,13 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 
 	// setup other map elements
 	bush.prepareObject();
-	//fog.prepareObject();
 	
-	monsters.forEach(function(m) {
-		m.prepareObject(mapWidth/2,mapHeight/2);
-	});
+	// setup monsters in the corners
+	m0.prepareObject(0, 0);
+	m1.prepareObject(0, mapHeight - m0.monsterSprite.height);
+	m2.prepareObject(mapWidth - m0.monsterSprite.width, 0);
+	m3.prepareObject(mapWidth - m0.monsterSprite.width, mapHeight - m0.monsterSprite.height);
+
 	// 2. INITIALIZE OBJECTS
 	// note: you can reorder everything very easily on the screen
 	// by reordering the object initializations :)
@@ -97,14 +99,14 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 
 	player.ui.initHealthbar();
 	player.ui.initCards();
+	player.ui.initPauseScreen();
 	
 	// 3. PUT LOOPS RUNNING
 	player.initLoop();
-	monsters.forEach(function(m) {		
-		m.initLoop();
-	});
+	//monsters.forEach(function(m) {		
+	//	m.initLoop();
+	//});
 	MATTER.Engine.run(physicsEngine);
-	//fog.initLoop();
 
 	//TODO: monster loop
 

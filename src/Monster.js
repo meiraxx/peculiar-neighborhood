@@ -31,7 +31,7 @@ export default class Monster {
 		this.monsterSprite.y = y_pos;
 		
 		this.monsterCollider = MATTER.Bodies.rectangle(this.monsterSprite.x,this.monsterSprite.y,
-		this.monsterSprite.scale.x * this.monsterSprite.width,this.monsterSprite.scale.y * this.monsterSprite.height, {mass: 80.0});
+		this.monsterSprite.width, this.monsterSprite.height, {mass: 80.0});
  		MATTER.World.add(physicsEngine.world,this.monsterCollider);
 	}
 

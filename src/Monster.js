@@ -1,5 +1,6 @@
 import UserInterface from './UserInterface';
 import { getRandomArbitraryFloat } from "./lib/UtilMethods";
+import { containSpriteInsideContainer } from "./lib/PixiUtilMethods";
 
 export default class Monster {
 	
@@ -9,8 +10,6 @@ export default class Monster {
 	
 	constructor(app) {
 		this.app = app;
-		this.newDirTimeStep = 50.0;
-		this.timeSinceNewDir = 0.0;
 	}
 	
 	prepareObject(x_pos, y_pos, MATTER, physicsEngine) {
@@ -29,10 +28,15 @@ export default class Monster {
 		this.monsterSprite.scale.y = 0.05;
 		this.monsterSprite.x = x_pos;
 		this.monsterSprite.y = y_pos;
+		this.monsterSprite.vx = 0;
+		this.monsterSprite.vy = 0;
+		this.newDirTimeStep = 50.0;
+		this.timeSinceNewDir = 0.0;
 
-		this.monsterCollider = MATTER.Bodies.rectangle(this.monsterSprite.x + this.monsterSprite.width/2,
-			this.monsterSprite.y + this.monsterSprite.height, this.monsterSprite.width, this.monsterSprite.height/*, {mass: 80.0}*/);
- 		MATTER.World.add(physicsEngine.world,this.monsterCollider);
+		//this.monsterCollider = MATTER.Bodies.rectangle(this.monsterSprite.x + this.monsterSprite.width/2,
+		//	this.monsterSprite.y + this.monsterSprite.height, this.monsterSprite.width, this.monsterSprite.height);
+
+ 		//MATTER.World.add(physicsEngine.world,this.monsterCollider);
 	}
 
 	initObject() {
@@ -40,35 +44,54 @@ export default class Monster {
 		console.log("monster character initialized");
 	}
 
-	initLoop() {
+	initLoop(playerUI) {
 		// start the monster loop
-		this.app.ticker.add(delta => this.monsterLoop(delta));
+		this.app.ticker.add(delta => this.monsterLoop(delta, playerUI));
 		console.log("monster loop initialized");
 	}
 
-	monsterLoop(delta) {
-		this.timeSinceNewDir += delta;
-		if(this.timeSinceNewDir > this.newDirTimeStep) {
-			this.timeSinceNewDir = 0.0;
+	monsterLoop(delta, playerUI) {
+		if (!playerUI.isPaused()) {
+			this.timeSinceNewDir += delta;
+			if(this.timeSinceNewDir > this.newDirTimeStep) {
+				this.timeSinceNewDir = 0.0;
 
-			let randomNumber = Math.random();
-			if (randomNumber >= 0 && randomNumber < 0.25) {
-				this.velocity = this.matter.Vector.create(1, 0);
+				let randomNumber = Math.random();
+				if (randomNumber >= 0 && randomNumber < 0.25) {
+					this.monsterSprite.vx = 2;
+					this.monsterSprite.vy = 0;
+				}
+				else if (randomNumber >= 0.25 && randomNumber < 0.50) {
+					this.monsterSprite.vx = 0;
+					this.monsterSprite.vy = 2;
+				}
+				else if (randomNumber >= 0.50 && randomNumber < 0.75) {
+					this.monsterSprite.vx = -2;
+					this.monsterSprite.vy = 0;
+				}
+				else if (randomNumber >= 0.75 && randomNumber < 1) {
+					this.monsterSprite.vx = 0;
+					this.monsterSprite.vy = -2;
+				}
+				//this.matter.Body.applyForce(this.monsterCollider ,this.monsterCollider.position, this.force);
 			}
-			else if (randomNumber >= 0.25 && randomNumber < 0.50) {
-				this.velocity = this.matter.Vector.create(0, 1);
-			}
-			else if (randomNumber >= 0.50 && randomNumber < 0.75) {
-				this.velocity = this.matter.Vector.create(-1, 0);
-			}
-			else if (randomNumber >= 0.75 && randomNumber < 1) {
-				this.velocity = this.matter.Vector.create(0, -1);
-			}
+			let monsterHitsWall = containSpriteInsideContainer(this.monsterSprite, 
+				{x: 0, y: 0, width: 1024, height: 1024});
 
-			//this.matter.Body.applyForce(this.monsterCollider ,this.monsterCollider.position, this.force);
+			if (monsterHitsWall !== "none") {
+				// character hit wall: do nothing, already contained
+			}
+			else if (this.monsterSprite.vx !== 0) {
+				// walking horizontally
+				this.monsterSprite.x += this.monsterSprite.vx;
+			}
+			else if (this.monsterSprite.vy !== 0) {
+				// walking vertically
+				this.monsterSprite.y += this.monsterSprite.vy;
+			}
+			else {
+				// character isn't walking: do nothing
+			}
 		}
-		this.matter.Body.setVelocity(this.monsterCollider ,this.velocity);
-		this.monsterSprite.x = this.monsterCollider.position.x - this.monsterSprite.width/2;
-		this.monsterSprite.y = this.monsterCollider.position.y - this.monsterSprite.height;
 	}
 }

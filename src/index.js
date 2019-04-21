@@ -61,13 +61,14 @@ var staticMap = new StaticMap(app);
 var player = new Player(app, viewport);
 var bush = new Bush(app);
 Monster.prepareResources();
+
 var m0 = new Monster(app);
 var m1 = new Monster(app);
 var m2 = new Monster(app);
 var m3 = new Monster(app);
-var monsters = [m0,m1,m2,m3];
-var tree0 = new Tree(app)
+var monsters = [m0, m1, m2, m3];
 
+var tree0 = new Tree(app)
 
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// 3. SETUP OBJECTS
@@ -84,39 +85,43 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 
 	// setup other map elements
 	bush.prepareObject();
-	tree0.prepareObject(100,100,MATTER,physicsEngine);
+	tree0.prepareObject(mapWidth - 100, mapHeight - 100, MATTER, physicsEngine);
+
 	// setup monsters in the corners
 	m0.prepareObject(100, 100, MATTER, physicsEngine);
 	m1.prepareObject(100, mapHeight - 100 - m0.monsterSprite.height, MATTER, physicsEngine);
 	m2.prepareObject(mapWidth - 100 - m0.monsterSprite.width, 100, MATTER, physicsEngine);
 	m3.prepareObject(mapWidth - 100 - m0.monsterSprite.width, mapHeight - 100 - m0.monsterSprite.height, MATTER, physicsEngine);
-
+	
 	// 2. INITIALIZE OBJECTS
 	staticMap.initObject();
 	staticMap.initPhysicsColliders(MATTER, physicsEngine, mapWidth, 
 		mapHeight, playerWidth, playerHeight, colliderThickness);
 
 	player.initObject();
-	
+	bush.initObject();
+
 	monsters.forEach(function(m) {
 		m.initObject();
 	});
 
-	bush.initObject();
 	tree0.initObject();
+
 	player.ui.initHealthbar();
 	player.ui.initCards();
 	player.ui.initPauseScreen();
 
 	// 3. PUT LOOPS RUNNING
 	// first initialize physics engine loop
-	MATTER.Engine.run(physicsEngine);
+	//MATTER.Engine.run(physicsEngine);
 
 	// then all other loops
 	player.initLoop();
+	
 	monsters.forEach(function(m) {		
-		m.initLoop();
+		m.initLoop(player.ui);
 	});
+	
 });
 
 

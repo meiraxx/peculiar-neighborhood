@@ -18,8 +18,8 @@ export default class Tree {
 		let tex = PIXI.loader.resources["assets/tree/conifer.png"].texture;
 		
 		this.sprite = new PIXI.Sprite(tex);
-		this.sprite.scale.x = 1;
-		this.sprite.scale.y = 1;
+		this.sprite.scale.x = 0.2;
+		this.sprite.scale.y = 0.2;
 		this.sprite.x = x_pos;
 		this.sprite.y = y_pos;
 		

@@ -1,5 +1,5 @@
 import { keyboard } from "./lib/UtilMethods";
-import { setTextureOnlyIfNeeded } from "./lib/PixiUtilMethods";
+import { setTextureOnlyIfNeeded, containSpriteInsideContainer } from "./lib/PixiUtilMethods";
 import UserInterface from './UserInterface';
 
 export default class Player {
@@ -281,50 +281,40 @@ export default class Player {
 
 	playerLoop(delta) {
 		if (!this.ui.isPaused()) {
-			//get possible collisions
-			var collisions = this.matter.Query.point(this.physicsEngine.world.bodies, 
-				this.matter.Vector.create(this.playerSprite.x + this.playerSprite.width/2 + this.playerSprite.vx, 
-				this.playerSprite.y + this.playerSprite.height + this.playerSprite.vy));
+			// use player's velocity to make him move
+			let playerHitsWall = containSpriteInsideContainer(this.playerSprite, 
+				{x: 0, y: 0, width: 1024, height: 1024});
 
-			// if no collisions were detected...
-			if (this.playerSprite.vx !== 0) {
+			if (playerHitsWall !== "none") {
+				// character hit wall: do nothing, already contained
+			}
+			else if (this.playerSprite.vx !== 0) {
 				// walking horizontally
-				//this.playerSprite.x += this.playerSprite.vx;
-				// move collider position
-				this.playerSprite.x = this.collider.position.x - this.playerSprite.width/2;
-				this.velocity = this.matter.Vector.create(this.playerSprite.vx, 0);
+				this.playerSprite.x += this.playerSprite.vx;
 				// camera effect
-				console.log(this.collider.position.x + "," + this.collider.position.y);
-				console.log(this.playerSprite.x + "," + this.playerSprite.y);
-				console.log(this.viewport.center.x + "," + this.viewport.center.y);
-
-				this.viewport.move(this.collider.velocity.x, 0);
+				this.viewport.move(this.playerSprite.vx, 0);
 				// move healthbar
-				this.ui.healthBar.container.x += this.collider.velocity.x;
+				this.ui.healthBar.container.x += this.playerSprite.vx;
 				// move cards container
-				this.ui.cards.container.x += this.collider.velocity.x;
+				this.ui.cards.container.x += this.playerSprite.vx;
 				// move invisible pause screen
-				this.ui.pauseScreen.container.x += this.collider.velocity.x;
+				this.ui.pauseScreen.container.x += this.playerSprite.vx;
 			}
 			else if (this.playerSprite.vy !== 0) {
 				// walking vertically
 				this.playerSprite.y += this.playerSprite.vy;
-				// move collider position
-				//this.playerSprite.y = this.collider.position.y - this.playerSprite.height;
-				this.velocity = this.matter.Vector.create(0, this.playerSprite.vy);
 				// camera effect
-				this.viewport.move(0, this.collider.velocity.y);
+				this.viewport.move(0, this.playerSprite.vy);
 				// move healthbar
-				this.ui.healthBar.container.y += this.collider.velocity.y;
+				this.ui.healthBar.container.y += this.playerSprite.vy;
 				// move cards container
-				this.ui.cards.container.y += this.collider.velocity.y;
+				this.ui.cards.container.y += this.playerSprite.vy;
 				// move invisible pause screen
-				this.ui.pauseScreen.container.y += this.collider.velocity.y;
+				this.ui.pauseScreen.container.y += this.playerSprite.vy;
 			}
-			else if (this.playerSprite.vy === 0 && this.playerSprite.vx === 0) {
-				this.velocity = this.matter.Vector.create(0, 0);
+			else {
+				// character isn't walking: do nothing
 			}
-			this.matter.Body.setVelocity(this.collider, this.velocity);
 		}
 	}
 }

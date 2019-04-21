@@ -74,7 +74,8 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	staticMap.prepareObject();
 	let mapWidth = staticMap.backgroundSprite.width;
 	let mapHeight = staticMap.backgroundSprite.height;
-
+	let colliderThickness = 100;
+	
 	// setup player character and UI
 	player.prepareObject(mapWidth/2,mapHeight/2,MATTER,physicsEngine);
 
@@ -82,17 +83,17 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	bush.prepareObject();
 	
 	// setup monsters in the corners
-	m0.prepareObject(100, 100,MATTER,physicsEngine);
-	m1.prepareObject(100, mapHeight - 100 - m0.monsterSprite.height,MATTER,physicsEngine);
-	m2.prepareObject(mapWidth - 100 - m0.monsterSprite.width, 100,MATTER,physicsEngine);
-	m3.prepareObject(mapWidth - 100 - m0.monsterSprite.width, mapHeight - 100 - m0.monsterSprite.height,MATTER,physicsEngine);
+	m0.prepareObject(100, 100, MATTER, physicsEngine);
+	m1.prepareObject(100, mapHeight - 100 - m0.monsterSprite.height, MATTER, physicsEngine);
+	m2.prepareObject(mapWidth - 100 - m0.monsterSprite.width, 100, MATTER, physicsEngine);
+	m3.prepareObject(mapWidth - 100 - m0.monsterSprite.width, mapHeight - 100 - m0.monsterSprite.height, MATTER, physicsEngine);
 
 	// 2. INITIALIZE OBJECTS
 	// note: you can reorder everything very easily on the screen
 	// by reordering the object initializations :)
 
 	staticMap.initObject();
-	staticMap.initPhysicsColliders(MATTER, physicsEngine, mapWidth, mapHeight);
+	staticMap.initPhysicsColliders(MATTER, physicsEngine, mapWidth, mapHeight, colliderThickness);
 
 	player.initObject();
 	

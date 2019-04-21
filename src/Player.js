@@ -280,8 +280,10 @@ export default class Player {
 
 			//get possible collisions
 			var collisions = this.matter.Query.point(this.physicsEngine.world.bodies, 
-			this.matter.Vector.create( this.playerSprite.x + this.playerSprite.vx, this.playerSprite.y + this.playerSprite.vy));
+				this.matter.Vector.create(this.playerSprite.x + this.playerSprite.vx, 
+					this.playerSprite.y + this.playerSprite.vy));
 			
+			// if no collisions were detected...
 			if (collisions == undefined || collisions.length == 0) {
 				if (this.playerSprite.vx !== 0) {
 					// walking horizontally

@@ -55,28 +55,28 @@ function containSpriteInsideContainer(sprite, container) {
 
 	// top hit
 	if (sprite.y + unitvy <= container.y) {
-		console.log("Top hit: " + sprite.y);
+		//console.log("Top hit: " + sprite.y);
 		sprite.y = container.y;
 		collision = "top";
 	}
 
 	// bottom hit
 	if (sprite.y + sprite.height - unitvy >= container.height && unitvy > 0) {
-		console.log("Bottom hit: " + sprite.y);
+		//console.log("Bottom hit: " + sprite.y);
 		sprite.y = container.height - sprite.height + unitvy;
 		collision = "bottom";
 	}
 
 	// left hit
 	if (sprite.x + unitvx <= container.x) {
-		console.log("Left hit: " + sprite.x);
+		//console.log("Left hit: " + sprite.x);
 		sprite.x = container.x;
 		collision = "left";
 	}
 
 	// right hit
 	if (sprite.x + sprite.width - unitvx >= container.width && unitvx > 0) {
-		console.log("Right hit: " + sprite.x);
+		//console.log("Right hit: " + sprite.x);
 		sprite.x = container.width - sprite.width + unitvx;
 		collision = "right";
 	}

@@ -15,6 +15,7 @@ export default class Cards {
         // cards-container global position
         this.container.x = x_pos;
         this.container.y = y_pos;
+        this.container.name = "cards";
 
         // load cards textures
         let cardBatTexture = PIXI.loader.resources["assets/cards/cardBat.png"].texture;
@@ -25,19 +26,19 @@ export default class Cards {
         let cardBatSprite = new PIXI.Sprite(cardBatTexture);
         cardBatSprite.scale.x = 0.10;
         cardBatSprite.scale.y = 0.10;
-        cardBatSprite.name = "bat";
+        cardBatSprite.name = "cardBat";
 
         let cardPistolSprite = new PIXI.Sprite(cardPistolTexture);
         cardPistolSprite.scale.x = 0.10;
         cardPistolSprite.scale.y = 0.10;
         cardPistolSprite.x = cardBatSprite.x + 30;
-        cardPistolSprite.name = "pistol";
+        cardPistolSprite.name = "cardPistol";
 
         let cardNetgunSprite = new PIXI.Sprite(cardNetgunTexture);
         cardNetgunSprite.scale.x = 0.10;
         cardNetgunSprite.scale.y = 0.10;
         cardNetgunSprite.x = cardPistolSprite.x + 30;
-        cardNetgunSprite.name = "netgun";
+        cardNetgunSprite.name = "cardNetgun";
 
         // add card sprites to cards container and sort them by zIndex
         this.container.addChild(cardBatSprite);
@@ -58,9 +59,9 @@ export default class Cards {
     }
 
     resortCards(batZ, pistolZ, netgunZ) {
-        this.container.getChildByName("bat").zIndex = batZ;
-        this.container.getChildByName("pistol").zIndex = pistolZ;
-        this.container.getChildByName("netgun").zIndex = netgunZ;
+        this.container.getChildByName("cardBat").zIndex = batZ;
+        this.container.getChildByName("cardPistol").zIndex = pistolZ;
+        this.container.getChildByName("cardNetgun").zIndex = netgunZ;
         this.container.children.sort((itemA, itemB) => itemA.zIndex - itemB.zIndex);
     }
 

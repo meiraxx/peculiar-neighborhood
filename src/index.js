@@ -13,12 +13,8 @@ var PIXI = require('pixi.js');
 PIXI.settings.RESOLUTION = 2;
 PIXI.settings.SORTABLE_CHILDREN = true;
 
-
-
-var MATTER = require('matter-js');
-var physicsEngine = MATTER.Engine.create();
-
-
+//var MATTER = require('matter-js');
+//var physicsEngine = MATTER.Engine.create();
 
 let type = "WebGL";
 if(!PIXI.utils.isWebGLSupported()){
@@ -38,7 +34,7 @@ let app = new PIXI.Application({
 		antialias: false,    // default: false
 		transparent: false, // default: false
 		resolution: 1,       // default: 1
-		forceCanvas: true 	// default: false
+		forceCanvas: false 	// default: false
 	}
 );
 
@@ -71,50 +67,43 @@ var monsters = [m0, m1, m2, m3];
 var tree0 = new Tree(app)
 
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
-	// 3. SETUP OBJECTS
+	// 3. SETUP AND INITIALIZE OBJECTS
 	// setup background map
 	staticMap.prepareObject();
+	staticMap.initObject();
 	let mapWidth = staticMap.backgroundSprite.width;
 	let mapHeight = staticMap.backgroundSprite.height;
 	let colliderThickness = 100;
 
 	// setup player character and UI
-	player.prepareObject(mapWidth/2,mapHeight/2,MATTER,physicsEngine);
+	player.prepareObject(mapWidth/2,mapHeight/2);
+	player.initObject();
 	let playerWidth = player.playerSprite.height;
 	let playerHeight = player.playerSprite.height;
 
-	// setup other map elements
-	bush.prepareObject();
-	tree0.prepareObject(mapWidth - 100, mapHeight - 100, MATTER, physicsEngine);
-
 	// setup monsters in the corners
-	m0.prepareObject(100, 100, MATTER, physicsEngine);
-	m1.prepareObject(100, mapHeight - 100 - m0.monsterSprite.height, MATTER, physicsEngine);
-	m2.prepareObject(mapWidth - 100 - m0.monsterSprite.width, 100, MATTER, physicsEngine);
-	m3.prepareObject(mapWidth - 100 - m0.monsterSprite.width, mapHeight - 100 - m0.monsterSprite.height, MATTER, physicsEngine);
-	
-	// 2. INITIALIZE OBJECTS
-	staticMap.initObject();
-	staticMap.initPhysicsColliders(MATTER, physicsEngine, mapWidth, 
-		mapHeight, playerWidth, playerHeight, colliderThickness);
-
-	player.initObject();
-	bush.initObject();
-
+	m0.prepareObject(100, 100);
+	m1.prepareObject(100, mapHeight - 100 - m0.monsterSprite.height);
+	m2.prepareObject(mapWidth - 100 - m0.monsterSprite.width, 100);
+	m3.prepareObject(mapWidth - 100 - m0.monsterSprite.width, mapHeight - 100 - m0.monsterSprite.height);
 	monsters.forEach(function(m) {
 		m.initObject();
 	});
 
+	// setup other map elements
+	bush.prepareObject();
+	bush.initObject();
+	tree0.prepareObject(mapWidth - 100, mapHeight - 100);
 	tree0.initObject();
 
+	// initialize UI in the end
 	player.ui.initHealthbar();
 	player.ui.initCards();
 	player.ui.initPauseScreen();
 
-	// 3. PUT LOOPS RUNNING
+	// 4. PUT LOOPS RUNNING
 	// first initialize physics engine loop
 	//MATTER.Engine.run(physicsEngine);
-
 	// then all other loops
 	player.initLoop();
 	
@@ -124,7 +113,7 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	
 });
 
-
+/*
 let music = document.createElement("audio");
 music.src = "assets/soundtrack.mp3";
 music.setAttribute("preload", "auto");
@@ -134,3 +123,4 @@ music.style.display = "none";
 music.volume = 0.4;
 document.body.appendChild(music);
 music.play();
+*/

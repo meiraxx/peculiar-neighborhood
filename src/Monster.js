@@ -12,11 +12,7 @@ export default class Monster {
 		this.app = app;
 	}
 	
-	prepareObject(x_pos, y_pos, MATTER, physicsEngine) {
-		this.matter = MATTER;
-		this.physicsEngine = physicsEngine;
-		this.velocity = this.matter.Vector.create(0, 0);
- 		
+	prepareObject(x_pos, y_pos) {
 		// SETUP monster
 		let frontTexture = PIXI.loader.resources["assets/brown-monster.png"].texture;
 		let backTexture = PIXI.loader.resources["assets/brown-monster.png"].texture;
@@ -30,13 +26,9 @@ export default class Monster {
 		this.monsterSprite.y = y_pos;
 		this.monsterSprite.vx = 0;
 		this.monsterSprite.vy = 0;
+		this.monsterSprite.name = "monster";
 		this.newDirTimeStep = 50.0;
 		this.timeSinceNewDir = 0.0;
-
-		//this.monsterCollider = MATTER.Bodies.rectangle(this.monsterSprite.x + this.monsterSprite.width/2,
-		//	this.monsterSprite.y + this.monsterSprite.height, this.monsterSprite.width, this.monsterSprite.height);
-
- 		//MATTER.World.add(physicsEngine.world,this.monsterCollider);
 	}
 
 	initObject() {

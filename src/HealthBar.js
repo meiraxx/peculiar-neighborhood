@@ -21,6 +21,7 @@ export default class HealthBar {
         // healthbar global position
         this.container.x = x_pos;
         this.container.y = y_pos;
+        this.container.name = "healthbar";
 
         // create the max-health rectangle
         let innerBar = getRoundedRectangle(-width/2, 0, width, height, 5, 0x000000);
@@ -42,6 +43,7 @@ export default class HealthBar {
         this.container.addChild(valueText);
         // save health value reference
         this.container.valueText = valueText;
+
     }
 
     initObject() {

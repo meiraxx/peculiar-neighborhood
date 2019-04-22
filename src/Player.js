@@ -29,7 +29,7 @@ export default class Player {
 		this.ui = new UserInterface(app);
 	}
 	
-	prepareObject(x_pos, y_pos, MATTER, physicsEngine) {
+	prepareObject(x_pos, y_pos) {
 		// SETUP player
 		let playerFrontTexture = PIXI.loader.resources["assets/character/none/characterFront.png"].texture;
 		let playerBackTexture = PIXI.loader.resources["assets/character/none/characterBack.png"].texture;
@@ -45,18 +45,8 @@ export default class Player {
 		this.playerSprite.y = y_pos;
 		this.playerSprite.vx = 0;
 		this.playerSprite.vy = 0;
-		
-		// PLAYER PHYSICS
-		this.matter = MATTER;
-		this.physicsEngine = physicsEngine;
-		this.velocity = this.matter.Vector.create(0, 0);
- 		//player collider
- 		this.collider = MATTER.Bodies.rectangle(this.playerSprite.x + this.playerSprite.width/2,
- 			this.playerSprite.y + this.playerSprite.height, this.playerSprite.width, 
- 			this.playerSprite.height);
- 		MATTER.World.add(physicsEngine.world,this.collider);
+ 		this.playerSprite.name = "player";
  		
- 
 		// SETUP player UI
 		this.ui.prepareHealthbar(x_pos - 1, y_pos - 4);
 		this.ui.prepareCards(x_pos - 530, 690);

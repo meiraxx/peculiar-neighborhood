@@ -14,6 +14,7 @@ export default class Bush {
 		this.bushSprite.scale.y = 0.2;
 		this.bushSprite.x = 10;
 		this.bushSprite.y = 400;
+		this.bushSprite.name = "bush";
 	}
 
 	initObject() {

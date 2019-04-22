@@ -98,11 +98,7 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	tree0.initObject();
 
 	// initialize UI in the end
-	player.ui.initHealthbar();
-	player.ui.initCards();
-	player.ui.initPauseScreen();
-	player.ui.prepareCrosshair();
-	player.ui.initCrosshair();
+	player.initUI();
 
 	// 4. PUT LOOPS RUNNING
 	// first initialize physics engine loop

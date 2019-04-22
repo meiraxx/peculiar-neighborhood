@@ -1,13 +1,16 @@
 import HealthBar from "./HealthBar";
 import Cards from "./Cards";
 import PauseScreen from "./PauseScreen";
+import Crosshair from "./Crosshair";
+import Bullet from './Bullet';
 
 export default class UserInterface {
 	static loadResources() {
 		HealthBar.loadResources();
 		Cards.loadResources();
 		PauseScreen.loadResources();
-		PIXI.loader.add("assets/crosshairs/crosshair.png");
+		Crosshair.loadResources();
+		Bullet.loadResources();
 	}
 	
 	constructor(app) {
@@ -15,32 +18,39 @@ export default class UserInterface {
 		this.healthBar = new HealthBar(this.app);
 		this.cards = new Cards(this.app);
 		this.pauseScreen = new PauseScreen(this.app);
+		this.crosshair = new Crosshair(this.app);
 
+		// initialize 10 bullet objects (max bullets in screen at the same time)
+		this.shootDirection = new PIXI.Point(0,0);
+		this.currentBullet = 0;
+		this.bullets = [];
+		for (var i = 10; i >= 0; i--) {
+			this.bullets.push(new Bullet(app));
+		}
+	}
+
+	prepareObject(x_pos, y_pos) {
+		this.currentItem = "none";
+		this.prepareHealthbar(x_pos - 1, y_pos - 4);
+		this.prepareCards(x_pos - 530, 690);
+		this.prepareCrosshair(x_pos, y_pos);
+		this.prepareBullets(x_pos, y_pos);
+		this.preparePauseScreen(x_pos, y_pos);
+	}
+
+	initObject() {
+		this.initHealthbar();
+		this.initCards();
+		this.initCrosshair();
+		this.initBullets();
+		// pause screen always in the end
+		this.initPauseScreen();
 	}
 
 	// HEALTHBAR
 	prepareHealthbar(x_pos, y_pos) {
 		this.healthBar.prepareObject(x_pos, y_pos, 64, 8, 0x4CBB17, 20);
 	}
-
-
-	prepareCrosshair(x_pos, y_pos) {
-		let crosshairTex = PIXI.loader.resources["assets/crosshairs/crosshair.png"].texture;
-		this.crosshair = new PIXI.Sprite(crosshairTex);
-		this.crosshair.scale.x = 0.1;
-		this.crosshair.scale.y = 0.1;
-		this.crosshair.x = 512;
-		this.crosshair.y = 512;
-		this.crosshair.visible = false;
-	}
-
-	initCrosshair() {
-		this.app.stage.addChild(this.crosshair);
-		console.log("crosshair  initialized");
-	}
-
-
-
 
 	initHealthbar() {
 		this.healthBar.initObject();
@@ -74,7 +84,6 @@ export default class UserInterface {
 	}
 
 	togglePause() {
-		// TODO: darken all sprites
 		// TODO: pause screen with command information
 		this.pauseScreen.toggle();
 	}
@@ -82,4 +91,31 @@ export default class UserInterface {
 	isPaused() {
 		return this.pauseScreen.container.visible;
 	}
+
+	// BULLETS
+	prepareBullets(x_pos, y_pos) {
+ 		for (var i = 10; i >= 0; i--) {
+			this.bullets[i].prepareObject(x_pos, y_pos, i);
+		}
+	}
+
+	initBullets() {
+		for (var i = 10; i >= 0; i--) {
+			this.bullets[i].initObject();
+		}
+	}
+
+	// CROSSHAIR
+	prepareCrosshair(x_pos, y_pos) {
+		this.crosshair.prepareObject(x_pos, y_pos);
+	}
+
+	initCrosshair() {
+		this.crosshair.initObject();
+	}
+	
+	shootableItem() {
+		return (this.currentItem === "pistol" || this.currentItem === "netgun");
+	}
+
 }

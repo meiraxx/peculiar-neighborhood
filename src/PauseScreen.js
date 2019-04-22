@@ -22,6 +22,8 @@ export default class PauseScreen {
         let innerRectangle = getRoundedRectangle(-width/2 + diffValue/2, -height/2 + diffValue/2,
         	width - diffValue, height - diffValue, 5, 0xd8c3d0);
         this.container.addChild(innerRectangle);
+
+        let gamePausedRectangle = getRoundedRectangle(-width/2, -height/2, width, height, 5, 0x414554);  
 	}
 
 	initObject() {

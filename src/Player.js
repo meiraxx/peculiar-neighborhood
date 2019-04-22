@@ -1,7 +1,7 @@
 import { keyboard } from "./lib/UtilMethods";
 import { setTextureOnlyIfNeeded, containSpriteInsideContainer } from "./lib/PixiUtilMethods";
 import UserInterface from './UserInterface';
-import Bullet from './Bullet'
+
 export default class Player {
 	static loadResources() {
 		PIXI.loader.add("assets/character/none/characterFront.png");
@@ -21,19 +21,12 @@ export default class Player {
 		PIXI.loader.add("assets/character/netgun/characterRight.png");
 		PIXI.loader.add("assets/character/netgun/characterLeft.png");
 		UserInterface.loadResources();
-		Bullet.loadResources();
 	}
 
 	constructor(app, viewport) {
 		this.app = app;
 		this.viewport = viewport;
 		this.ui = new UserInterface(app);
-		this.shootDirection = new PIXI.Point(0,0);
-		this.currentBullet = 0;
-		this.bullets = [];
-		for (var i = 100; i >= 0; i--) {
-			this.bullets.push(new Bullet(app));
-		}
 	}
 	
 	prepareObject(x_pos, y_pos) {
@@ -42,7 +35,6 @@ export default class Player {
 		let playerBackTexture = PIXI.loader.resources["assets/character/none/characterBack.png"].texture;
 		let playerRightTexture = PIXI.loader.resources["assets/character/none/characterRight.png"].texture;
 		let playerLeftTexture = PIXI.loader.resources["assets/character/none/characterLeft.png"].texture;
-		this.ui.currentItem = "none";
 		this.command = "down";
 		
 		this.playerSprite = new PIXI.Sprite(playerFrontTexture);
@@ -53,16 +45,9 @@ export default class Player {
 		this.playerSprite.vx = 0;
 		this.playerSprite.vy = 0;
  		this.playerSprite.name = "player";
- 		
- 		//bullets
- 		for (var i = 100; i >= 0; i--) {
-			this.bullets[i].prepareObject();
-		}
 
 		// SETUP player UI
-		this.ui.prepareHealthbar(x_pos - 1, y_pos - 4);
-		this.ui.prepareCards(x_pos - 530, 690);
-		this.ui.preparePauseScreen(x_pos, y_pos);
+		this.ui.prepareObject(x_pos, y_pos);
 
 		// KEY STROKE EVENTS
 		this.leftKey = keyboard("ArrowLeft");
@@ -143,6 +128,7 @@ export default class Player {
 		this.zeroKey.press = () => {
 			if (!this.ui.isPaused()) {
 				this.ui.highlightCard("none");
+				this.ui.crosshair.sprite.visible = false;
 				this.updatePlayerSprite();
 			}
 		};
@@ -152,6 +138,7 @@ export default class Player {
 		this.oneKey.press = () => {
 			if (!this.ui.isPaused()) {
 				this.ui.highlightCard("bat");
+				this.ui.crosshair.sprite.visible = false;
 				this.updatePlayerSprite();
 			}
 		};
@@ -161,6 +148,7 @@ export default class Player {
 		this.twoKey.press = () => {
 			if (!this.ui.isPaused()) {
 				this.ui.highlightCard("pistol");
+				this.ui.crosshair.sprite.visible = true;
 				this.updatePlayerSprite();
 			}
 		};
@@ -170,6 +158,7 @@ export default class Player {
 		this.threeKey.press = () => {
 			if (!this.ui.isPaused()) {
 				this.ui.highlightCard("netgun");
+				this.ui.crosshair.sprite.visible = true;
 				this.updatePlayerSprite();
 			}
 		};
@@ -190,49 +179,53 @@ export default class Player {
 		};
 
 		//mouse input
-
 		window.addEventListener("mousemove", event => {
-			this.ui.crosshair.visible = true;
-			//top left based
-			var mousePosOnSphereAroundPlayer = new PIXI.Point(event.screenX ,event.screenY );
-			mousePosOnSphereAroundPlayer.x /= window.screen.availWidth ;
-			mousePosOnSphereAroundPlayer.x -= 0.5;
-			mousePosOnSphereAroundPlayer.y /= window.screen.availHeight;
-			mousePosOnSphereAroundPlayer.y -= 0.5;
-			this.shootDirection.x =   mousePosOnSphereAroundPlayer.x;
-			this.shootDirection.y = mousePosOnSphereAroundPlayer.y;
-			let length = Math.sqrt(this.shootDirection.x * this.shootDirection.x + this.shootDirection.y * this.shootDirection.y);
-			if(length != 0) {
-				this.shootDirection.x /= length;
-				this.shootDirection.y /= length;
+			if (!this.ui.isPaused()) {
+				this.ui.crosshair.sprite.visible = this.ui.shootableItem();
+				//top left based
+				let mousePosOnSphereAroundPlayer = new PIXI.Point(event.screenX, event.screenY);
+				mousePosOnSphereAroundPlayer.x /= window.screen.availWidth;
+				mousePosOnSphereAroundPlayer.x -= 0.5;
+				mousePosOnSphereAroundPlayer.y /= window.screen.availHeight;
+				mousePosOnSphereAroundPlayer.y -= 0.5;
+				this.ui.shootDirection.x =   mousePosOnSphereAroundPlayer.x;
+				this.ui.shootDirection.y = mousePosOnSphereAroundPlayer.y;
+				let length = Math.sqrt(this.ui.shootDirection.x * this.ui.shootDirection.x + this.ui.shootDirection.y * this.ui.shootDirection.y);
+				if(length != 0) {
+					this.ui.shootDirection.x /= length;
+					this.ui.shootDirection.y /= length;
+				}
 			}
-			
 		});
 
-		window.addEventListener("click",event => {
-			console.log("click");
-			let angle = Math.acos( this.shootDirection.y );
-			angle *= this.shootDirection.x > 0.0 ? -1 : 1;
-			this.bullets[this.currentBullet].go(this.playerSprite.x + this.playerSprite.width / 2 ,this.playerSprite.y + this.playerSprite.height / 2, 10.0 * this.shootDirection.x,10.0 * this.shootDirection.y,angle);
-			this.currentBullet = (this.currentBullet + 1) % 100;
+		window.addEventListener("click", event => {
+			if (!this.ui.isPaused() && this.ui.shootableItem()) {
+				let angle = Math.acos( this.ui.shootDirection.y );
+				angle *= this.ui.shootDirection.x > 0.0 ? -1 : 1;
+				this.ui.bullets[this.ui.currentBullet].go(
+					this.playerSprite.x + this.playerSprite.width/2,
+					this.playerSprite.y + this.playerSprite.height/2,
+					10.0 * this.ui.shootDirection.x,
+					10.0 * this.ui.shootDirection.y,
+					angle);
+				this.ui.currentBullet = (this.ui.currentBullet + 1) % 10;
+			}
 		});
-
-
-
 	}
 
 	initObject() {
 		this.app.stage.addChild(this.playerSprite);
 		console.log("player character initialized");
-		for (var i = 100; i >= 0; i--) {
-			this.bullets[i].initObject();
-		}
 	}
 
 	initLoop() {
 		// start the player loop
 		this.app.ticker.add(delta => this.playerLoop(delta));
 		console.log("player loop initialized");
+	}
+
+	initUI() {
+		this.ui.initObject();
 	}
 
 	updatePlayerSprite() {
@@ -352,11 +345,11 @@ export default class Player {
 			}
 		}
 		//update crosshair
-		this.ui.crosshair.x = this.playerSprite.x + this.playerSprite.width / 2 + 100.0 *  this.shootDirection.x;
-		this.ui.crosshair.y = this.playerSprite.y + this.playerSprite.height / 2 + 100.0 * this.shootDirection.y;
+		this.ui.crosshair.sprite.x = this.playerSprite.x + this.playerSprite.width / 2 + 100.0 *  this.ui.shootDirection.x;
+		this.ui.crosshair.sprite.y = this.playerSprite.y + this.playerSprite.height / 2 + 100.0 * this.ui.shootDirection.y;
 		//update bullets
-		for (var i = this.bullets.length - 1; i >= 0; i--) {
-			this.bullets[i].update(delta);
+		for (var i = this.ui.bullets.length - 1; i >= 0; i--) {
+			this.ui.bullets[i].update(delta);
 		}
 		
 	}

@@ -24,11 +24,25 @@ function textStyle(choice) {
 		textStyle = new PIXI.TextStyle({
 		    fontFamily: 'Courier New',
 		    fontSize: 14,
-		    //fontWeight: 'bold',
-		    //fontStyle: 'italic',
 		    fill: ['#ffffff'],
 		    stroke: '#000000',
 		    strokeThickness: 1,
+		});
+	}
+	else if (choice === "gamePausedText") {
+		textStyle = new PIXI.TextStyle({
+		    fontFamily: 'Courier New',
+		    fontSize: 28,
+		    align : 'center',
+		    fill: ['#d8c3d0'],
+		});
+	}
+	else if (choice === "gameHelpText") {
+		textStyle = new PIXI.TextStyle({
+		    fontFamily: 'Courier New',
+		    fontSize: 14,
+		    align : 'left',
+		    fill: ['#d8c3d0'],
 		});
 	}
 	return textStyle;

@@ -24,14 +24,14 @@ export default class HealthBar {
         this.container.name = "healthbar";
 
         // create the max-health rectangle
-        let innerBar = getRoundedRectangle(-width/2, 0, width, height, 5, 0x000000);
+        let innerBar = getRoundedRectangle(-width/2, 0, width, height, 3, 0x000000);
         this.container.addChild(innerBar);
         this.container.innerBar = innerBar;
 
         // create the current-health rectangle with an outline effect
         let diffValue = width/32;
         let outerBar = getRoundedRectangle(-width/2 + diffValue/2, diffValue/2, width - diffValue,
-            height - diffValue, 5, colorCode);
+            height - diffValue, 3, colorCode);
         this.container.addChild(outerBar);
         this.container.outerBar = outerBar;
 

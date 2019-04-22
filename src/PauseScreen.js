@@ -1,4 +1,4 @@
-import { getRoundedRectangle } from "./lib/PixiUtilMethods";
+import { getRoundedRectangle, textStyle } from "./lib/PixiUtilMethods";
 
 export default class PauseScreen {
 	static loadResources() {
@@ -15,15 +15,54 @@ export default class PauseScreen {
         this.container.y = y_pos;
         this.container.name = "pauseScreen";
 
-        let outerRectangle = getRoundedRectangle(-width/2, -height/2, width, height, 5, 0x414554);
+        let betweenContainersHeight = height/32;
+        let textInsideContainerDrift = width/128;
+
+        let outerRectangle = getRoundedRectangle(-width/2, -height/2, width, height, 3, 0x414554);
         this.container.addChild(outerRectangle);
 
-        let diffValue = width/16;
-        let innerRectangle = getRoundedRectangle(-width/2 + diffValue/2, -height/2 + diffValue/2,
-        	width - diffValue, height - diffValue, 5, 0xd8c3d0);
+        let innerRectangle = getRoundedRectangle(-width/2 + width/32, -height/2 + betweenContainersHeight,
+        	width - width/16, height - height/16, 3, 0xd8c3d0);
         this.container.addChild(innerRectangle);
 
-        let gamePausedRectangle = getRoundedRectangle(-width/2, -height/2, width, height, 5, 0x414554);  
+        let gamePausedTextRectangle = getRoundedRectangle(-width/2 + width/16, -height/2 + height/16, 
+        	width - width/8, height/8, 3, 0x414554);
+        this.container.addChild(gamePausedTextRectangle);
+        
+        let gamePausedText = new PIXI.Text("GAME PAUSED", textStyle("gamePausedText"));
+        // magic values "10" and "-2" because of visual correctness
+		gamePausedText.x = -width/2 + width/16 + gamePausedTextRectangle.width/4 - 10;
+		gamePausedText.y = -height/2 + height/16 + gamePausedTextRectangle.height/4 - 2;
+		gamePausedText.resolution = 2;
+		this.container.addChild(gamePausedText);
+
+		let gameHelpRectangle = getRoundedRectangle(-width/2 + width/16, 
+			-height/2 + gamePausedTextRectangle.height + betweenContainersHeight*3, 
+        	width - width/8, height - 5 * betweenContainersHeight - height/8,
+        	3, 0x414554);
+        this.container.addChild(gameHelpRectangle);
+
+        let gameHelpString = "\"0\": unequip items\n" + 
+        					"\"1\": equip bat\n" +
+        					"\"2\": equip pistol\n" +
+        					"\"3\": equip netgun\n" +
+        					"\"4\": equip whistle\n" +
+        					"\"A\": walk left\n" +
+        					"\"W\": walk up\n" +
+        					"\"S\": walk down\n" +
+        					"\"D\": walk right\n" +
+        					"\"E\": interact with object\n" +
+        					"\"MOUSE-1\": use item\n" + 
+        					"\"P\": pause/unpause game";
+
+        let gameHelpText = new PIXI.Text(gameHelpString, textStyle("gameHelpText"));
+        console.log(gameHelpRectangle.x);
+        console.log(gameHelpRectangle.y);
+		gameHelpText.x = -width/2 + width/16 + textInsideContainerDrift;
+		gameHelpText.y = -height/2 + betweenContainersHeight*3 
+			+ gamePausedTextRectangle.height + textInsideContainerDrift;
+		gameHelpText.resolution = 2;
+		this.container.addChild(gameHelpText);
 	}
 
 	initObject() {
@@ -33,11 +72,9 @@ export default class PauseScreen {
 	}
 
 	toggle() {
-		// TODO2: pause screen with command information
 		// recalculate what other elements are on the map
 		let otherElements = this.app.stage.children.filter(child => child.name !== "pauseScreen");
-		console.log(this.app.stage.children);
-		console.log(otherElements);
+
 		// toggle needs WebGL because of "filters"
 		if (this.container.visible) {
 			let colorMatrix = new PIXI.filters.ColorMatrixFilter();

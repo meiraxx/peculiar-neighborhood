@@ -29,7 +29,11 @@ export default class Player {
 		this.viewport = viewport;
 		this.ui = new UserInterface(app);
 		this.shootDirection = new PIXI.Point(0,0);
+		this.currentBullet = 0;
 		this.bullets = [];
+		for (var i = 100; i >= 0; i--) {
+			this.bullets.push(new Bullet(app));
+		}
 	}
 	
 	prepareObject(x_pos, y_pos) {
@@ -50,6 +54,11 @@ export default class Player {
 		this.playerSprite.vy = 0;
  		this.playerSprite.name = "player";
  		
+ 		//bullets
+ 		for (var i = 100; i >= 0; i--) {
+			this.bullets[i].prepareObject();
+		}
+
 		// SETUP player UI
 		this.ui.prepareHealthbar(x_pos - 1, y_pos - 4);
 		this.ui.prepareCards(x_pos - 530, 690);
@@ -204,10 +213,8 @@ export default class Player {
 			console.log("click");
 			let angle = Math.acos( this.shootDirection.y );
 			angle *= this.shootDirection.x > 0.0 ? -1 : 1;
-			var bullet = new Bullet(this.app);
-			bullet.prepareObject(this.playerSprite.x + this.playerSprite.width / 2 ,this.playerSprite.y + this.playerSprite.height / 2, 10.0 * this.shootDirection.x,10.0 * this.shootDirection.y,angle);
-			bullet.initObject();
-			this.bullets.push(bullet);
+			this.bullets[this.currentBullet].go(this.playerSprite.x + this.playerSprite.width / 2 ,this.playerSprite.y + this.playerSprite.height / 2, 10.0 * this.shootDirection.x,10.0 * this.shootDirection.y,angle);
+			this.currentBullet = (this.currentBullet + 1) % 100;
 		});
 
 
@@ -217,6 +224,9 @@ export default class Player {
 	initObject() {
 		this.app.stage.addChild(this.playerSprite);
 		console.log("player character initialized");
+		for (var i = 100; i >= 0; i--) {
+			this.bullets[i].initObject();
+		}
 	}
 
 	initLoop() {

@@ -7,6 +7,7 @@ export default class UserInterface {
 		HealthBar.loadResources();
 		Cards.loadResources();
 		PauseScreen.loadResources();
+		PIXI.loader.add("assets/crosshairs/crosshair.png");
 	}
 	
 	constructor(app) {
@@ -14,12 +15,32 @@ export default class UserInterface {
 		this.healthBar = new HealthBar(this.app);
 		this.cards = new Cards(this.app);
 		this.pauseScreen = new PauseScreen(this.app);
+
 	}
 
 	// HEALTHBAR
 	prepareHealthbar(x_pos, y_pos) {
 		this.healthBar.prepareObject(x_pos, y_pos, 64, 8, 0x4CBB17, 20);
 	}
+
+
+	prepareCrosshair(x_pos, y_pos) {
+		let crosshairTex = PIXI.loader.resources["assets/crosshairs/crosshair.png"].texture;
+		this.crosshair = new PIXI.Sprite(crosshairTex);
+		this.crosshair.scale.x = 0.1;
+		this.crosshair.scale.y = 0.1;
+		this.crosshair.x = 512;
+		this.crosshair.y = 512;
+		this.crosshair.visible = false;
+	}
+
+	initCrosshair() {
+		this.app.stage.addChild(this.crosshair);
+		console.log("crosshair  initialized");
+	}
+
+
+
 
 	initHealthbar() {
 		this.healthBar.initObject();

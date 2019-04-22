@@ -7,14 +7,14 @@ export default class Bush {
 		this.app = app;
 	}
 
-	prepareObject() {
+	prepareObject(x_pos, y_pos, i) {
 		let bushTexture = PIXI.loader.resources["assets/bush.png"].texture;
 		this.bushSprite = new PIXI.Sprite(bushTexture);
 		this.bushSprite.scale.x = 0.2;
 		this.bushSprite.scale.y = 0.2;
-		this.bushSprite.x = 10;
-		this.bushSprite.y = 400;
-		this.bushSprite.name = "bush";
+		this.bushSprite.x = x_pos;
+		this.bushSprite.y = y_pos;
+		this.bushSprite.name = "bush" + i;
 	}
 
 	initObject() {

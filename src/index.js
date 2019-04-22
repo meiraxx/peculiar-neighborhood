@@ -52,11 +52,11 @@ StaticMap.loadResources();
 Player.loadResources();
 Bush.loadResources();
 Tree.loadResources();
+Monster.loadResources();
+
 // 2. CONSTRUCT MAIN OBJECTS
 var staticMap = new StaticMap(app);
 var player = new Player(app, viewport);
-var bush = new Bush(app);
-Monster.prepareResources();
 
 var m0 = new Monster(app);
 var m1 = new Monster(app);
@@ -64,6 +64,7 @@ var m2 = new Monster(app);
 var m3 = new Monster(app);
 var monsters = [m0, m1, m2, m3];
 
+var bush0 = new Bush(app);
 var tree0 = new Tree(app)
 
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
@@ -82,18 +83,18 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	let playerHeight = player.playerSprite.height;
 
 	// setup monsters in the corners
-	m0.prepareObject(100, 100);
-	m1.prepareObject(100, mapHeight - 100 - m0.monsterSprite.height);
-	m2.prepareObject(mapWidth - 100 - m0.monsterSprite.width, 100);
-	m3.prepareObject(mapWidth - 100 - m0.monsterSprite.width, mapHeight - 100 - m0.monsterSprite.height);
+	m0.prepareObject(100, 100, 0);
+	m1.prepareObject(100, mapHeight - 100 - m0.monsterSprite.height, 1);
+	m2.prepareObject(mapWidth - 100 - m0.monsterSprite.width, 100, 2);
+	m3.prepareObject(mapWidth - 100 - m0.monsterSprite.width, mapHeight - 100 - m0.monsterSprite.height, 3);
 	monsters.forEach(function(m) {
 		m.initObject();
 	});
 
 	// setup other map elements
-	bush.prepareObject();
-	bush.initObject();
-	tree0.prepareObject(mapWidth - 100, mapHeight - 100);
+	bush0.prepareObject(10, 400, 0);
+	bush0.initObject();
+	tree0.prepareObject(mapWidth - 100, mapHeight - 100, 0);
 	tree0.initObject();
 
 	// initialize UI in the end

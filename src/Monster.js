@@ -3,8 +3,7 @@ import { getRandomArbitraryFloat } from "./lib/UtilMethods";
 import { containSpriteInsideContainer } from "./lib/PixiUtilMethods";
 
 export default class Monster {
-	
-	static prepareResources() {
+	static loadResources() {
 		PIXI.loader.add("assets/brown-monster.png");
 	}
 	
@@ -12,7 +11,7 @@ export default class Monster {
 		this.app = app;
 	}
 	
-	prepareObject(x_pos, y_pos) {
+	prepareObject(x_pos, y_pos, i) {
 		// SETUP monster
 		let frontTexture = PIXI.loader.resources["assets/brown-monster.png"].texture;
 		let backTexture = PIXI.loader.resources["assets/brown-monster.png"].texture;
@@ -26,7 +25,7 @@ export default class Monster {
 		this.monsterSprite.y = y_pos;
 		this.monsterSprite.vx = 0;
 		this.monsterSprite.vy = 0;
-		this.monsterSprite.name = "monster";
+		this.monsterSprite.name = "monster" + i;
 		this.newDirTimeStep = 50.0;
 		this.timeSinceNewDir = 0.0;
 	}

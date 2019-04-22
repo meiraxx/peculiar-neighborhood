@@ -197,15 +197,15 @@ export default class Player {
 				this.shootDirection.x /= length;
 				this.shootDirection.y /= length;
 			}
-			this.ui.crosshair.x = this.playerSprite.x + this.playerSprite.width / 2 + 100.0 *  this.shootDirection.x;
-			this.ui.crosshair.y = this.playerSprite.y + this.playerSprite.height / 2 + 100.0 * this.shootDirection.y;
+			
 		});
 
 		window.addEventListener("click",event => {
 			console.log("click");
-			let angle = Math.acos(this.shootDirection.y * 1);
+			let angle = Math.acos( this.shootDirection.y );
+			angle *= this.shootDirection.x > 0.0 ? -1 : 1;
 			var bullet = new Bullet(this.app);
-			bullet.prepareObject(this.playerSprite.x + this.playerSprite.width / 2 ,this.playerSprite.y+ this.playerSprite.height / 2, this.shootDirection.x,this.shootDirection.y,angle);
+			bullet.prepareObject(this.playerSprite.x + this.playerSprite.width / 2 ,this.playerSprite.y + this.playerSprite.height / 2, 10.0 * this.shootDirection.x,10.0 * this.shootDirection.y,angle);
 			bullet.initObject();
 			this.bullets.push(bullet);
 		});
@@ -341,7 +341,10 @@ export default class Player {
 				// character isn't walking: do nothing
 			}
 		}
-		//update 
+		//update crosshair
+		this.ui.crosshair.x = this.playerSprite.x + this.playerSprite.width / 2 + 100.0 *  this.shootDirection.x;
+		this.ui.crosshair.y = this.playerSprite.y + this.playerSprite.height / 2 + 100.0 * this.shootDirection.y;
+		//update bullets
 		for (var i = this.bullets.length - 1; i >= 0; i--) {
 			this.bullets[i].update(delta);
 		}

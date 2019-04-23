@@ -60,9 +60,9 @@ export default class Player {
 		this.oneKey = keyboard("1");
 		this.twoKey = keyboard("2");
 		this.threeKey = keyboard("3");
-		this.fourKey = keyboard("F1");
-		this.fiveKey = keyboard("F2");
-		this.sixKey = keyboard("F3");
+		this.f1Key = keyboard("F1");
+		this.f2Key = keyboard("F2");
+		this.f3Key = keyboard("F3");
 
 		this.pKey = keyboard("p");
 		this.escKey = keyboard("Escape");
@@ -172,28 +172,28 @@ export default class Player {
 		this.threeKey.release = () => {
 		};
 
-		this.fourKey.press = () => {
+		this.f1Key.press = () => {
 			if (!this.ui.pauseScreen.container.visible) {
 				this.ui.toggleCardsInfo("cardBatInfo");
 			}
 		};
-		this.fourKey.release = () => {
+		this.f1Key.release = () => {
 		};
 
-		this.fiveKey.press = () => {
+		this.f2Key.press = () => {
 			if (!this.ui.pauseScreen.container.visible) {
 				this.ui.toggleCardsInfo("cardPistolInfo");
 			}
 		};
-		this.fiveKey.release = () => {
+		this.f2Key.release = () => {
 		};
 
-		this.sixKey.press = () => {
+		this.f3Key.press = () => {
 			if (!this.ui.pauseScreen.container.visible) {
 				this.ui.toggleCardsInfo("cardNetgunInfo");
 			}
 		};
-		this.sixKey.release = () => {
+		this.f3Key.release = () => {
 		};
 
 		// PAUSE: "P" or "Esc"

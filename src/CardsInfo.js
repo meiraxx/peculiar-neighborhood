@@ -1,9 +1,6 @@
 export default class CardsInfo {
 	static loadResources() {
-		PIXI.loader.add("assets/cardsInfo/cardBatInfo.jpg");
-		PIXI.loader.add("assets/cardsInfo/cardPistolInfo.jpg");
-		PIXI.loader.add("assets/cardsInfo/cardNetgunInfo.jpg");
-		PIXI.loader.add("assets/cardsInfo/cardShotgunInfo.jpg");
+		// already loaded in cards
 	}
 	
 	constructor(app) {
@@ -12,16 +9,18 @@ export default class CardsInfo {
 
 	prepareObject(x_pos, y_pos) {
 		this.container = new PIXI.Container();
-		this.container.x = x_pos - 50;
-        this.container.y = y_pos - 50;
+		this.container.x = x_pos - 50; //hardcoded playerWidth/2
+        this.container.y = y_pos;
+        this.container.x = x_pos - 150; //hardcoded playerWidth/2
+        this.container.y = y_pos - 100;
         this.container.scale.x = 0.30;
         this.container.scale.y = 0.30;
 
         this.container.name = "cardsInfo";
 
-		let cardBatInfo = PIXI.loader.resources["assets/cardsInfo/cardBatInfo.jpg"].texture;
-		let cardPistolInfo = PIXI.loader.resources["assets/cardsInfo/cardPistolInfo.jpg"].texture;
-		let cardNetgunInfo = PIXI.loader.resources["assets/cardsInfo/cardNetgunInfo.jpg"].texture;
+		let cardBatInfo = PIXI.loader.resources["assets/cards/cardBat.png"].texture;
+		let cardPistolInfo = PIXI.loader.resources["assets/cards/cardPistol.png"].texture;
+		let cardNetgunInfo = PIXI.loader.resources["assets/cards/cardNetgun.png"].texture;
 
 		let cardBatInfoSprite = new PIXI.Sprite(cardBatInfo);
 		cardBatInfoSprite.name = "cardBatInfo";
@@ -38,6 +37,7 @@ export default class CardsInfo {
 		this.container.addChild(cardBatInfoSprite);
 		this.container.addChild(cardPistolInfoSprite);
 		this.container.addChild(cardNetgunInfoSprite);
+
 		this.displayed = false;
 	}
 
@@ -55,6 +55,12 @@ export default class CardsInfo {
 
 		// toggle needs WebGL because of "filters"
 		if (this.displayed === true) {
+			otherCardsInfo.forEach(function(ci) {		
+				ci.visible = false;
+			});
+		}
+		
+		if (this.displayed === true && cardInfo.visible === true) {
 			let colorMatrix = new PIXI.filters.ColorMatrixFilter();
 			// must clear color matrix instead of resetting it because
 			// performance is greatly affected if this is on

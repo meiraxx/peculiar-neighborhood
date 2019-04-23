@@ -47,6 +47,10 @@ export default class PauseScreen {
         					"\"2\": equip pistol\n" +
         					"\"3\": equip netgun\n" +
         					"\"4\": equip whistle\n" +
+        					"\"F1\": see bat info\n" +
+        					"\"F2\": see pistol info\n" +
+        					"\"F3\": see netgun info\n" +
+        					"\"F4\": see whistle info\n" +
         					"\"ArrowLeft\": walk left\n" +
         					"\"ArrowUp\": walk up\n" +
         					"\"ArrowDown\": walk down\n" +

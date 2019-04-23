@@ -1,3 +1,4 @@
 http://proclive.io/shooting-tutorial/
 https://codepen.io/spaarwt001/pen/mqxRvZ
 http://www.html5gamedevs.com/topic/30424-animation-of-sprite-movement/
+https://gameofbombs.github.io/pixi-bin/index.html?s=flip&f=cards.js&title=Cards

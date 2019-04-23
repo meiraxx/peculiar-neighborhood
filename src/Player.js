@@ -59,9 +59,15 @@ export default class Player {
 		this.oneKey = keyboard("1");
 		this.twoKey = keyboard("2");
 		this.threeKey = keyboard("3");
+		this.fourKey = keyboard("4");
+		this.fiveKey = keyboard("5");
+		this.sixKey = keyboard("6");
 
 		this.pKey = keyboard("p");
 		this.escKey = keyboard("Escape");
+
+		// left, right, down, up
+		//this.commandArray = [false, false, false, false];
 
 		// MOVEMENT KEYS
 		// note: comment second conditions and movement resets on key press to obtain diagonal movements,
@@ -165,6 +171,30 @@ export default class Player {
 		this.threeKey.release = () => {
 		};
 
+		this.fourKey.press = () => {
+			if (!this.ui.pauseScreen.container.visible) {
+				this.ui.toggleCardsInfo("cardBatInfo");
+			}
+		};
+		this.fourKey.release = () => {
+		};
+
+		this.fiveKey.press = () => {
+			if (!this.ui.pauseScreen.container.visible) {
+				this.ui.toggleCardsInfo("cardPistolInfo");
+			}
+		};
+		this.fiveKey.release = () => {
+		};
+
+		this.sixKey.press = () => {
+			if (!this.ui.pauseScreen.container.visible) {
+				this.ui.toggleCardsInfo("cardNetgunInfo");
+			}
+		};
+		this.sixKey.release = () => {
+		};
+
 		// PAUSE: "P" or "Esc"
 		this.pKey.press = () => {
 			this.ui.togglePause();
@@ -227,6 +257,32 @@ export default class Player {
 	initUI() {
 		this.ui.initObject();
 	}
+
+	/*
+	resetPreviousVelX() {
+		if (this.commandArray[0]) {
+			this.command = "left";
+			this.playerSprite.vx = -3;
+		}
+		else if (this.commandArray[1]) {
+			this.command = "right";
+			this.playerSprite.vx = 3;
+		}
+		this.updatePlayerSprite();
+	}
+
+	resetPreviousVelY() {
+		if (this.commandArray[2]) {
+			this.command = "down";
+			this.playerSprite.vy = 3;
+		}
+		else if (this.commandArray[3]) {
+			this.command = "up";
+			this.playerSprite.vy = -3;
+		}
+		this.updatePlayerSprite();
+	}
+	*/
 
 	updatePlayerSprite() {
 		switch(this.command) {
@@ -325,6 +381,8 @@ export default class Player {
 				this.ui.healthBar.container.x += this.playerSprite.vx;
 				// move cards container
 				this.ui.cards.container.x += this.playerSprite.vx;
+				// move invisible cards info container
+				this.ui.cardsInfo.container.x += this.playerSprite.vx;
 				// move invisible pause screen
 				this.ui.pauseScreen.container.x += this.playerSprite.vx;
 			}
@@ -337,6 +395,8 @@ export default class Player {
 				this.ui.healthBar.container.y += this.playerSprite.vy;
 				// move cards container
 				this.ui.cards.container.y += this.playerSprite.vy;
+				// move invisible cards info container
+				this.ui.cardsInfo.container.y += this.playerSprite.vy;
 				// move invisible pause screen
 				this.ui.pauseScreen.container.y += this.playerSprite.vy;
 			}

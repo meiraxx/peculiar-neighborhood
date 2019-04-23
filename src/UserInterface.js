@@ -2,7 +2,8 @@ import HealthBar from "./HealthBar";
 import Cards from "./Cards";
 import PauseScreen from "./PauseScreen";
 import Crosshair from "./Crosshair";
-import Bullet from './Bullet';
+import Bullet from "./Bullet";
+import CardsInfo from "./CardsInfo";
 
 export default class UserInterface {
 	static loadResources() {
@@ -11,6 +12,7 @@ export default class UserInterface {
 		PauseScreen.loadResources();
 		Crosshair.loadResources();
 		Bullet.loadResources();
+		CardsInfo.loadResources();
 	}
 	
 	constructor(app) {
@@ -19,7 +21,6 @@ export default class UserInterface {
 		this.cards = new Cards(this.app);
 		this.pauseScreen = new PauseScreen(this.app);
 		this.crosshair = new Crosshair(this.app);
-
 		// initialize 10 bullet objects (max bullets in screen at the same time)
 		this.shootDirection = new PIXI.Point(0,0);
 		this.currentBullet = 0;
@@ -27,6 +28,7 @@ export default class UserInterface {
 		for (var i = 10; i >= 0; i--) {
 			this.bullets.push(new Bullet(app));
 		}
+		this.cardsInfo = new CardsInfo(app);
 	}
 
 	prepareObject(x_pos, y_pos) {
@@ -35,6 +37,7 @@ export default class UserInterface {
 		this.prepareCards(x_pos - 530, 690);
 		this.prepareCrosshair(x_pos, y_pos);
 		this.prepareBullets(x_pos, y_pos);
+		this.prepareCardsInfo(x_pos, y_pos);
 		this.preparePauseScreen(x_pos, y_pos);
 	}
 
@@ -43,6 +46,7 @@ export default class UserInterface {
 		this.initCards();
 		this.initCrosshair();
 		this.initBullets();
+		this.initCardsInfo();
 		// pause screen always in the end
 		this.initPauseScreen();
 	}
@@ -84,12 +88,11 @@ export default class UserInterface {
 	}
 
 	togglePause() {
-		// TODO: pause screen with command information
 		this.pauseScreen.toggle();
 	}
 
 	isPaused() {
-		return this.pauseScreen.container.visible;
+		return (this.pauseScreen.container.visible || this.cardsInfo.displayed);
 	}
 
 	// BULLETS
@@ -118,4 +121,16 @@ export default class UserInterface {
 		return (this.currentItem === "pistol" || this.currentItem === "netgun");
 	}
 
+	// CARDS INFO
+	prepareCardsInfo(x_pos, y_pos) {
+		this.cardsInfo.prepareObject(x_pos, y_pos);
+	}
+
+	initCardsInfo() {
+		this.cardsInfo.initObject();
+	}
+
+	toggleCardsInfo(cardInfo) {
+		this.cardsInfo.toggle(cardInfo);
+	}
 }

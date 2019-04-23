@@ -47,17 +47,15 @@ export default class PauseScreen {
         					"\"2\": equip pistol\n" +
         					"\"3\": equip netgun\n" +
         					"\"4\": equip whistle\n" +
-        					"\"A\": walk left\n" +
-        					"\"W\": walk up\n" +
-        					"\"S\": walk down\n" +
-        					"\"D\": walk right\n" +
-        					"\"E\": interact with object\n" +
+        					"\"ArrowLeft\": walk left\n" +
+        					"\"ArrowUp\": walk up\n" +
+        					"\"ArrowDown\": walk down\n" +
+        					"\"ArrowRight\": walk right\n" +
+        					"\"F\": interact with objects on the map\n" +
         					"\"MOUSE-1\": use item\n" + 
         					"\"P\": pause/unpause game";
 
         let gameHelpText = new PIXI.Text(gameHelpString, textStyle("gameHelpText"));
-        console.log(gameHelpRectangle.x);
-        console.log(gameHelpRectangle.y);
 		gameHelpText.x = -width/2 + width/16 + textInsideContainerDrift;
 		gameHelpText.y = -height/2 + betweenContainersHeight*3 
 			+ gamePausedTextRectangle.height + textInsideContainerDrift;
@@ -73,14 +71,15 @@ export default class PauseScreen {
 
 	toggle() {
 		// recalculate what other elements are on the map
-		let otherElements = this.app.stage.children.filter(child => child.name !== "pauseScreen");
+		let otherElements = this.app.stage.children.filter(child => child.name !== "pauseScreen" 
+			&& child.name !== "cardsInfo");
 
 		// toggle needs WebGL because of "filters"
 		if (this.container.visible) {
 			let colorMatrix = new PIXI.filters.ColorMatrixFilter();
+			// must clear color matrix instead of resetting it because
+			// performance is greatly affected if this is on
 			otherElements.forEach(function(element) {
-				// must clear color matrix instead of resetting it because
-				// performance is greatly affected if this is on
 				element.filters = undefined;
 			});
 

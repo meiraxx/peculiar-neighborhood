@@ -51,10 +51,10 @@ export default class Player {
 		this.ui.prepareObject(x_pos, y_pos);
 
 		// KEY STROKE EVENTS
-		this.leftKey = keyboard("ArrowLeft");
-		this.rightKey = keyboard("ArrowRight");
-		this.downKey = keyboard("ArrowDown");
-		this.upKey = keyboard("ArrowUp");
+		this.leftKey = keyboard("a");
+		this.rightKey = keyboard("d");
+		this.downKey = keyboard("s");
+		this.upKey = keyboard("w");
 
 		this.zeroKey = keyboard("0");
 		this.oneKey = keyboard("1");
@@ -205,16 +205,16 @@ export default class Player {
 				angle *= this.ui.shootDirection.x > 0.0 ? -1 : 1;
 				if( this.ui.currentItem == "netgun") {
 					this.ui.nets[this.ui.currentNet].go(
-						this.playerSprite.x + this.playerSprite.width/2,
-						this.playerSprite.y + this.playerSprite.height/2,
+						this.playerSprite.x + this.playerSprite.width/2 - this.ui.shootDirection.y * this.ui.nets[0].sprite.width / 2,
+						this.playerSprite.y + this.playerSprite.height/2 + this.ui.shootDirection.x * this.ui.nets[0].sprite.height / 2,
 						10.0 * this.ui.shootDirection.x,
 						10.0 * this.ui.shootDirection.y,
 						angle);
 					this.ui.currentNet = (this.ui.currentNet + 1) % 10;
 				} else {
 					this.ui.bullets[this.ui.currentBullet].go(
-						this.playerSprite.x + this.playerSprite.width/2,
-						this.playerSprite.y + this.playerSprite.height/2,
+						this.playerSprite.x + this.playerSprite.width/2 - this.ui.shootDirection.y * this.ui.bullets[0].sprite.width / 2,
+						this.playerSprite.y + this.playerSprite.height/2 + this.ui.shootDirection.x * this.ui.bullets[0].sprite.height / 2,
 						10.0 * this.ui.shootDirection.x,
 						10.0 * this.ui.shootDirection.y,
 						angle);

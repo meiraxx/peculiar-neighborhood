@@ -58,10 +58,10 @@ Monster.loadResources();
 var staticMap = new StaticMap(app);
 var player = new Player(app, viewport);
 
-var m0 = new Monster(app);
-var m1 = new Monster(app);
-var m2 = new Monster(app);
-var m3 = new Monster(app);
+var m0 = new Monster(app, true);
+var m1 = new Monster(app, true);
+var m2 = new Monster(app, false);
+var m3 = new Monster(app, false);
 var monsters = [m0, m1, m2, m3];
 
 var bush0 = new Bush(app);

@@ -4,21 +4,24 @@ import { containSpriteInsideContainer } from "./lib/PixiUtilMethods";
 
 export default class Monster {
 	static loadResources() {
-		PIXI.loader.add("assets/brown-monster.png");
+		PIXI.loader.add("assets/angry_monster.png");
+		PIXI.loader.add("assets/normal_monster.png");
 	}
 	
-	constructor(app) {
+	constructor(app, isAngry) {
 		this.app = app;
+		this.isAngry = isAngry;
 	}
 	
 	prepareObject(x_pos, y_pos, i) {
+		var tex = undefined;
 		// SETUP monster
-		let frontTexture = PIXI.loader.resources["assets/brown-monster.png"].texture;
-		let backTexture = PIXI.loader.resources["assets/brown-monster.png"].texture;
-		let rightTexture = PIXI.loader.resources["assets/brown-monster.png"].texture;
-		let leftTexture = PIXI.loader.resources["assets/brown-monster.png"].texture;
-		
-		this.monsterSprite = new PIXI.Sprite(frontTexture);
+		if(this.isAngry) {
+			tex = PIXI.loader.resources["assets/angry_monster.png"].texture;
+		} else {
+			tex = PIXI.loader.resources["assets/normal_monster.png"].texture;
+		}
+		this.monsterSprite = new PIXI.Sprite(tex);
 		this.monsterSprite.scale.x = 0.05;
 		this.monsterSprite.scale.y = 0.05;
 		this.monsterSprite.x = x_pos;

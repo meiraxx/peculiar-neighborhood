@@ -27,6 +27,7 @@ export default class Player {
 		this.app = app;
 		this.viewport = viewport;
 		this.ui = new UserInterface(app);
+		this.activeMissile = undefined;
 	}
 	
 	prepareObject(x_pos, y_pos) {
@@ -59,9 +60,9 @@ export default class Player {
 		this.oneKey = keyboard("1");
 		this.twoKey = keyboard("2");
 		this.threeKey = keyboard("3");
-		this.fourKey = keyboard("4");
-		this.fiveKey = keyboard("5");
-		this.sixKey = keyboard("6");
+		this.fourKey = keyboard("F1");
+		this.fiveKey = keyboard("F2");
+		this.sixKey = keyboard("F3");
 
 		this.pKey = keyboard("p");
 		this.escKey = keyboard("Escape");
@@ -232,13 +233,24 @@ export default class Player {
 			if (!this.ui.isPaused() && this.ui.shootableItem()) {
 				let angle = Math.acos( this.ui.shootDirection.y );
 				angle *= this.ui.shootDirection.x > 0.0 ? -1 : 1;
-				this.ui.bullets[this.ui.currentBullet].go(
-					this.playerSprite.x + this.playerSprite.width/2,
-					this.playerSprite.y + this.playerSprite.height/2,
-					10.0 * this.ui.shootDirection.x,
-					10.0 * this.ui.shootDirection.y,
-					angle);
-				this.ui.currentBullet = (this.ui.currentBullet + 1) % 10;
+				if( this.ui.currentItem == "netgun") {
+					this.ui.nets[this.ui.currentNet].go(
+						this.playerSprite.x + this.playerSprite.width/2 - this.ui.shootDirection.y * this.ui.nets[0].sprite.width / 2,
+						this.playerSprite.y + this.playerSprite.height/2 + this.ui.shootDirection.x * this.ui.nets[0].sprite.height / 2,
+						10.0 * this.ui.shootDirection.x,
+						10.0 * this.ui.shootDirection.y,
+						angle);
+					this.ui.currentNet = (this.ui.currentNet + 1) % 10;
+				} else {
+					this.ui.bullets[this.ui.currentBullet].go(
+						this.playerSprite.x + this.playerSprite.width/2 - this.ui.shootDirection.y * this.ui.bullets[0].sprite.width / 2,
+						this.playerSprite.y + this.playerSprite.height/2 + this.ui.shootDirection.x * this.ui.bullets[0].sprite.height / 2,
+						10.0 * this.ui.shootDirection.x,
+						10.0 * this.ui.shootDirection.y,
+						angle);
+					this.ui.currentBullet = (this.ui.currentBullet + 1) % 10;
+				}
+				
 			}
 		});
 	}
@@ -410,6 +422,7 @@ export default class Player {
 		//update bullets
 		for (var i = this.ui.bullets.length - 1; i >= 0; i--) {
 			this.ui.bullets[i].update(delta);
+			this.ui.nets[i].update(delta);
 		}
 		
 	}

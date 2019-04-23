@@ -2,8 +2,8 @@ import HealthBar from "./HealthBar";
 import Cards from "./Cards";
 import PauseScreen from "./PauseScreen";
 import Crosshair from "./Crosshair";
-import Bullet from "./Bullet";
 import CardsInfo from "./CardsInfo";
+import Missile from './Missile';
 
 export default class UserInterface {
 	static loadResources() {
@@ -11,7 +11,7 @@ export default class UserInterface {
 		Cards.loadResources();
 		PauseScreen.loadResources();
 		Crosshair.loadResources();
-		Bullet.loadResources();
+		Missile.loadResources();
 		CardsInfo.loadResources();
 	}
 	
@@ -24,9 +24,12 @@ export default class UserInterface {
 		// initialize 10 bullet objects (max bullets in screen at the same time)
 		this.shootDirection = new PIXI.Point(0,0);
 		this.currentBullet = 0;
+		this.currentNet = 0;
 		this.bullets = [];
+		this.nets = [];
 		for (var i = 10; i >= 0; i--) {
-			this.bullets.push(new Bullet(app));
+			this.bullets.push(new Missile(app,"bullet"));
+			this.nets.push(new Missile(app,"net"));
 		}
 		this.cardsInfo = new CardsInfo(app);
 	}
@@ -36,7 +39,7 @@ export default class UserInterface {
 		this.prepareHealthbar(x_pos - 1, y_pos - 4);
 		this.prepareCards(x_pos - 530, 690);
 		this.prepareCrosshair(x_pos, y_pos);
-		this.prepareBullets(x_pos, y_pos);
+		this.prepareMissiles(x_pos, y_pos);
 		this.prepareCardsInfo(x_pos, y_pos);
 		this.preparePauseScreen(x_pos, y_pos);
 	}
@@ -45,7 +48,7 @@ export default class UserInterface {
 		this.initHealthbar();
 		this.initCards();
 		this.initCrosshair();
-		this.initBullets();
+		this.initMissiles();
 		this.initCardsInfo();
 		// pause screen always in the end
 		this.initPauseScreen();
@@ -95,16 +98,18 @@ export default class UserInterface {
 		return (this.pauseScreen.container.visible || this.cardsInfo.displayed);
 	}
 
-	// BULLETS
-	prepareBullets(x_pos, y_pos) {
+	// bullets & nets
+	prepareMissiles(x_pos, y_pos) {
  		for (var i = 10; i >= 0; i--) {
 			this.bullets[i].prepareObject(x_pos, y_pos, i);
+			this.nets[i].prepareObject(x_pos, y_pos, i);
 		}
 	}
 
-	initBullets() {
+	initMissiles() {
 		for (var i = 10; i >= 0; i--) {
 			this.bullets[i].initObject();
+			this.nets[i].initObject();
 		}
 	}
 

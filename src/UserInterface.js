@@ -7,7 +7,6 @@ import Missile from './Missile';
 
 export default class UserInterface {
 	static loadResources() {
-		HealthBar.loadResources();
 		Cards.loadResources();
 		PauseScreen.loadResources();
 		Crosshair.loadResources();

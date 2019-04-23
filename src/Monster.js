@@ -1,51 +1,66 @@
 import UserInterface from './UserInterface';
 import { getRandomArbitraryFloat } from "./lib/UtilMethods";
-import { containSpriteInsideContainer } from "./lib/PixiUtilMethods";
+import { containSpriteInsideContainer, hitTestRectangle, setTextureOnlyIfNeeded } from "./lib/PixiUtilMethods";
+import HealthBar from "./HealthBar";
 
 export default class Monster {
 	static loadResources() {
-		PIXI.loader.add("assets/angry_monster.png");
-		PIXI.loader.add("assets/normal_monster.png");
+		PIXI.loader.add("assets/monsters/angryMonster.png");
+		PIXI.loader.add("assets/monsters/normalMonster.png");
+		PIXI.loader.add("assets/capturedMonsters/angryMonster.png");
+		PIXI.loader.add("assets/capturedMonsters/normalMonster.png");
 	}
 	
 	constructor(app, isAngry) {
 		this.app = app;
 		this.isAngry = isAngry;
+		this.healthBar = new HealthBar(this.app);
 	}
 	
 	prepareObject(x_pos, y_pos, i) {
-		var tex = undefined;
 		// SETUP monster
-		if(this.isAngry) {
-			tex = PIXI.loader.resources["assets/angry_monster.png"].texture;
-		} else {
-			tex = PIXI.loader.resources["assets/normal_monster.png"].texture;
+		if (this.isAngry) {
+			this.monsterTexture = PIXI.loader.resources["assets/monsters/angryMonster.png"].texture;
+			this.capturedMonsterTexture = 
+				PIXI.loader.resources["assets/capturedMonsters/angryMonster.png"].texture;
+			this.healthBar.prepareObject(x_pos, y_pos - 12, (32*6)/10, 8, 0xFF3300, 6);
+			//this.healthBar.prepareObject(x_pos, y_pos - 12, 64, 8, 0xFF3300, 6);
 		}
-		this.monsterSprite = new PIXI.Sprite(tex);
+		else {
+			this.monsterTexture = PIXI.loader.resources["assets/monsters/normalMonster.png"].texture;
+			this.capturedMonsterTexture = 
+				PIXI.loader.resources["assets/capturedMonsters/normalMonster.png"].texture;
+			this.healthBar.prepareObject(x_pos, y_pos - 12, 32, 8, 0xFF3300, 10);
+			//this.healthBar.prepareObject(x_pos, y_pos - 12, 64, 8, 0xFF3300, 10);
+		}
+
+		this.monsterSprite = new PIXI.Sprite(this.monsterTexture);
 		this.monsterSprite.scale.x = 0.05;
 		this.monsterSprite.scale.y = 0.05;
-		this.monsterSprite.x = x_pos;
+		this.monsterSprite.x = Math.round(x_pos - (this.monsterSprite.width/2));
 		this.monsterSprite.y = y_pos;
 		this.monsterSprite.vx = 0;
 		this.monsterSprite.vy = 0;
 		this.monsterSprite.name = "monster" + i;
+		this.monsterSprite.captured = false;
 		this.newDirTimeStep = 50.0;
 		this.timeSinceNewDir = 0.0;
 	}
 
 	initObject() {
+		this.healthBar.initObject();
 		this.app.stage.addChild(this.monsterSprite);
 		console.log("monster character initialized");
 	}
 
-	initLoop(playerUI) {
+	initLoop(player) {
 		// start the monster loop
-		this.app.ticker.add(delta => this.monsterLoop(delta, playerUI));
+		this.app.ticker.add(delta => this.monsterLoop(delta, player));
 		console.log("monster loop initialized");
 	}
 
-	monsterLoop(delta, playerUI) {
-		if (!playerUI.isPaused()) {
+	monsterLoop(delta, player) {
+		if (!player.ui.isPaused() && !this.isCaptured()) {
 			this.timeSinceNewDir += delta;
 			if(this.timeSinceNewDir > this.newDirTimeStep) {
 				this.timeSinceNewDir = 0.0;
@@ -69,23 +84,68 @@ export default class Monster {
 				}
 				//this.matter.Body.applyForce(this.monsterCollider ,this.monsterCollider.position, this.force);
 			}
-			let monsterHitsWall = containSpriteInsideContainer(this.monsterSprite, 
+
+			let monsterHitsMapBound = containSpriteInsideContainer(this.monsterSprite, 
 				{x: 0, y: 0, width: 1024, height: 1024});
 
-			if (monsterHitsWall !== "none") {
-				// character hit wall: do nothing, already contained
+
+			let allVisibleNets = this.app.stage.children.filter(child => 
+				child.name.indexOf("net") !== -1 && child.visible === true);
+
+			if (allVisibleNets !== undefined && allVisibleNets.length !== 0) {
+				//console.log(allVisibleNets);
+				for (var i = 0; i < allVisibleNets.length; i++) {
+				    if(hitTestRectangle(this.monsterSprite, allVisibleNets[i])) {
+				    	// make it invisible
+				    	allVisibleNets[i].visible = false;
+				    	// stop monster
+						this.stopMonster();
+					}
+				}
+			}
+			
+			if (monsterHitsMapBound !== "none") {
+				this.reverseMonsterDirection();
 			}
 			else if (this.monsterSprite.vx !== 0) {
 				// walking horizontally
 				this.monsterSprite.x += this.monsterSprite.vx;
+				// move healthbar
+				this.healthBar.container.x += this.monsterSprite.vx;
 			}
 			else if (this.monsterSprite.vy !== 0) {
 				// walking vertically
 				this.monsterSprite.y += this.monsterSprite.vy;
+				// move healthbar
+				this.healthBar.container.y += this.monsterSprite.vy;
 			}
 			else {
 				// character isn't walking: do nothing
 			}
 		}
+	}
+
+	reverseMonsterDirection() {
+		// if monsters hits wall we reverse his speed so he doesn't stop moving
+		if (this.monsterSprite.vx !== 0) {
+			this.monsterSprite.vx *= -1;
+		}
+		else if (this.monsterSprite.vy !== 0){
+			this.monsterSprite.vy *= -1;
+		}
+		else {
+			// shouldn't happen
+		}
+	}
+
+	stopMonster() {
+		setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
+		this.monsterSprite.captured = true;
+		this.monsterSprite.vx = 0;
+		this.monsterSprite.vy = 0;
+	}
+
+	isCaptured() {
+		return this.monsterSprite.captured;
 	}
 }

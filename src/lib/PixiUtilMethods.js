@@ -98,4 +98,51 @@ function containSpriteInsideContainer(sprite, container) {
 	return collision;
 }
 
-export {textStyle, setTextureOnlyIfNeeded, getRoundedRectangle, containSpriteInsideContainer};
+function hitTestRectangle(sprite1,sprite2) {
+	//Define the variables we'll need to calculate
+	let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
+
+	//hit will determine whether there's a collision
+	hit = false;
+
+	//Find the center points of each sprite
+	sprite1.centerX = sprite1.x + sprite1.width / 2;
+	sprite1.centerY = sprite1.y + sprite1.height / 2;
+	sprite2.centerX = sprite2.x + sprite2.width / 2;
+	sprite2.centerY = sprite2.y + sprite2.height / 2;
+
+	//Find the half-widths and half-heights of each sprite
+	sprite1.halfWidth = sprite1.width / 2;
+	sprite1.halfHeight = sprite1.height / 2;
+	sprite2.halfWidth = sprite2.width / 2;
+	sprite2.halfHeight = sprite2.height / 2;
+
+	//Calculate the distance vector between the sprites
+	vx = sprite1.centerX - sprite2.centerX;
+	vy = sprite1.centerY - sprite2.centerY;
+
+	//Figure out the combined half-widths and half-heights
+	combinedHalfWidths = sprite1.halfWidth + sprite2.halfWidth;
+	combinedHalfHeights = sprite1.halfHeight + sprite2.halfHeight;
+
+	//Check for a collision on the x axis
+	if (Math.abs(vx) < combinedHalfWidths) {
+		//A collision might be occurring. Check for a collision on the y axis
+		if (Math.abs(vy) < combinedHalfHeights) {
+		  //There's definitely a collision happening
+		  hit = true;
+		}
+		else {
+		  //There's no collision on the y axis
+		  hit = false;
+		}
+	}
+	else {
+		//There's no collision on the x axis
+		hit = false;
+	}
+	//'hit' will be either 'true' or 'false'
+	return hit;
+}
+
+export {textStyle, setTextureOnlyIfNeeded, getRoundedRectangle, containSpriteInsideContainer, hitTestRectangle};

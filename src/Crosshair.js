@@ -14,6 +14,7 @@ export default class Crosshair {
 		this.sprite.scale.y = 0.1;
 		this.sprite.x = x_pos;
 		this.sprite.y = y_pos;
+        this.sprite.name = "crosshair";
 		this.sprite.visible = false;
     }
 

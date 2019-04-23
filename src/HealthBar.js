@@ -1,10 +1,6 @@
 import { textStyle, getRoundedRectangle } from "./lib/PixiUtilMethods";
 
 export default class HealthBar {
-	static loadResources() {
-        // nothing
-    }
-
     constructor(app) {
     	this.app = app;
     }
@@ -37,7 +33,11 @@ export default class HealthBar {
 
         let style = textStyle("healthText");
         let valueText = new PIXI.Text(maxHealth, style);
-        valueText.x = -10;
+
+        if (maxHealth < 10)
+            valueText.x = -5;
+        else
+            valueText.x = -10;
         valueText.y = -15;
         valueText.resolution = 2;
         this.container.addChild(valueText);

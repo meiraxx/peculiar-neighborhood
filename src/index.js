@@ -4,7 +4,8 @@ import Player from './Player';
 import Bush from './Bush';
 import Viewport from './lib/viewport';
 import Monster from './Monster';
-import Tree from './Tree'
+import Tree from './Tree';
+
 function loadProgressHandler(loader,resource) {
   console.log("loading " + resource.url + " "  + loader.progress + "%");
 }
@@ -105,9 +106,9 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	//MATTER.Engine.run(physicsEngine);
 	// then all other loops
 	player.initLoop();
-	
-	monsters.forEach(function(m) {		
-		m.initLoop(player.ui);
+
+	monsters.forEach(function(m) {
+		m.initLoop(player);
 	});
 	
 });

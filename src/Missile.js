@@ -47,7 +47,7 @@ export default class Missile {
 
 	initObject() {
 		this.app.stage.addChild(this.sprite);
-		//console.log(this.typeName + "initialized");
+		//console.log(this.sprite.name + " initialized");
 	}
 
 

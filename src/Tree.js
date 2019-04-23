@@ -2,7 +2,7 @@
 export default class Tree {
 	
 	static loadResources() {
-		PIXI.loader.add("assets/tree/conifer.png");
+		PIXI.loader.add("assets/staticElements/conifer.png");
 	}
 	
 	constructor(app) {
@@ -11,7 +11,7 @@ export default class Tree {
 	}
 	
 	prepareObject(x_pos, y_pos, i) {
-		let treeTexture = PIXI.loader.resources["assets/tree/conifer.png"].texture;
+		let treeTexture = PIXI.loader.resources["assets/staticElements/conifer.png"].texture;
 		
 		this.sprite = new PIXI.Sprite(treeTexture);
 		this.sprite.scale.x = 0.2;

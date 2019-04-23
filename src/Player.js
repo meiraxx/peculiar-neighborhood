@@ -378,10 +378,10 @@ export default class Player {
 	playerLoop(delta) {
 		if (!this.ui.isPaused()) {
 			// use player's velocity to make him move
-			let playerHitsWall = containSpriteInsideContainer(this.playerSprite, 
+			let playerHitsMapBound = containSpriteInsideContainer(this.playerSprite, 
 				{x: 0, y: 0, width: 1024, height: 1024});
 
-			if (playerHitsWall !== "none") {
+			if (playerHitsMapBound !== "none") {
 				// character hit wall: do nothing, already contained
 			}
 			else if (this.playerSprite.vx !== 0) {

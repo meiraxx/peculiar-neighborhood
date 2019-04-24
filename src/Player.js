@@ -551,8 +551,8 @@ export default class Player {
 			}	
 		}
 		//update crosshair
-		this.ui.crosshair.sprite.x = this.playerSprite.x + this.playerSprite.width / 2 + 100.0 *  this.ui.shootDirection.x;
-		this.ui.crosshair.sprite.y = this.playerSprite.y + this.playerSprite.height / 2 + 100.0 * this.ui.shootDirection.y;
+		this.ui.crosshair.sprite.x = this.playerSprite.x - this.ui.crosshair.sprite.width / 2  + this.playerSprite.width / 2 + 100.0 *  this.ui.shootDirection.x;
+		this.ui.crosshair.sprite.y = this.playerSprite.y - this.ui.crosshair.sprite.height / 2 + this.playerSprite.height / 2 + 100.0 * this.ui.shootDirection.y;
 		//update bullets
 		for (var i = this.ui.bullets.length - 1; i >= 0; i--) {
 			this.ui.bullets[i].update(delta);

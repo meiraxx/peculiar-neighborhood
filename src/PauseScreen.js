@@ -42,21 +42,21 @@ export default class PauseScreen {
         	3, 0x414554);
         this.container.addChild(gameHelpRectangle);
 
-        let gameHelpString = "\"0\": unequip items\n" + 
+        let gameHelpString = "\"A\": walk left\n" +
+        					"\"W\": walk up\n" +
+        					"\"S\": walk down\n" +
+        					"\"D\": walk right\n" + 
+        					"\"MOUSE-1\": use item\n" + 
+        					"\"0\": unequip items\n" + 
         					"\"1\": equip bat\n" +
         					"\"2\": equip pistol\n" +
         					"\"3\": equip netgun\n" +
-        					"\"4\": equip whistle\n" +
+        					//"\"4\": equip whistle\n" +
         					"\"F1\": see bat info\n" +
         					"\"F2\": see pistol info\n" +
         					"\"F3\": see netgun info\n" +
-        					"\"F4\": see whistle info\n" +
-        					"\"ArrowLeft\": walk left\n" +
-        					"\"ArrowUp\": walk up\n" +
-        					"\"ArrowDown\": walk down\n" +
-        					"\"ArrowRight\": walk right\n" +
+        					//"\"F4\": see whistle info\n" +
         					"\"F\": interact with objects on the map\n" +
-        					"\"MOUSE-1\": use item\n" + 
         					"\"P\": pause/unpause game";
 
         let gameHelpText = new PIXI.Text(gameHelpString, textStyle("gameHelpText"));

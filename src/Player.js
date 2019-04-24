@@ -51,10 +51,14 @@ export default class Player {
 		this.ui.prepareObject(x_pos, y_pos);
 
 		// KEY STROKE EVENTS
-		this.leftKey = keyboard("ArrowLeft");
-		this.rightKey = keyboard("ArrowRight");
-		this.downKey = keyboard("ArrowDown");
-		this.upKey = keyboard("ArrowUp");
+		//this.leftKey = keyboard("ArrowLeft");
+		//this.rightKey = keyboard("ArrowRight");
+		//this.downKey = keyboard("ArrowDown");
+		//this.upKey = keyboard("ArrowUp");
+		this.leftKey = keyboard("a");
+		this.rightKey = keyboard("d");
+		this.downKey = keyboard("s");
+		this.upKey = keyboard("w");
 
 		this.zeroKey = keyboard("0");
 		this.oneKey = keyboard("1");
@@ -63,6 +67,8 @@ export default class Player {
 		this.f1Key = keyboard("F1");
 		this.f2Key = keyboard("F2");
 		this.f3Key = keyboard("F3");
+
+		this.fKey = keyboard("f");
 
 		this.pKey = keyboard("p");
 		this.escKey = keyboard("Escape");
@@ -194,6 +200,13 @@ export default class Player {
 			}
 		};
 		this.f3Key.release = () => {
+		};
+
+		this.fKey.press = () => {
+			if (!this.ui.isPaused()) {
+			}
+		};
+		this.fKey.release = () => {
 		};
 
 		// PAUSE: "P" or "Esc"
@@ -397,6 +410,8 @@ export default class Player {
 				this.ui.cardsInfo.container.x += this.playerSprite.vx;
 				// move invisible pause screen
 				this.ui.pauseScreen.container.x += this.playerSprite.vx;
+				// move score text
+				this.ui.score.container.x += this.playerSprite.vx;
 			}
 			else if (this.playerSprite.vy !== 0) {
 				// walking vertically
@@ -411,6 +426,8 @@ export default class Player {
 				this.ui.cardsInfo.container.y += this.playerSprite.vy;
 				// move invisible pause screen
 				this.ui.pauseScreen.container.y += this.playerSprite.vy;
+				// move score text
+				this.ui.score.container.y += this.playerSprite.vy;
 			}
 			else {
 				// character isn't walking: do nothing

@@ -45,6 +45,14 @@ function textStyle(choice) {
 		    fill: ['#d8c3d0'],
 		});
 	}
+	else if (choice === "scoreText") {
+		textStyle = new PIXI.TextStyle({
+		    fontFamily: 'Courier New',
+		    fontSize: 20,
+		    align : 'right',
+		    fill: ['#ffffff'],
+		});
+	}
 	return textStyle;
 }
 

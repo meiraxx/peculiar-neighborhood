@@ -3,7 +3,8 @@ import Cards from "./Cards";
 import PauseScreen from "./PauseScreen";
 import Crosshair from "./Crosshair";
 import CardsInfo from "./CardsInfo";
-import Missile from './Missile';
+import Missile from "./Missile";
+import Score from "./Score";
 
 export default class UserInterface {
 	static loadResources() {
@@ -31,15 +32,20 @@ export default class UserInterface {
 			this.nets.push(new Missile(app,"net"));
 		}
 		this.cardsInfo = new CardsInfo(app);
+		this.score = new Score(app);
 	}
 
 	prepareObject(x_pos, y_pos) {
 		this.currentItem = "none";
 		this.prepareHealthbar(x_pos - 1, y_pos - 4);
-		this.prepareCards(x_pos - 530, 690);
+		this.prepareCards(x_pos - 530, y_pos + 178);
 		this.prepareCrosshair(x_pos, y_pos);
 		this.prepareMissiles(x_pos, y_pos);
 		this.prepareCardsInfo(x_pos, y_pos);
+
+		// viewportwidth/2
+		// -viewportheight/2 - player height/2
+		this.prepareScore(x_pos + 405, y_pos - 230);
 		this.preparePauseScreen(x_pos, y_pos);
 	}
 
@@ -49,6 +55,7 @@ export default class UserInterface {
 		this.initCrosshair();
 		this.initMissiles();
 		this.initCardsInfo();
+		this.initScore();
 		// pause screen always in the end
 		this.initPauseScreen();
 	}
@@ -136,5 +143,14 @@ export default class UserInterface {
 
 	toggleCardsInfo(cardInfo) {
 		this.cardsInfo.toggle(cardInfo);
+	}
+
+	// SCORE
+	prepareScore(x_pos, y_pos) {
+		this.score.prepareObject(x_pos, y_pos);
+	}
+
+	initScore() {
+		this.score.initObject();
 	}
 }

@@ -1,5 +1,5 @@
 import UserInterface from './UserInterface';
-import { getRandomArbitraryFloat, getRandomArbitraryInt } from "./lib/UtilMethods";
+import { getRandomArbitraryInt } from "./lib/UtilMethods";
 import { containSpriteInsideContainer, hitTestRectangle, setTextureOnlyIfNeeded } from "./lib/PixiUtilMethods";
 import HealthBar from "./HealthBar";
 
@@ -9,6 +9,8 @@ export default class Monster {
 		PIXI.loader.add("assets/monsters/normalMonster.png");
 		PIXI.loader.add("assets/capturedMonsters/angryMonster.png");
 		PIXI.loader.add("assets/capturedMonsters/normalMonster.png");
+		PIXI.loader.add("assets/deadMonsters/angryMonster.png");
+		PIXI.loader.add("assets/deadMonsters/normalMonster.png");
 	}
 	
 	constructor(app, isAngry) {
@@ -23,6 +25,8 @@ export default class Monster {
 			this.monsterTexture = PIXI.loader.resources["assets/monsters/angryMonster.png"].texture;
 			this.capturedMonsterTexture = 
 				PIXI.loader.resources["assets/capturedMonsters/angryMonster.png"].texture;
+			this.deadMonsterTexture = 
+				PIXI.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
 			this.healthBar.prepareObject(x_pos, y_pos - 12, (32*6)/10, 8, 0xFF3300, 6);
 			//this.healthBar.prepareObject(x_pos, y_pos - 12, 64, 8, 0xFF3300, 6);
 		}
@@ -30,6 +34,8 @@ export default class Monster {
 			this.monsterTexture = PIXI.loader.resources["assets/monsters/normalMonster.png"].texture;
 			this.capturedMonsterTexture = 
 				PIXI.loader.resources["assets/capturedMonsters/normalMonster.png"].texture;
+			this.deadMonsterTexture = 
+				PIXI.loader.resources["assets/deadMonsters/normalMonster.png"].texture;
 			this.healthBar.prepareObject(x_pos, y_pos - 12, 32, 8, 0xFF3300, 10);
 			//this.healthBar.prepareObject(x_pos, y_pos - 12, 64, 8, 0xFF3300, 10);
 		}
@@ -43,6 +49,7 @@ export default class Monster {
 		this.monsterSprite.vy = 0;
 		this.monsterSprite.name = "monster" + i;
 		this.monsterSprite.captured = false;
+		this.monsterSprite.dead = false;
 		this.newDirTimeStep = 50.0;
 		this.timeSinceNewDir = 0.0;
 	}
@@ -60,7 +67,7 @@ export default class Monster {
 	}
 
 	monsterLoop(delta, player) {
-		if (!player.ui.isPaused() && !this.isCaptured()) {
+		if (!player.ui.isPaused() && !this.isCaptured() && !this.isDead()) {
 			this.timeSinceNewDir += delta;
 			if(this.timeSinceNewDir > this.newDirTimeStep) {
 				this.timeSinceNewDir = 0.0;
@@ -101,7 +108,7 @@ export default class Monster {
 				    	// make it invisible
 				    	allVisibleNets[i].visible = false;
 				    	// stop monster
-						this.stopMonster();
+						this.stopMonster(player);
 					}
 				}
 			}
@@ -111,8 +118,8 @@ export default class Monster {
 				    if(hitTestRectangle(this.monsterSprite, allVisibleBullets[i])) {
 				    	// make it invisible
 				    	allVisibleBullets[i].visible = false;
-				    	// stop monster
-						this.harmMonster("pistol");
+				    	// harm monster
+						this.harmMonster(player, "pistol");
 					}
 				}
 			}
@@ -151,7 +158,7 @@ export default class Monster {
 		}
 	}
 
-	stopMonster() {
+	stopMonster(player) {
 		let healthValue = +this.healthBar.container.valueText.text; // convert to string to int
 
 		// monster must be with less than half of his HP to be captured
@@ -160,18 +167,38 @@ export default class Monster {
 			this.monsterSprite.captured = true;
 			this.monsterSprite.vx = 0;
 			this.monsterSprite.vy = 0;
+			player.ui.score.addScore(this.isAngry?2:1);
 		}
+		// else monster not stopped!
 	}
 
-	harmMonster(weapon) {
+	harmMonster(player, weapon) {
 		if (weapon === "pistol") {
 			// weapon: 50% chance 1 dmg, 50% chance 2 dmg
 			let randomInt = getRandomArbitraryInt(1, 2);
 			this.healthBar.subtractHealth(randomInt);
 		}
+		this.killMonster(player);
+	}
+
+	killMonster(player) {
+		let healthValue = +this.healthBar.container.valueText.text;
+		// if health is 0 then monster is dead
+		if (healthValue === 0) {
+			setTextureOnlyIfNeeded(this.monsterSprite, this.deadMonsterTexture);
+			this.monsterSprite.dead = true;
+			this.monsterSprite.vx = 0;
+			this.monsterSprite.vy = 0;
+			player.ui.score.addScore(this.isAngry?-2:-1);
+		}
+		// else monster is ok!
 	}
 
 	isCaptured() {
 		return this.monsterSprite.captured;
+	}
+
+	isDead() {
+		return this.monsterSprite.dead;
 	}
 }

@@ -32,18 +32,12 @@ export default class HealthBar {
         this.container.outerBar = outerBar;
 
         let style = textStyle("healthText");
-        let valueText = new PIXI.Text(maxHealth, style);
+        this.container.valueText = new PIXI.Text(maxHealth, style);
 
-        if (maxHealth < 10)
-            valueText.x = -5;
-        else
-            valueText.x = -10;
-        valueText.y = -15;
-        valueText.resolution = 2;
-        this.container.addChild(valueText);
-        // save health value reference
-        this.container.valueText = valueText;
-
+        this.calculateHealthTextX();
+        this.container.valueText.y = -15;
+        this.container.valueText.resolution = 2;
+        this.container.addChild(this.container.valueText);
     }
 
     initObject() {
@@ -51,13 +45,27 @@ export default class HealthBar {
         console.log("healthBar initialized");
     }
 
+    calculateHealthTextX() {
+        if (this.container.currHealth < 10)
+            this.container.valueText.x = -5;
+        else
+            this.container.valueText.x = -10;
+    }
+
     subtractHealth(value) {
-        let maxWidth = this.container.innerBar.width;
-        let maxHealth = this.container.maxHealth;
-        let ratio = maxWidth/maxHealth;
-        console.log("Healthbar maxWidth/maxHealth ratio: " + ratio);
-        this.container.currHealth -= value;
-        this.container.outerBar.width -= value*ratio;
+        if (this.container.currHealth - value > 0) {
+            let maxWidth = this.container.innerBar.width;
+            let maxHealth = this.container.maxHealth;
+            let ratio = maxWidth/maxHealth;
+            console.log("Healthbar maxWidth/maxHealth ratio: " + ratio);
+            this.container.currHealth -= value;
+            this.container.outerBar.width -= value*ratio;
+        }
+        else {
+            this.container.currHealth = 0;
+            this.container.outerBar.width = 0;
+        }
+        this.calculateHealthTextX();
         this.container.valueText.setText(this.container.currHealth);
     }
   

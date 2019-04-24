@@ -1,5 +1,5 @@
 import UserInterface from './UserInterface';
-import { getRandomArbitraryFloat } from "./lib/UtilMethods";
+import { getRandomArbitraryFloat, getRandomArbitraryInt } from "./lib/UtilMethods";
 import { containSpriteInsideContainer, hitTestRectangle, setTextureOnlyIfNeeded } from "./lib/PixiUtilMethods";
 import HealthBar from "./HealthBar";
 
@@ -91,6 +91,8 @@ export default class Monster {
 
 			let allVisibleNets = this.app.stage.children.filter(child => 
 				child.name.indexOf("net") !== -1 && child.visible === true);
+			let allVisibleBullets = this.app.stage.children.filter(child => 
+				child.name.indexOf("bullet") !== -1 && child.visible === true);
 
 			if (allVisibleNets !== undefined && allVisibleNets.length !== 0) {
 				//console.log(allVisibleNets);
@@ -104,6 +106,17 @@ export default class Monster {
 				}
 			}
 			
+			if (allVisibleBullets !== undefined && allVisibleBullets.length !== 0) {
+				for (var i = 0; i < allVisibleBullets.length; i++) {
+				    if(hitTestRectangle(this.monsterSprite, allVisibleBullets[i])) {
+				    	// make it invisible
+				    	allVisibleBullets[i].visible = false;
+				    	// stop monster
+						this.harmMonster("pistol");
+					}
+				}
+			}
+
 			if (monsterHitsMapBound !== "none") {
 				this.reverseMonsterDirection();
 			}
@@ -139,10 +152,23 @@ export default class Monster {
 	}
 
 	stopMonster() {
-		setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
-		this.monsterSprite.captured = true;
-		this.monsterSprite.vx = 0;
-		this.monsterSprite.vy = 0;
+		let healthValue = +this.healthBar.container.valueText.text; // convert to string to int
+
+		// monster must be with less than half of his HP to be captured
+		if (healthValue <= this.healthBar.container.maxHealth/2) {
+			setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
+			this.monsterSprite.captured = true;
+			this.monsterSprite.vx = 0;
+			this.monsterSprite.vy = 0;
+		}
+	}
+
+	harmMonster(weapon) {
+		if (weapon === "pistol") {
+			// weapon: 50% chance 1 dmg, 50% chance 2 dmg
+			let randomInt = getRandomArbitraryInt(1, 2);
+			this.healthBar.subtractHealth(randomInt);
+		}
 	}
 
 	isCaptured() {

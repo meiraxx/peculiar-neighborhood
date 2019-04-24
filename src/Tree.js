@@ -1,4 +1,3 @@
-
 export default class Tree {
 	
 	static loadResources() {
@@ -14,8 +13,8 @@ export default class Tree {
 		let treeTexture = PIXI.loader.resources["assets/staticElements/conifer.png"].texture;
 		
 		this.sprite = new PIXI.Sprite(treeTexture);
-		this.sprite.scale.x = 0.2;
-		this.sprite.scale.y = 0.2;
+		this.sprite.scale.x = 0.3;
+		this.sprite.scale.y = 0.3;
 		this.sprite.x = x_pos;
 		this.sprite.y = y_pos;
 		this.sprite.name = "tree" + i;
@@ -23,7 +22,7 @@ export default class Tree {
 
 	initObject() {
 		this.app.stage.addChild(this.sprite);
-		console.log("tree  initialized");
+		console.log("tree initialized");
 	}
 
 }

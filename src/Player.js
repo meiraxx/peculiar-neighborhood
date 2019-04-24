@@ -1,5 +1,5 @@
 import { keyboard } from "./lib/UtilMethods";
-import { setTextureOnlyIfNeeded, containSpriteInsideContainer } from "./lib/PixiUtilMethods";
+import { setTextureOnlyIfNeeded, containSpriteInsideContainer, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision } from "./lib/PixiUtilMethods";
 import UserInterface from './UserInterface';
 
 export default class Player {
@@ -46,6 +46,10 @@ export default class Player {
 		this.playerSprite.vx = 0;
 		this.playerSprite.vy = 0;
  		this.playerSprite.name = "player";
+ 		this.playerSprite.velocity = 3;
+ 		this.isGrabbing = false;
+ 		this.grabbedMonster = undefined;
+ 		this.grabbedMonstersList = [];
 
 		// SETUP player UI
 		this.ui.prepareObject(x_pos, y_pos);
@@ -83,7 +87,7 @@ export default class Player {
 		this.leftKey.press = () => {
 			if (!this.ui.isPaused()) {
 				this.command = "left";
-				this.playerSprite.vx = -3;
+				this.playerSprite.vx = -this.playerSprite.velocity;
 				this.playerSprite.vy = 0;
 				this.updatePlayerSprite();
 			}
@@ -97,7 +101,7 @@ export default class Player {
 		this.rightKey.press = () => {
 			if (!this.ui.isPaused()) {
 				this.command = "right";
-				this.playerSprite.vx = 3;
+				this.playerSprite.vx = this.playerSprite.velocity;
 				this.playerSprite.vy = 0;
 				this.updatePlayerSprite();
 			}
@@ -112,7 +116,7 @@ export default class Player {
 			if (!this.ui.isPaused()) {
 				this.command = "down";
 				this.playerSprite.vx = 0;
-				this.playerSprite.vy = 3;
+				this.playerSprite.vy = this.playerSprite.velocity;
 				this.updatePlayerSprite();
 			}
 		};
@@ -126,7 +130,7 @@ export default class Player {
 			if (!this.ui.isPaused()) {
 				this.command = "up";
 				this.playerSprite.vx = 0;
-				this.playerSprite.vy = -3;
+				this.playerSprite.vy = -this.playerSprite.velocity;
 				this.updatePlayerSprite();
 			}
 		};
@@ -204,6 +208,7 @@ export default class Player {
 
 		this.fKey.press = () => {
 			if (!this.ui.isPaused()) {
+				this.grabNearestMonster();
 			}
 		};
 		this.fKey.release = () => {
@@ -246,7 +251,7 @@ export default class Player {
 			if (!this.ui.isPaused() && this.ui.shootableItem()) {
 				let angle = Math.acos( this.ui.shootDirection.y );
 				angle *= this.ui.shootDirection.x > 0.0 ? -1 : 1;
-				if( this.ui.currentItem == "netgun") {
+				if( this.ui.currentItem === "netgun") {
 					this.ui.nets[this.ui.currentNet].go(
 						this.playerSprite.x + this.playerSprite.width/2 - this.ui.shootDirection.y * this.ui.nets[0].sprite.width / 2,
 						this.playerSprite.y + this.playerSprite.height/2 + this.ui.shootDirection.x * this.ui.nets[0].sprite.height / 2,
@@ -283,15 +288,50 @@ export default class Player {
 		this.ui.initObject();
 	}
 
+	grabNearestMonster() {
+		let monsters = this.app.stage.children.filter(child => child.name.indexOf("monster") !== -1);
+
+		if (monsters !== undefined && monsters.length !== 0 && !this.isGrabbing) {
+			for (var i = 0; i < monsters.length; i++) {
+			    if (monsters[i].captured && checkDynamicIntoDynamicCollision(this.playerSprite, monsters[i])) {
+			    	for (var j = 0; j < this.grabbedMonstersList.length; j++) {
+						if (this.grabbedMonstersList[j]===monsters[i]) {
+							return;
+						}
+					}
+			    	this.isGrabbing = true;
+					monsters[i].x = this.playerSprite.x;
+					monsters[i].y = this.playerSprite.y;
+					// hide healthbar
+					monsters[i].healthBar.container.visible = false;
+					this.grabbedMonster = monsters[i];
+				}
+			}
+		}
+		else {
+			// get drop-monster points (max: 4 monsters)
+			for (var i = 0; i < this.grabbedMonstersList.length; i++) {
+				if (this.grabbedMonstersList[i]===this.grabbedMonster) {
+					return;
+				}
+			}
+			console.log("valid drop");
+			this.isGrabbing = false;
+			this.ui.score.addScore(this.grabbedMonster.isAngry?2:1);
+			this.grabbedMonstersList.push(this.grabbedMonster);
+			this.grabbedMonster = undefined;
+		}
+	}
+
 	/*
 	resetPreviousVelX() {
 		if (this.commandArray[0]) {
 			this.command = "left";
-			this.playerSprite.vx = -3;
+			this.playerSprite.vx = -this.playerSprite.velocity;
 		}
 		else if (this.commandArray[1]) {
 			this.command = "right";
-			this.playerSprite.vx = 3;
+			this.playerSprite.vx = this.playerSprite.velocity;
 		}
 		this.updatePlayerSprite();
 	}
@@ -299,11 +339,11 @@ export default class Player {
 	resetPreviousVelY() {
 		if (this.commandArray[2]) {
 			this.command = "down";
-			this.playerSprite.vy = 3;
+			this.playerSprite.vy = this.playerSprite.velocity;
 		}
 		else if (this.commandArray[3]) {
 			this.command = "up";
-			this.playerSprite.vy = -3;
+			this.playerSprite.vy = -this.playerSprite.velocity;
 		}
 		this.updatePlayerSprite();
 	}
@@ -388,50 +428,127 @@ export default class Player {
 		setTextureOnlyIfNeeded(this.playerSprite, this.playerTexture);
 	}
 
+	movePlayerSprite() {
+		if (this.playerSprite.vx !== 0) {
+			//console.log("wtf: " + this.playerHitsHouse);
+			// walking horizontally
+			this.playerSprite.x += this.playerSprite.vx;
+			// camera effect
+			this.viewport.move(this.playerSprite.vx, 0);
+			// move healthbar
+			this.ui.healthBar.container.x += this.playerSprite.vx;
+			// move cards container
+			this.ui.cards.container.x += this.playerSprite.vx;
+			// move invisible cards info container
+			this.ui.cardsInfo.container.x += this.playerSprite.vx;
+			// move invisible pause screen
+			this.ui.pauseScreen.container.x += this.playerSprite.vx;
+			// move score text
+			this.ui.score.container.x += this.playerSprite.vx;
+			// move grabbed monster
+			if (this.isGrabbing) {
+				this.grabbedMonster.x += this.playerSprite.vx;
+			}
+		}
+		else if (this.playerSprite.vy !== 0) {
+			// walking vertically
+			this.playerSprite.y += this.playerSprite.vy;
+			// camera effect
+			this.viewport.move(0, this.playerSprite.vy);
+			// move healthbar
+			this.ui.healthBar.container.y += this.playerSprite.vy;
+			// move cards container
+			this.ui.cards.container.y += this.playerSprite.vy;
+			// move invisible cards info container
+			this.ui.cardsInfo.container.y += this.playerSprite.vy;
+			// move invisible pause screen
+			this.ui.pauseScreen.container.y += this.playerSprite.vy;
+			// move score text
+			this.ui.score.container.y += this.playerSprite.vy;
+			// move grabbed monster
+			if (this.isGrabbing) {
+				this.grabbedMonster.y += this.playerSprite.vy;
+			}
+		}
+		else {
+			// character isn't walking: do nothing
+		}
+	}
+
+	resetPlayerSprite(factor) {
+		console.log(this.playerSprite.vx);
+		if (this.playerSprite.vx !== 0) {
+			// walking horizontally
+			this.playerSprite.x -= factor*this.playerSprite.vx;
+			// camera effect
+			this.viewport.move(-factor*this.playerSprite.vx, 0);
+			// move healthbar
+			this.ui.healthBar.container.x -= factor*this.playerSprite.vx;
+			// move cards container
+			this.ui.cards.container.x -= factor*this.playerSprite.vx;
+			// move invisible cards info container
+			this.ui.cardsInfo.container.x -= factor*this.playerSprite.vx;
+			// move invisible pause screen
+			this.ui.pauseScreen.container.x -= factor*this.playerSprite.vx;
+			// move score text
+			this.ui.score.container.x -= factor*this.playerSprite.vx;
+		}
+		else if (this.playerSprite.vy !== 0) {
+			// walking vertically
+			this.playerSprite.y -= factor*this.playerSprite.vy;
+			// camera effect
+			this.viewport.move(0, -factor*this.playerSprite.vy);
+			// move healthbar
+			this.ui.healthBar.container.y -= factor*this.playerSprite.vy;
+			// move cards container
+			this.ui.cards.container.y -= factor*this.playerSprite.vy;
+			// move invisible cards info container
+			this.ui.cardsInfo.container.y -= factor*this.playerSprite.vy;
+			// move invisible pause screen
+			this.ui.pauseScreen.container.y -= factor*this.playerSprite.vy;
+			// move score text
+			this.ui.score.container.y -= factor*this.playerSprite.vy;
+		}
+		else {
+			// character isn't walking: do nothing
+		}
+	}
+
+	playerIsMoving() {
+		return (this.playerSprite.vx !== 0 || this.playerSprite.vy !== 0);
+	}
+
 	playerLoop(delta) {
 		if (!this.ui.isPaused()) {
 			// use player's velocity to make him move
 			let playerHitsMapBound = containSpriteInsideContainer(this.playerSprite, 
 				{x: 0, y: 0, width: 1024, height: 1024});
+			
+			let houses = this.app.stage.children.filter(child => 
+				child.name.indexOf("house") !== -1);
 
+			this.playerHitsHouse = "none";
+			if (houses !== undefined && houses.length !== 0 && this.playerIsMoving()) {
+				for (var i = 0; i < houses.length; i++) {
+				    this.playerHitsHouse = detainSpriteOutsideDetainer(this.playerSprite, houses[i]);
+				    if (this.playerHitsHouse !== "none"){
+				    	//console.log("HOUSE WAS HIT WTF 1");
+				    	break;
+				    }	
+				}
+			}
+			
+			// if player hits something static, the behavior is already taken care of
 			if (playerHitsMapBound !== "none") {
-				// character hit wall: do nothing, already contained
+				// character hit map bounds: do nothing, already contained
 			}
-			else if (this.playerSprite.vx !== 0) {
-				// walking horizontally
-				this.playerSprite.x += this.playerSprite.vx;
-				// camera effect
-				this.viewport.move(this.playerSprite.vx, 0);
-				// move healthbar
-				this.ui.healthBar.container.x += this.playerSprite.vx;
-				// move cards container
-				this.ui.cards.container.x += this.playerSprite.vx;
-				// move invisible cards info container
-				this.ui.cardsInfo.container.x += this.playerSprite.vx;
-				// move invisible pause screen
-				this.ui.pauseScreen.container.x += this.playerSprite.vx;
-				// move score text
-				this.ui.score.container.x += this.playerSprite.vx;
-			}
-			else if (this.playerSprite.vy !== 0) {
-				// walking vertically
-				this.playerSprite.y += this.playerSprite.vy;
-				// camera effect
-				this.viewport.move(0, this.playerSprite.vy);
-				// move healthbar
-				this.ui.healthBar.container.y += this.playerSprite.vy;
-				// move cards container
-				this.ui.cards.container.y += this.playerSprite.vy;
-				// move invisible cards info container
-				this.ui.cardsInfo.container.y += this.playerSprite.vy;
-				// move invisible pause screen
-				this.ui.pauseScreen.container.y += this.playerSprite.vy;
-				// move score text
-				this.ui.score.container.y += this.playerSprite.vy;
+			else if (this.playerHitsHouse !== "none") {
+				//console.log("HOUSE WAS HIT WTF 2");
+				// character hit detainer bounds: do nothing, already detained
 			}
 			else {
-				// character isn't walking: do nothing
-			}
+				this.movePlayerSprite();
+			}	
 		}
 		//update crosshair
 		this.ui.crosshair.sprite.x = this.playerSprite.x + this.playerSprite.width / 2 + 100.0 *  this.ui.shootDirection.x;

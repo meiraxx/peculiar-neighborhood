@@ -1,6 +1,6 @@
 import UserInterface from './UserInterface';
 import { getRandomArbitraryInt } from "./lib/UtilMethods";
-import { containSpriteInsideContainer, hitTestRectangle, setTextureOnlyIfNeeded } from "./lib/PixiUtilMethods";
+import { containSpriteInsideContainer, setTextureOnlyIfNeeded, checkDynamicIntoDynamicCollision } from "./lib/PixiUtilMethods";
 import HealthBar from "./HealthBar";
 
 export default class Monster {
@@ -50,8 +50,12 @@ export default class Monster {
 		this.monsterSprite.name = "monster" + i;
 		this.monsterSprite.captured = false;
 		this.monsterSprite.dead = false;
+		this.monsterSprite.grabbed = false;
 		this.newDirTimeStep = 50.0;
 		this.timeSinceNewDir = 0.0;
+		// hack to be able to move healthbar when finding children
+		this.monsterSprite.healthBar = this.healthBar;
+		this.monsterSprite.isAngry = this.isAngry;
 	}
 
 	initObject() {
@@ -73,6 +77,10 @@ export default class Monster {
 				this.timeSinceNewDir = 0.0;
 
 				let randomNumber = Math.random();
+				//if (this.monsterSprite.name === "monster3") {
+				//	this.monsterSprite.vx = 0;
+				//	this.monsterSprite.vy = -2;
+				//}
 				if (randomNumber >= 0 && randomNumber < 0.25) {
 					this.monsterSprite.vx = 2;
 					this.monsterSprite.vy = 0;
@@ -100,11 +108,13 @@ export default class Monster {
 				child.name.indexOf("net") !== -1 && child.visible === true);
 			let allVisibleBullets = this.app.stage.children.filter(child => 
 				child.name.indexOf("bullet") !== -1 && child.visible === true);
+			let houses = this.app.stage.children.filter(child => 
+				child.name.indexOf("house") !== -1);
 
 			if (allVisibleNets !== undefined && allVisibleNets.length !== 0) {
 				//console.log(allVisibleNets);
 				for (var i = 0; i < allVisibleNets.length; i++) {
-				    if(hitTestRectangle(this.monsterSprite, allVisibleNets[i])) {
+				    if(checkDynamicIntoDynamicCollision(this.monsterSprite, allVisibleNets[i])) {
 				    	// make it invisible
 				    	allVisibleNets[i].visible = false;
 				    	// stop monster
@@ -115,7 +125,7 @@ export default class Monster {
 			
 			if (allVisibleBullets !== undefined && allVisibleBullets.length !== 0) {
 				for (var i = 0; i < allVisibleBullets.length; i++) {
-				    if(hitTestRectangle(this.monsterSprite, allVisibleBullets[i])) {
+				    if(checkDynamicIntoDynamicCollision(this.monsterSprite, allVisibleBullets[i])) {
 				    	// make it invisible
 				    	allVisibleBullets[i].visible = false;
 				    	// harm monster
@@ -124,7 +134,20 @@ export default class Monster {
 				}
 			}
 
+			if (houses !== undefined && houses.length !== 0) {
+				for (var i = 0; i < houses.length; i++) {
+				    if(checkDynamicIntoDynamicCollision(this.monsterSprite, houses[i])) {
+				    	//if (this.monsterSprite.name === "monster3")
+						//	console.log("1: " + this.monsterSprite.vy);
+						// monster reverts direction
+						this.reverseMonsterDirection();
+					}
+				}
+			}
+
 			if (monsterHitsMapBound !== "none") {
+				//if (this.monsterSprite.name === "monster3")
+				//	console.log("2: " + this.monsterSprite.vy);
 				this.reverseMonsterDirection();
 			}
 			else if (this.monsterSprite.vx !== 0) {

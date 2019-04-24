@@ -1,20 +1,21 @@
-import Fog from './Fog';
-import StaticMap from './StaticMap';
-import Player from './Player';
-import Bush from './Bush';
-import Viewport from './lib/viewport';
-import Monster from './Monster';
-import Tree from './Tree';
+import Fog from "./Fog";
+import StaticMap from "./StaticMap";
+import Player from "./Player";
+import Bush from "./Bush";
+import Viewport from "./lib/viewport";
+import Monster from "./Monster";
+import Tree from "./Tree";
+import House from "./House";
 
 function loadProgressHandler(loader,resource) {
   console.log("loading " + resource.url + " "  + loader.progress + "%");
 }
 
-var PIXI = require('pixi.js');
+var PIXI = require("pixi.js");
 PIXI.settings.RESOLUTION = 2;
 PIXI.settings.SORTABLE_CHILDREN = true;
 
-//var MATTER = require('matter-js');
+//var MATTER = require("matter-js");
 //var physicsEngine = MATTER.Engine.create();
 
 let type = "WebGL";
@@ -54,6 +55,7 @@ Player.loadResources();
 Bush.loadResources();
 Tree.loadResources();
 Monster.loadResources();
+House.loadResources();
 
 // 2. CONSTRUCT MAIN OBJECTS
 var staticMap = new StaticMap(app);
@@ -66,7 +68,11 @@ var m3 = new Monster(app, false);
 var monsters = [m0, m1, m2, m3];
 
 var bush0 = new Bush(app);
-var tree0 = new Tree(app)
+//var tree0 = new Tree(app);
+
+var house0 = new House(app);
+//var house1 = new House(app);
+var houses = [house0, /*house1*/];
 
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// 3. SETUP AND INITIALIZE OBJECTS
@@ -85,9 +91,9 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 
 	// setup monsters in the corners
 	m0.prepareObject(100, 100, 0);
-	m1.prepareObject(100, mapHeight - 100 - m0.monsterSprite.height, 1);
-	m2.prepareObject(mapWidth - 100 - m0.monsterSprite.width, 100, 2);
-	m3.prepareObject(mapWidth - 100 - m0.monsterSprite.width, mapHeight - 100 - m0.monsterSprite.height, 3);
+	m1.prepareObject(100, 200, 1);
+	m2.prepareObject(200, 100, 2);
+	m3.prepareObject(200, 200, 3);
 	monsters.forEach(function(m) {
 		m.initObject();
 	});
@@ -95,8 +101,15 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// setup other map elements
 	bush0.prepareObject(10, 400, 0);
 	bush0.initObject();
-	tree0.prepareObject(mapWidth - 100, mapHeight - 100, 0);
-	tree0.initObject();
+	//tree0.prepareObject(mapWidth - 100, mapHeight - 300, 0);
+	//tree0.initObject();
+
+	house0.prepareObject(mapWidth - 200, mapHeight - 200, 0);
+	//house1.prepareObject(100, mapHeight - 300, 0);
+
+	houses.forEach(function(h) {
+		h.initObject();
+	});
 
 	// initialize UI in the end
 	player.initUI();

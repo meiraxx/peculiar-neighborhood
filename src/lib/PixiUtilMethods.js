@@ -75,6 +75,14 @@ function containSpriteInsideContainer(sprite, container) {
 	let unitvx = sprite.vx/Math.abs(sprite.vx);
 	let unitvy = sprite.vy/Math.abs(sprite.vy);
 
+	if (isNaN(unitvx)) {
+		unitvx = 0;
+	}
+
+	if (isNaN(unitvy)) {
+		unitvy = 0;
+	}
+
 	// top hit
 	if (sprite.y + unitvy <= container.y) {
 		//console.log("Top hit: " + sprite.y);
@@ -106,9 +114,83 @@ function containSpriteInsideContainer(sprite, container) {
 	return collision;
 }
 
-function hitTestRectangle(sprite1,sprite2) {
+function detainSpriteOutsideDetainer(sprite, detainer) {
+	let collision = "none";
+
+	let unitvx = sprite.vx/Math.abs(sprite.vx);
+	let unitvy = sprite.vy/Math.abs(sprite.vy);
+
+	if (isNaN(unitvx)) {
+		unitvx = 0;
+	}
+
+	if (isNaN(unitvy)) {
+		unitvy = 0;
+	}
+
+	let detainerMinY = detainer.y;
+	let detainerMaxY = detainer.y + detainer.height;
+	let detainerMinX = detainer.x;
+	let detainerMaxX = detainer.x + detainer.width;
+
+	if ( (sprite.y - unitvy >= detainerMaxY || sprite.y + unitvy + sprite.height <= detainerMinY)
+		|| (sprite.x - unitvx >= detainerMaxX || sprite.x + unitvx + sprite.width <= detainerMinX) ) {
+		// no collisions whatsoever in this 4 cases
+	}
+	// collision in all other cases
+	else {
+		if (sprite.y - unitvy < detainerMaxY) {
+			if (unitvy > 0) {
+				sprite.y = detainerMinY - sprite.height;
+				collision = "top";
+			}
+		}
+		/*
+		if (sprite.x + unitvx > detainerMinX) {
+			console.log(unitvx);
+			console.log(sprite.x);
+			console.log(detainerMinX);
+			console.log(detainerMaxX);
+			
+			// right
+			if (unitvx < 0){
+				sprite.x = detainerMaxX;
+				collision = "right";
+			}
+			console.log(sprite.x);
+		}*/
+		//else
+		if (sprite.x + unitvx < detainerMaxX) {
+			// left
+			if (unitvx > 0){
+				sprite.x = detainerMinX - sprite.width;
+				collision = "left";
+			}
+		}
+		// TODO: RIGHT AND BOT
+		/*
+		else if (sprite.y + unitvy + sprite.height > detainerMinY) {
+			sprite.y = detainerMaxY;
+			collision = "bottom2";
+		}
+		else if (sprite.x - unitvx < detainerMaxX) {
+			sprite.x = detainerMaxX;
+			collision = "right";
+		}
+		else if (sprite.x + unitvx + sprite.width > detainerMinX) {
+			sprite.x = detainerMinX - sprite.width - unitvx;
+			collision = "left";
+		}
+		*/
+		console.log(collision);
+	}
+
+	return collision;
+}
+
+function checkDynamicIntoDynamicCollision(sprite1,sprite2) {
 	//Define the variables we'll need to calculate
-	let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
+	let hit, combinedHalfWidths, combinedHalfHeights, xDistance, yDistance;
 
 	//hit will determine whether there's a collision
 	hit = false;
@@ -126,17 +208,17 @@ function hitTestRectangle(sprite1,sprite2) {
 	sprite2.halfHeight = sprite2.height / 2;
 
 	//Calculate the distance vector between the sprites
-	vx = sprite1.centerX - sprite2.centerX;
-	vy = sprite1.centerY - sprite2.centerY;
+	xDistance = Math.abs(sprite1.centerX - sprite2.centerX);
+	yDistance = Math.abs(sprite1.centerY - sprite2.centerY);
 
 	//Figure out the combined half-widths and half-heights
 	combinedHalfWidths = sprite1.halfWidth + sprite2.halfWidth;
 	combinedHalfHeights = sprite1.halfHeight + sprite2.halfHeight;
 
 	//Check for a collision on the x axis
-	if (Math.abs(vx) < combinedHalfWidths) {
+	if (xDistance < combinedHalfWidths) {
 		//A collision might be occurring. Check for a collision on the y axis
-		if (Math.abs(vy) < combinedHalfHeights) {
+		if (yDistance < combinedHalfHeights) {
 		  //There's definitely a collision happening
 		  hit = true;
 		}
@@ -153,4 +235,4 @@ function hitTestRectangle(sprite1,sprite2) {
 	return hit;
 }
 
-export {textStyle, setTextureOnlyIfNeeded, getRoundedRectangle, containSpriteInsideContainer, hitTestRectangle};
+export {textStyle, setTextureOnlyIfNeeded, getRoundedRectangle, containSpriteInsideContainer, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision};

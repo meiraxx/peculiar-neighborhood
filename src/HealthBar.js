@@ -1,4 +1,4 @@
-import { textStyle, getRoundedRectangle } from "./lib/PixiUtilMethods";
+import { textStyle, getRoundedRectangle, getIntLength } from "./lib/PixiUtilMethods";
 
 export default class HealthBar {
     constructor(app) {
@@ -38,6 +38,8 @@ export default class HealthBar {
         this.container.valueText.y = -15;
         this.container.valueText.resolution = 2;
         this.container.addChild(this.container.valueText);
+
+        this.changedBar = false;
     }
 
     initObject() {
@@ -46,10 +48,8 @@ export default class HealthBar {
     }
 
     calculateHealthTextX() {
-        if (this.container.currHealth < 10)
-            this.container.valueText.x = -5;
-        else
-            this.container.valueText.x = -10;
+        let healthText = "" + this.container.currHealth;
+        this.container.valueText.x = -5*healthText.length;
     }
 
     subtractHealth(value) {
@@ -57,6 +57,7 @@ export default class HealthBar {
             let maxWidth = this.container.innerBar.width;
             let maxHealth = this.container.maxHealth;
             let ratio = maxWidth/maxHealth;
+            let diffValue = maxWidth/32;
             console.log("Healthbar maxWidth/maxHealth ratio: " + ratio);
             this.container.currHealth -= value;
             this.container.outerBar.width -= value*ratio;
@@ -67,6 +68,25 @@ export default class HealthBar {
         }
         this.calculateHealthTextX();
         this.container.valueText.setText(this.container.currHealth);
+    }
+
+    isChanged() {
+        return this.changedBar;
+    }
+
+    changeBarColor(colorcode) {
+        let oldOutterBar = this.container.outerBar;
+        let outerBar = getRoundedRectangle(
+            oldOutterBar.x - oldOutterBar.width/2,
+            oldOutterBar.y,
+            oldOutterBar.width,
+            oldOutterBar.height,
+            3,
+            colorcode);
+        this.container.removeChild(oldOutterBar);
+        this.container.addChild(outerBar);
+        this.container.outerBar = outerBar;
+        this.changedBar = true;
     }
   
 }

@@ -59,4 +59,8 @@ function getRandomArbitraryInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export {keyboard, getRandomArbitraryFloat, getRandomArbitraryInt};
+function getIntLength(x) {
+	return Math.max(Math.floor(Math.log10(Math.abs(x))), 0) + 1;
+}
+
+export {keyboard, getRandomArbitraryFloat, getRandomArbitraryInt, getIntLength};

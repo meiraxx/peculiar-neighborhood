@@ -15,9 +15,6 @@ var PIXI = require("pixi.js");
 PIXI.settings.RESOLUTION = 2;
 PIXI.settings.SORTABLE_CHILDREN = true;
 
-//var MATTER = require("matter-js");
-//var physicsEngine = MATTER.Engine.create();
-
 let type = "WebGL";
 if(!PIXI.utils.isWebGLSupported()){
   type = "Canvas";
@@ -47,7 +44,6 @@ document.body.appendChild(app.view);
 var viewport = new Viewport(app.renderer, 700, 800, app.stage);
 viewport.moveTo(700, 800);
 viewport.zoom(700);
-//viewport.zoomToFit(700, 800, new PIXI.Point(600, 800));
 
 // 1. LOAD ALL RESOURCES
 StaticMap.loadResources();
@@ -72,7 +68,7 @@ var bush0 = new Bush(app);
 
 var house0 = new House(app);
 //var house1 = new House(app);
-var houses = [house0, /*house1*/];
+var houses = [house0/*, house1*/];
 
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// 3. SETUP AND INITIALIZE OBJECTS
@@ -115,9 +111,6 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	player.initUI();
 
 	// 4. PUT LOOPS RUNNING
-	// first initialize physics engine loop
-	//MATTER.Engine.run(physicsEngine);
-	// then all other loops
 	player.initLoop();
 
 	monsters.forEach(function(m) {

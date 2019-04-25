@@ -64,10 +64,16 @@ function setTextureOnlyIfNeeded(sprite, newTexture) {
 
 function getRoundedRectangle(x_pos, y_pos, width, height, roundFactor, colorcode) {
 	let roundedRectangle = new PIXI.Graphics();
-    roundedRectangle.beginFill(colorcode);
+	roundedRectangle.beginFill(colorcode);
     roundedRectangle.drawRoundedRect(x_pos, y_pos, width, height, roundFactor);
     roundedRectangle.endFill();
 	return roundedRectangle;
+}
+
+function setGraphicsFillColor(graphicsObject, colorcode) {
+	graphicsObject.beginFill(colorcode);
+    graphicsObject.endFill();
+    return graphicsObject;
 }
 
 function containSpriteInsideContainer(sprite, container) {
@@ -84,7 +90,7 @@ function containSpriteInsideContainer(sprite, container) {
 	}
 
 	// top hit
-	if (sprite.y + unitvy <= container.y) {
+	if (sprite.y + unitvy <= container.y && unitvy < 0) {
 		//console.log("Top hit: " + sprite.y);
 		sprite.y = container.y;
 		collision = "top";
@@ -98,7 +104,7 @@ function containSpriteInsideContainer(sprite, container) {
 	}
 
 	// left hit
-	if (sprite.x + unitvx <= container.x) {
+	if (sprite.x + unitvx <= container.x && unitvx < 0) {
 		//console.log("Left hit: " + sprite.x);
 		sprite.x = container.x;
 		collision = "left";
@@ -139,11 +145,9 @@ function detainSpriteOutsideDetainer(sprite, detainer) {
 	}
 	// collision in all other cases
 	else {
-		if (sprite.y - unitvy < detainerMaxY) {
-			if (unitvy > 0) {
-				sprite.y = detainerMinY - sprite.height;
-				collision = "top";
-			}
+		if (sprite.y - unitvy < detainerMaxY && unitvy > 0) {
+			sprite.y = detainerMinY - sprite.height;
+			collision = "top";
 		}
 		/*
 		if (sprite.x + unitvx > detainerMinX) {
@@ -160,12 +164,10 @@ function detainSpriteOutsideDetainer(sprite, detainer) {
 			console.log(sprite.x);
 		}*/
 		//else
-		if (sprite.x + unitvx < detainerMaxX) {
-			// left
-			if (unitvx > 0){
-				sprite.x = detainerMinX - sprite.width;
-				collision = "left";
-			}
+		// left
+		if (sprite.x + unitvx < detainerMaxX  && unitvx > 0) {
+			sprite.x = detainerMinX - sprite.width;
+			collision = "left";
 		}
 		// TODO: RIGHT AND BOT
 		/*

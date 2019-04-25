@@ -21,14 +21,14 @@ export default class Monster {
 	
 	prepareObject(x_pos, y_pos, i) {
 		// SETUP monster
+		//console.log("monster" + i);
 		if (this.isAngry) {
 			this.monsterTexture = PIXI.loader.resources["assets/monsters/angryMonster.png"].texture;
 			this.capturedMonsterTexture = 
 				PIXI.loader.resources["assets/capturedMonsters/angryMonster.png"].texture;
 			this.deadMonsterTexture = 
 				PIXI.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
-			this.healthBar.prepareObject(x_pos, y_pos - 12, (32*6)/10, 8, 0xFF3300, 6);
-			//this.healthBar.prepareObject(x_pos, y_pos - 12, 64, 8, 0xFF3300, 6);
+			this.healthBar.prepareObject(x_pos, y_pos - 12, 48, 8, 0xFF3300, 15);
 		}
 		else {
 			this.monsterTexture = PIXI.loader.resources["assets/monsters/normalMonster.png"].texture;
@@ -36,13 +36,19 @@ export default class Monster {
 				PIXI.loader.resources["assets/capturedMonsters/normalMonster.png"].texture;
 			this.deadMonsterTexture = 
 				PIXI.loader.resources["assets/deadMonsters/normalMonster.png"].texture;
-			this.healthBar.prepareObject(x_pos, y_pos - 12, 32, 8, 0xFF3300, 10);
-			//this.healthBar.prepareObject(x_pos, y_pos - 12, 64, 8, 0xFF3300, 10);
+			this.healthBar.prepareObject(x_pos, y_pos - 6, 32, 8, 0xFF3300, 10);
 		}
 
 		this.monsterSprite = new PIXI.Sprite(this.monsterTexture);
-		this.monsterSprite.scale.x = 0.05;
-		this.monsterSprite.scale.y = 0.05;
+		if (this.isAngry) {
+			this.monsterSprite.scale.x = 0.06;
+			this.monsterSprite.scale.y = 0.06;
+		}
+		else {
+			this.monsterSprite.scale.x = 0.15;
+			this.monsterSprite.scale.y = 0.15;
+		}
+
 		this.monsterSprite.x = Math.round(x_pos - (this.monsterSprite.width/2));
 		this.monsterSprite.y = y_pos;
 		this.monsterSprite.vx = 0;
@@ -77,10 +83,6 @@ export default class Monster {
 				this.timeSinceNewDir = 0.0;
 
 				let randomNumber = Math.random();
-				//if (this.monsterSprite.name === "monster3") {
-				//	this.monsterSprite.vx = 0;
-				//	this.monsterSprite.vy = -2;
-				//}
 				if (randomNumber >= 0 && randomNumber < 0.25) {
 					this.monsterSprite.vx = 2;
 					this.monsterSprite.vy = 0;
@@ -97,7 +99,8 @@ export default class Monster {
 					this.monsterSprite.vx = 0;
 					this.monsterSprite.vy = -2;
 				}
-				//this.matter.Body.applyForce(this.monsterCollider ,this.monsterCollider.position, this.force);
+				//this.monsterSprite.vx = 0;
+				//this.monsterSprite.vy = 0;
 			}
 
 			let monsterHitsMapBound = containSpriteInsideContainer(this.monsterSprite, 
@@ -117,8 +120,12 @@ export default class Monster {
 				    if(checkDynamicIntoDynamicCollision(this.monsterSprite, allVisibleNets[i])) {
 				    	// make it invisible
 				    	allVisibleNets[i].visible = false;
-				    	// stop monster
-						this.stopMonster(player);
+				    	// convert health string to int
+				    	let healthValue = +this.healthBar.container.valueText.text;
+				    	if (healthValue <= this.healthBar.container.maxHealth/2) {
+				    		// stop monster
+							this.stopMonster(player);
+				    	}
 					}
 				}
 			}
@@ -126,7 +133,7 @@ export default class Monster {
 			if (allVisibleBullets !== undefined && allVisibleBullets.length !== 0) {
 				for (var i = 0; i < allVisibleBullets.length; i++) {
 				    if(checkDynamicIntoDynamicCollision(this.monsterSprite, allVisibleBullets[i])) {
-				    	// make it invisible
+				    	// make bullet invisible
 				    	allVisibleBullets[i].visible = false;
 				    	// harm monster
 						this.harmMonster(player, "pistol");
@@ -137,8 +144,6 @@ export default class Monster {
 			if (houses !== undefined && houses.length !== 0) {
 				for (var i = 0; i < houses.length; i++) {
 				    if(checkDynamicIntoDynamicCollision(this.monsterSprite, houses[i])) {
-				    	//if (this.monsterSprite.name === "monster3")
-						//	console.log("1: " + this.monsterSprite.vy);
 						// monster reverts direction
 						this.reverseMonsterDirection();
 					}
@@ -146,8 +151,6 @@ export default class Monster {
 			}
 
 			if (monsterHitsMapBound !== "none") {
-				//if (this.monsterSprite.name === "monster3")
-				//	console.log("2: " + this.monsterSprite.vy);
 				this.reverseMonsterDirection();
 			}
 			else if (this.monsterSprite.vx !== 0) {
@@ -182,16 +185,12 @@ export default class Monster {
 	}
 
 	stopMonster(player) {
-		let healthValue = +this.healthBar.container.valueText.text; // convert to string to int
-
 		// monster must be with less than half of his HP to be captured
-		if (healthValue <= this.healthBar.container.maxHealth/2) {
-			setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
-			this.monsterSprite.captured = true;
-			this.monsterSprite.vx = 0;
-			this.monsterSprite.vy = 0;
-			player.ui.score.addScore(this.isAngry?2:1);
-		}
+		setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
+		this.monsterSprite.captured = true;
+		this.monsterSprite.vx = 0;
+		this.monsterSprite.vy = 0;
+		player.ui.score.addScore(this.isAngry?2:1);
 		// else monster not stopped!
 	}
 
@@ -201,20 +200,27 @@ export default class Monster {
 			let randomInt = getRandomArbitraryInt(1, 2);
 			this.healthBar.subtractHealth(randomInt);
 		}
-		this.killMonster(player);
+
+		let healthValue = +this.healthBar.container.valueText.text;
+
+		if (!this.healthBar.isChanged() && healthValue <= this.healthBar.container.maxHealth/2) {
+			console.log("changing");
+			// healthbar color change
+			this.healthBar.changeBarColor(0xffffff);
+		}
+		// if health is 0 then monster is dead
+		else if (healthValue === 0) {
+			this.killMonster(player);
+		}
+		// else monster is ok!
 	}
 
 	killMonster(player) {
-		let healthValue = +this.healthBar.container.valueText.text;
-		// if health is 0 then monster is dead
-		if (healthValue === 0) {
-			setTextureOnlyIfNeeded(this.monsterSprite, this.deadMonsterTexture);
-			this.monsterSprite.dead = true;
-			this.monsterSprite.vx = 0;
-			this.monsterSprite.vy = 0;
-			player.ui.score.addScore(this.isAngry?-2:-1);
-		}
-		// else monster is ok!
+		setTextureOnlyIfNeeded(this.monsterSprite, this.deadMonsterTexture);
+		this.monsterSprite.dead = true;
+		this.monsterSprite.vx = 0;
+		this.monsterSprite.vy = 0;
+		player.ui.score.addScore(this.isAngry?-2:-1);
 	}
 
 	isCaptured() {

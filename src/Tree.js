@@ -17,7 +17,7 @@ export default class Tree {
 		this.sprite.scale.y = 0.3;
 		this.sprite.x = x_pos;
 		this.sprite.y = y_pos;
-		this.sprite.name = "tree" + i;
+		this.sprite.name = "blocker-tree" + i;
 	}
 
 	initObject() {

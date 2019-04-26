@@ -17,7 +17,7 @@ export default class House {
 		this.sprite.scale.y = 0.4;
 		this.sprite.x = x_pos;
 		this.sprite.y = y_pos;
-		this.sprite.name = "house" + i;
+		this.sprite.name = "blocker-house" + i;
 	}
 
 	initObject() {

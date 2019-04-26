@@ -472,13 +472,13 @@ export default class Player {
 	}
 
 	handleGenericStaticCollisions() {
-		let houses = this.app.stage.children.filter(child => 
-			child.name.indexOf("house") !== -1);
+		let staticBlockers = this.app.stage.children.filter(child => 
+			child.name.indexOf("blocker") !== -1);
 
 		let playerHitsHouse = undefined;
-		if (houses !== undefined && houses.length !== 0 && this.playerIsMoving()) {
-			for (var i = 0; i < houses.length; i++) {
-			    playerHitsHouse = detainSpriteOutsideDetainer(this.playerSprite, houses[i]);
+		if (staticBlockers !== undefined && staticBlockers.length !== 0 && this.playerIsMoving()) {
+			for (var i = 0; i < staticBlockers.length; i++) {
+			    playerHitsHouse = detainSpriteOutsideDetainer(this.playerSprite, staticBlockers[i]);
 			    if (playerHitsHouse !== "none"){
 			    	break;
 			    }	

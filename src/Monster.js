@@ -145,8 +145,8 @@ export default class Monster {
 			child.name.indexOf("net") !== -1 && child.visible === true);
 		let allVisibleBullets = this.app.stage.children.filter(child => 
 			child.name.indexOf("bullet") !== -1 && child.visible === true);
-		let houses = this.app.stage.children.filter(child => 
-			child.name.indexOf("house") !== -1);
+		let staticBlockers = this.app.stage.children.filter(child => 
+			child.name.indexOf("blocker") !== -1);
 
 		if (!this.isDead() && !this.isCaptured() && 
 			allVisibleNets !== undefined && allVisibleNets.length !== 0) {
@@ -180,9 +180,9 @@ export default class Monster {
 		}
 
 		if (!this.isDead() && !this.isCaptured() && 
-			houses !== undefined && houses.length !== 0) {
-			for (var i = 0; i < houses.length; i++) {
-			    if(detainSpriteOutsideDetainer(this.monsterSprite, houses[i])!=="none") {
+			staticBlockers !== undefined && staticBlockers.length !== 0) {
+			for (var i = 0; i < staticBlockers.length; i++) {
+			    if(detainSpriteOutsideDetainer(this.monsterSprite, staticBlockers[i])!=="none") {
 					// monster reverts direction
 					this.reverseMonsterDirection();
 					this.moveMonster();
@@ -227,7 +227,6 @@ export default class Monster {
 		let healthValue = +this.healthBar.container.valueText.text;
 
 		if (!this.healthBar.isChanged() && healthValue <= this.healthBar.container.maxHealth/2) {
-			console.log("changing");
 			// healthbar color change
 			this.healthBar.changeBarColor(0xffffff);
 		}

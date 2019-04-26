@@ -58,7 +58,6 @@ export default class HealthBar {
             let maxHealth = this.container.maxHealth;
             let ratio = maxWidth/maxHealth;
             let diffValue = maxWidth/32;
-            console.log("Healthbar maxWidth/maxHealth ratio: " + ratio);
             this.container.currHealth -= value;
             this.container.outerBar.width -= value*ratio;
         }

@@ -64,11 +64,12 @@ var m3 = new Monster(app, false);
 var monsters = [m0, m1, m2, m3];
 
 var bush0 = new Bush(app);
-//var tree0 = new Tree(app);
 
+var tree0 = new Tree(app);
 var house0 = new House(app);
 var house1 = new House(app);
-var houses = [house0, house1];
+
+var blockers = [tree0, house0, house1];
 
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// 3. SETUP AND INITIALIZE OBJECTS
@@ -97,15 +98,14 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// setup other map elements
 	bush0.prepareObject(10, 400, 0);
 	bush0.initObject();
-	//tree0.prepareObject(mapWidth - 100, mapHeight - 300, 0);
-	//tree0.initObject();
 
-	house0.prepareObject(mapWidth - 200, mapHeight - 200, 0);
-	// 100, mapHeight - 300
-	house1.prepareObject(200, mapHeight - 500, 0);
+	tree0.prepareObject(mapWidth - 100, 100, 0);
+	tree0.initObject();
+	house0.prepareObject(100, mapHeight - 300, 0);
+	house1.prepareObject(mapWidth - 200, mapHeight - 200, 0);
 
-	houses.forEach(function(h) {
-		h.initObject();
+	blockers.forEach(function(b) {
+		b.initObject();
 	});
 
 	// initialize UI in the end

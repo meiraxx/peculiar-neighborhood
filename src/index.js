@@ -67,8 +67,8 @@ var bush0 = new Bush(app);
 //var tree0 = new Tree(app);
 
 var house0 = new House(app);
-//var house1 = new House(app);
-var houses = [house0/*, house1*/];
+var house1 = new House(app);
+var houses = [house0, house1];
 
 PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// 3. SETUP AND INITIALIZE OBJECTS
@@ -101,7 +101,8 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	//tree0.initObject();
 
 	house0.prepareObject(mapWidth - 200, mapHeight - 200, 0);
-	//house1.prepareObject(100, mapHeight - 300, 0);
+	// 100, mapHeight - 300
+	house1.prepareObject(200, mapHeight - 500, 0);
 
 	houses.forEach(function(h) {
 		h.initObject();

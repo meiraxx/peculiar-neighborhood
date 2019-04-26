@@ -1,6 +1,6 @@
 import UserInterface from './UserInterface';
 import { getRandomArbitraryInt } from "./lib/UtilMethods";
-import { containSpriteInsideContainer, setTextureOnlyIfNeeded, checkDynamicIntoDynamicCollision } from "./lib/PixiUtilMethods";
+import { containSpriteInsideContainer, setTextureOnlyIfNeeded, detainSpriteOutsideDetainer } from "./lib/PixiUtilMethods";
 import HealthBar from "./HealthBar";
 
 export default class Monster {
@@ -78,97 +78,120 @@ export default class Monster {
 
 	monsterLoop(delta, player) {
 		if (!player.ui.isPaused() && !this.isCaptured() && !this.isDead()) {
-			this.timeSinceNewDir += delta;
-			if(this.timeSinceNewDir > this.newDirTimeStep) {
-				this.timeSinceNewDir = 0.0;
-
-				let randomNumber = Math.random();
-				if (randomNumber >= 0 && randomNumber < 0.25) {
-					this.monsterSprite.vx = 2;
-					this.monsterSprite.vy = 0;
-				}
-				else if (randomNumber >= 0.25 && randomNumber < 0.50) {
-					this.monsterSprite.vx = 0;
-					this.monsterSprite.vy = 2;
-				}
-				else if (randomNumber >= 0.50 && randomNumber < 0.75) {
-					this.monsterSprite.vx = -2;
-					this.monsterSprite.vy = 0;
-				}
-				else if (randomNumber >= 0.75 && randomNumber < 1) {
-					this.monsterSprite.vx = 0;
-					this.monsterSprite.vy = -2;
-				}
-				//this.monsterSprite.vx = 0;
-				//this.monsterSprite.vy = 0;
-			}
-
-			let monsterHitsMapBound = containSpriteInsideContainer(this.monsterSprite, 
-				{x: 0, y: 0, width: 1024, height: 1024});
-
-
-			let allVisibleNets = this.app.stage.children.filter(child => 
-				child.name.indexOf("net") !== -1 && child.visible === true);
-			let allVisibleBullets = this.app.stage.children.filter(child => 
-				child.name.indexOf("bullet") !== -1 && child.visible === true);
-			let houses = this.app.stage.children.filter(child => 
-				child.name.indexOf("house") !== -1);
-
-			if (allVisibleNets !== undefined && allVisibleNets.length !== 0) {
-				//console.log(allVisibleNets);
-				for (var i = 0; i < allVisibleNets.length; i++) {
-				    if(checkDynamicIntoDynamicCollision(this.monsterSprite, allVisibleNets[i])) {
-				    	// make it invisible
-				    	allVisibleNets[i].visible = false;
-				    	// convert health string to int
-				    	let healthValue = +this.healthBar.container.valueText.text;
-				    	if (healthValue <= this.healthBar.container.maxHealth/2) {
-				    		// stop monster
-							this.stopMonster(player);
-				    	}
-					}
-				}
-			}
-			
-			if (allVisibleBullets !== undefined && allVisibleBullets.length !== 0) {
-				for (var i = 0; i < allVisibleBullets.length; i++) {
-				    if(checkDynamicIntoDynamicCollision(this.monsterSprite, allVisibleBullets[i])) {
-				    	// make bullet invisible
-				    	allVisibleBullets[i].visible = false;
-				    	// harm monster
-						this.harmMonster(player, "pistol");
-					}
-				}
-			}
-
-			if (houses !== undefined && houses.length !== 0) {
-				for (var i = 0; i < houses.length; i++) {
-				    if(checkDynamicIntoDynamicCollision(this.monsterSprite, houses[i])) {
-						// monster reverts direction
-						this.reverseMonsterDirection();
-					}
-				}
-			}
-
-			if (monsterHitsMapBound !== "none") {
-				this.reverseMonsterDirection();
-			}
-			else if (this.monsterSprite.vx !== 0) {
-				// walking horizontally
-				this.monsterSprite.x += this.monsterSprite.vx;
-				// move healthbar
-				this.healthBar.container.x += this.monsterSprite.vx;
-			}
-			else if (this.monsterSprite.vy !== 0) {
-				// walking vertically
-				this.monsterSprite.y += this.monsterSprite.vy;
-				// move healthbar
-				this.healthBar.container.y += this.monsterSprite.vy;
-			}
-			else {
-				// character isn't walking: do nothing
+			this.recalculateDirection(delta);
+			let collided = this.handleDynamicCollisions(player);
+			if (!collided) {
+				this.handleContainerCollisionsAndMove();
 			}
 		}
+	}
+
+	recalculateDirection(delta) {
+		this.timeSinceNewDir += delta;
+		if(this.timeSinceNewDir > this.newDirTimeStep) {
+			this.timeSinceNewDir = 0.0;
+
+			let randomNumber = Math.random();
+			if (randomNumber >= 0 && randomNumber < 0.25) {
+				this.monsterSprite.vx = 2;
+				this.monsterSprite.vy = 0;
+			}
+			else if (randomNumber >= 0.25 && randomNumber < 0.50) {
+				this.monsterSprite.vx = 0;
+				this.monsterSprite.vy = 2;
+			}
+			else if (randomNumber >= 0.50 && randomNumber < 0.75) {
+				this.monsterSprite.vx = -2;
+				this.monsterSprite.vy = 0;
+			}
+			else if (randomNumber >= 0.75 && randomNumber < 1) {
+				this.monsterSprite.vx = 0;
+				this.monsterSprite.vy = -2;
+			}
+			//this.monsterSprite.vx = 0;
+			//this.monsterSprite.vy = 0;
+		}
+	}
+
+	handleContainerCollisionsAndMove() {
+		let monsterHitsMapBound = containSpriteInsideContainer(this.monsterSprite, 
+				{x: 0, y: 0, width: 1024, height: 1024});
+		if (monsterHitsMapBound !== "none") {
+			this.reverseMonsterDirection();
+		}
+		this.moveMonster();
+	}
+
+	moveMonster(vx, vy) {
+		if (this.monsterSprite.vx !== 0) {
+			// walking horizontally
+			this.monsterSprite.x += this.monsterSprite.vx;
+			// move healthbar
+			this.healthBar.container.x += this.monsterSprite.vx;
+		}
+		else if (this.monsterSprite.vy !== 0) {
+			// walking vertically
+			this.monsterSprite.y += this.monsterSprite.vy;
+			// move healthbar
+			this.healthBar.container.y += this.monsterSprite.vy;
+		}
+		else {
+			// character isn't walking: do nothing
+		}
+	}
+
+	handleDynamicCollisions(player) {
+		let allVisibleNets = this.app.stage.children.filter(child => 
+			child.name.indexOf("net") !== -1 && child.visible === true);
+		let allVisibleBullets = this.app.stage.children.filter(child => 
+			child.name.indexOf("bullet") !== -1 && child.visible === true);
+		let houses = this.app.stage.children.filter(child => 
+			child.name.indexOf("house") !== -1);
+
+		if (!this.isDead() && !this.isCaptured() && 
+			allVisibleNets !== undefined && allVisibleNets.length !== 0) {
+			for (var i = 0; i < allVisibleNets.length; i++) {
+			    if(detainSpriteOutsideDetainer(allVisibleNets[i], this.monsterSprite) !== "none") {
+			    	// make it invisible
+			    	allVisibleNets[i].visible = false;
+			    	// convert health string to int
+			    	let healthValue = +this.healthBar.container.valueText.text;
+			    	// if monster health is below half
+			    	if (healthValue <= this.healthBar.container.maxHealth/2) {
+			    		// stop monster
+						this.stopMonster(player);
+						return true;
+			    	}
+				}
+			}
+		}
+		
+		if (!this.isDead() && !this.isCaptured() && 
+			allVisibleBullets !== undefined && allVisibleBullets.length !== 0) {
+			for (var i = 0; i < allVisibleBullets.length; i++) {
+			    if(detainSpriteOutsideDetainer(allVisibleBullets[i], this.monsterSprite) !== "none") {
+			    	// make bullet invisible
+			    	allVisibleBullets[i].visible = false;
+			    	// harm monster
+					this.harmMonster(player, "pistol");
+					return true;
+				}
+			}
+		}
+
+		if (!this.isDead() && !this.isCaptured() && 
+			houses !== undefined && houses.length !== 0) {
+			for (var i = 0; i < houses.length; i++) {
+			    if(detainSpriteOutsideDetainer(this.monsterSprite, houses[i])!=="none") {
+					// monster reverts direction
+					this.reverseMonsterDirection();
+					this.moveMonster();
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	reverseMonsterDirection() {

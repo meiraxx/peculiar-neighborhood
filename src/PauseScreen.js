@@ -1,4 +1,4 @@
-import { getRoundedRectangle, textStyle } from "./lib/PixiUtilMethods";
+import { getRoundedRectangle, textStyle, applyFilter } from "./lib/PixiUtilMethods";
 
 export default class PauseScreen {
 	static loadResources() {
@@ -80,26 +80,16 @@ export default class PauseScreen {
 
 		// toggle needs WebGL because of "filters"
 		if (this.container.visible) {
-			let colorMatrix = new PIXI.filters.ColorMatrixFilter();
-			// must clear color matrix instead of resetting it because
-			// performance is greatly affected if this is on
-			otherElements.forEach(function(element) {
-				element.filters = undefined;
-			});
-
+			applyFilter(otherElements, "reset");
 			this.container.visible = false;
 		}
 		else {
-			let colorMatrix = new PIXI.filters.ColorMatrixFilter();
-			otherElements.forEach(function(element) {
-				element.filters = [colorMatrix];
-			});
-			//colorMatrix.night(0.2, true);
-			//colorMatrix.predator(1, true);
-			colorMatrix.brightness(0.3, false);
-
+			applyFilter(otherElements, "darken");
 			this.container.visible = true;
 		}
 	}
 
+	isActive() {
+		return this.container.visible;
+	}
 }

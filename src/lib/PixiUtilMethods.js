@@ -139,57 +139,57 @@ function detainSpriteOutsideDetainer(sprite, detainer) {
 	let detainerMinX = detainer.x;
 	let detainerMaxX = detainer.x + detainer.width;
 
-	if ( (sprite.y - unitvy >= detainerMaxY || sprite.y + unitvy + sprite.height <= detainerMinY)
-		|| (sprite.x - unitvx >= detainerMaxX || sprite.x + unitvx + sprite.width <= detainerMinX) ) {
-		// no collisions whatsoever in this 4 cases
+	if (sprite.y + sprite.vy >= detainerMaxY) {
+		//
+	}
+	else if (sprite.x + sprite.vx >= detainerMaxX) {
+		//
+	}
+	else if (sprite.y + sprite.vy + sprite.height <= detainerMinY) {
+		//
+	}
+	else if (sprite.x + sprite.vx + sprite.width <= detainerMinX) {
+		//
 	}
 	// collision in all other cases
 	else {
-		if (sprite.y - unitvy < detainerMaxY && unitvy > 0) {
+		let condtop = sprite.y + sprite.height <= detainerMinY &&
+			sprite.y + sprite.height + sprite.vy > detainerMinY && unitvy > 0;
+
+		let condleft = sprite.x + sprite.vx < detainerMinX  && unitvx > 0;
+
+		let condright = sprite.x + sprite.vx < detainerMaxX && unitvx < 0;
+
+		let condbottom = sprite.y >= detainerMaxY &&
+			sprite.y + sprite.vy < detainerMaxY && unitvy < 0;
+
+		//console.log(sprite.vx + "," + sprite.vy);
+		//console.log(sprite.y + "," + (sprite.y + sprite.vy) + "," + detainerMaxY);
+		//console.log("" + [condtop, condleft, condright, condbottom]);
+		if (condtop) {
 			sprite.y = detainerMinY - sprite.height;
 			collision = "top";
 		}
-		/*
-		if (sprite.x + unitvx > detainerMinX) {
-			console.log(unitvx);
-			console.log(sprite.x);
-			console.log(detainerMinX);
-			console.log(detainerMaxX);
-			
-			// right
-			if (unitvx < 0){
-				sprite.x = detainerMaxX;
-				collision = "right";
-			}
-			console.log(sprite.x);
-		}*/
-		//else
-		// left
-		if (sprite.x + unitvx < detainerMaxX  && unitvx > 0) {
+
+		if (condleft) {
 			sprite.x = detainerMinX - sprite.width;
 			collision = "left";
 		}
-		// TODO: RIGHT AND BOT
-		/*
-		else if (sprite.y + unitvy + sprite.height > detainerMinY) {
-			sprite.y = detainerMaxY;
-			collision = "bottom2";
-		}
-		else if (sprite.x - unitvx < detainerMaxX) {
+
+		if (condright) {
 			sprite.x = detainerMaxX;
 			collision = "right";
 		}
-		else if (sprite.x + unitvx + sprite.width > detainerMinX) {
-			sprite.x = detainerMinX - sprite.width - unitvx;
-			collision = "left";
-		}
-		*/
-		console.log(collision);
-	}
 
+		if (condbottom) {
+			sprite.y = detainerMaxY;
+			collision = "bottom";
+		}
+	}
 	return collision;
 }
 
+// used for no-block collisions
 function checkDynamicIntoDynamicCollision(sprite1,sprite2) {
 	//Define the variables we'll need to calculate
 	let hit, combinedHalfWidths, combinedHalfHeights, xDistance, yDistance;
@@ -237,4 +237,30 @@ function checkDynamicIntoDynamicCollision(sprite1,sprite2) {
 	return hit;
 }
 
-export {textStyle, setTextureOnlyIfNeeded, getRoundedRectangle, containSpriteInsideContainer, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision};
+function applyFilter(elementArray, filter) {
+	let colorMatrix = new PIXI.filters.ColorMatrixFilter();
+
+	if (filter==="reset") {
+		elementArray.forEach(function(element) {
+			element.filters = undefined;
+		});
+	}
+	else {
+		elementArray.forEach(function(element) {
+			element.filters = [colorMatrix];
+		});
+
+		if (filter==="darken") {
+			colorMatrix.brightness(0.3, false);
+		}
+		else if (filter==="night") {
+			colorMatrix.night(0.2, true);
+		}
+		else if (filter==="predator") {
+			colorMatrix.predator(1, true);
+		}
+	}
+	
+}
+
+export {textStyle, setTextureOnlyIfNeeded, getRoundedRectangle, containSpriteInsideContainer, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision, applyFilter};

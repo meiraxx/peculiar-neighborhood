@@ -101,8 +101,10 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 
 	tree0.prepareObject(mapWidth - 100, 100, 0);
 	tree0.initObject();
+	
+	//house0.prepareObject(200, mapHeight - 500, 0);
 	house0.prepareObject(100, mapHeight - 300, 0);
-	house1.prepareObject(mapWidth - 200, mapHeight - 200, 0);
+	house1.prepareObject(mapWidth - 200, mapHeight - 200, 1);
 
 	blockers.forEach(function(b) {
 		b.initObject();

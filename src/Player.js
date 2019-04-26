@@ -248,7 +248,10 @@ export default class Player {
 		});
 
 		window.addEventListener("click", event => {
-			if (!this.ui.isPaused() && this.ui.shootableItem()) {
+			// mouse events:
+			// - right-handed: 0 for mouse1, 1 for wheel-click, 2 for mouse2
+			// - left-handed: 2 for mouse1, 1 for wheel-click, 0 for mouse2
+			if (!this.ui.isPaused() && event.button===0 && this.ui.shootableItem()) {
 				let angle = Math.acos( this.ui.shootDirection.y );
 				angle *= this.ui.shootDirection.x > 0.0 ? -1 : 1;
 				if( this.ui.currentItem === "netgun") {
@@ -454,20 +457,19 @@ export default class Player {
 	}
 
 	playerLoop(delta) {
-		if (!this.ui.isPaused()) {
+		if (!this.ui.isPaused() && this.playerIsMoving()) {
 			let collided = this.handleGenericStaticCollisions();
-			
 			if (!collided) {
 				this.handleContainerCollisionsAndMove();
 			}
-			//update crosshair
-			this.ui.crosshair.sprite.x = this.playerSprite.x - this.ui.crosshair.sprite.width / 2  + this.playerSprite.width / 2 + 100.0 *  this.ui.shootDirection.x;
-			this.ui.crosshair.sprite.y = this.playerSprite.y - this.ui.crosshair.sprite.height / 2 + this.playerSprite.height / 2 + 100.0 * this.ui.shootDirection.y;
-			//update bullets
-			for (var i = this.ui.bullets.length - 1; i >= 0; i--) {
-				this.ui.bullets[i].update(delta);
-				this.ui.nets[i].update(delta);
-			}
+		}
+		//update crosshair
+		this.ui.crosshair.sprite.x = this.playerSprite.x - this.ui.crosshair.sprite.width / 2  + this.playerSprite.width / 2 + 100.0 *  this.ui.shootDirection.x;
+		this.ui.crosshair.sprite.y = this.playerSprite.y - this.ui.crosshair.sprite.height / 2 + this.playerSprite.height / 2 + 100.0 * this.ui.shootDirection.y;
+		//update bullets
+		for (var i = this.ui.bullets.length - 1; i >= 0; i--) {
+			this.ui.bullets[i].update(delta);
+			this.ui.nets[i].update(delta);
 		}
 	}
 
@@ -476,7 +478,7 @@ export default class Player {
 			child.name.indexOf("blocker") !== -1);
 
 		let playerHitsHouse = undefined;
-		if (staticBlockers !== undefined && staticBlockers.length !== 0 && this.playerIsMoving()) {
+		if (staticBlockers !== undefined && staticBlockers.length !== 0) {
 			for (var i = 0; i < staticBlockers.length; i++) {
 			    playerHitsHouse = detainSpriteOutsideDetainer(this.playerSprite, staticBlockers[i]);
 			    if (playerHitsHouse !== "none"){

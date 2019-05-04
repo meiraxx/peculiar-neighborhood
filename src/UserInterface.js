@@ -5,14 +5,15 @@ import Crosshair from "./Crosshair";
 import CardsInfo from "./CardsInfo";
 import Missile from "./Missile";
 import Score from "./Score";
+import * as PIXI from 'pixi.js'
 
 export default class UserInterface {
-	static loadResources() {
-		Cards.loadResources();
-		PauseScreen.loadResources();
-		Crosshair.loadResources();
-		Missile.loadResources();
-		CardsInfo.loadResources();
+	static loadResources(app) {
+		Cards.loadResources(app);
+		PauseScreen.loadResources(app);
+		Crosshair.loadResources(app);
+		Missile.loadResources(app);
+		CardsInfo.loadResources(app);
 	}
 	
 	constructor(app) {

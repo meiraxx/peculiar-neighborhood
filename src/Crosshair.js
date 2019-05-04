@@ -1,6 +1,7 @@
+import * as PIXI from 'pixi.js'
 export default class Crosshair {
-	static loadResources() {
-		PIXI.loader.add("assets/crosshairs/crosshair.png");
+	static loadResources(app) {
+		app.loader.add("assets/crosshairs/crosshair.png");
     }
 
     constructor(app) {
@@ -8,7 +9,7 @@ export default class Crosshair {
     }
 
     prepareObject(x_pos, y_pos) {
-        let crosshairTexture = PIXI.loader.resources["assets/crosshairs/crosshair.png"].texture;
+        let crosshairTexture = this.app.loader.resources["assets/crosshairs/crosshair.png"].texture;
 		this.sprite = new PIXI.Sprite(crosshairTexture);
 		this.sprite.scale.x = 0.1;
 		this.sprite.scale.y = 0.1;
@@ -16,6 +17,8 @@ export default class Crosshair {
 		this.sprite.y = y_pos;
         this.sprite.name = "crosshair";
 		this.sprite.visible = false;
+        this.sprite._zIndex = Number.MAX_SAFE_INTEGER;
+
     }
 
     initObject() {

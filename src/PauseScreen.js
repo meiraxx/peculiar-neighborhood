@@ -1,4 +1,5 @@
 import { getRoundedRectangle, textStyle, applyFilter } from "./lib/PixiUtilMethods";
+import * as PIXI from 'pixi.js'
 
 export default class PauseScreen {
 	static loadResources() {
@@ -14,6 +15,7 @@ export default class PauseScreen {
 		this.container.x = x_pos;
         this.container.y = y_pos;
         this.container.name = "pauseScreen";
+        this.container._zIndex = Number.MAX_SAFE_INTEGER;
 
         let betweenContainersHeight = height/32;
         let textInsideContainerDrift = width/128;

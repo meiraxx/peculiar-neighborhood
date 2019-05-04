@@ -1,5 +1,6 @@
+import * as PIXI from 'pixi.js'
 export default class CardsInfo {
-	static loadResources() {
+	static loadResources(app) {
 		// already loaded in cards
 	}
 	
@@ -15,12 +16,13 @@ export default class CardsInfo {
         this.container.y = y_pos - 100;
         this.container.scale.x = 0.30;
         this.container.scale.y = 0.30;
-
+        this.container._zIndex = Number.MAX_SAFE_INTEGER;
+  	
         this.container.name = "cardsInfo";
 
-		let cardBatInfo = PIXI.loader.resources["assets/cards/cardBat.png"].texture;
-		let cardPistolInfo = PIXI.loader.resources["assets/cards/cardPistol.png"].texture;
-		let cardNetgunInfo = PIXI.loader.resources["assets/cards/cardNetgun.png"].texture;
+		let cardBatInfo = this.app.loader.resources["assets/cards/cardBat.png"].texture;
+		let cardPistolInfo = this.app.loader.resources["assets/cards/cardPistol.png"].texture;
+		let cardNetgunInfo = this.app.loader.resources["assets/cards/cardNetgun.png"].texture;
 
 		let cardBatInfoSprite = new PIXI.Sprite(cardBatInfo);
 		cardBatInfoSprite.name = "cardBatInfo";

@@ -1,3 +1,4 @@
+import * as PIXI from 'pixi.js'
 function textStyle(choice) {
 	// test here: https://pixijs.io/pixi-text-style/
 	let textStyle = undefined;
@@ -58,7 +59,7 @@ function textStyle(choice) {
 
 function setTextureOnlyIfNeeded(sprite, newTexture) {
 	if (sprite.texture !== newTexture) {
-		sprite.setTexture(newTexture);
+		sprite.texture = newTexture;
 	}
 }
 

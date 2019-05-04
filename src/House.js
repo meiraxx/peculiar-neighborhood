@@ -1,7 +1,8 @@
+import * as PIXI from 'pixi.js'
 export default class House {
 	
-	static loadResources() {
-		PIXI.loader.add("assets/staticElements/house.png");
+	static loadResources(app) {
+		app.loader.add("assets/staticElements/house.png");
 	}
 	
 	constructor(app) {
@@ -10,7 +11,7 @@ export default class House {
 	}
 	
 	prepareObject(x_pos, y_pos, i) {
-		let houseTexture = PIXI.loader.resources["assets/staticElements/house.png"].texture;
+		let houseTexture = this.app.loader.resources["assets/staticElements/house.png"].texture;
 		
 		this.sprite = new PIXI.Sprite(houseTexture);
 		this.sprite.scale.x = 0.4;
@@ -18,6 +19,8 @@ export default class House {
 		this.sprite.x = x_pos;
 		this.sprite.y = y_pos;
 		this.sprite.name = "blocker-house" + i;
+		this.sprite.yForZOrdering = this.sprite.y + this.sprite.height;
+
 	}
 
 	initObject() {

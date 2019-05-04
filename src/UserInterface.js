@@ -32,9 +32,9 @@ export default class UserInterface {
 		this.batColliders = [];
 
 		for (var i = 10; i >= 0; i--) {
-			this.bullets.push(new Missile(app,"bullet"));
-			this.nets.push(new Missile(app,"net"));
-			this.batColliders.push(new Missile(app,"bat"));
+			this.bullets.push(new Missile(app,"bulletCollider"));
+			this.nets.push(new Missile(app,"netCollider"));
+			this.batColliders.push(new Missile(app,"batCollider"));
 		}
 		this.cardsInfo = new CardsInfo(app);
 		this.score = new Score(app);
@@ -109,6 +109,7 @@ export default class UserInterface {
 		return (this.pauseScreen.container.visible || this.cardsInfo.displayed);
 	}
 
+
 	// bullets & nets
 	prepareMissiles(x_pos, y_pos) {
  		for (var i = 10; i >= 0; i--) {
@@ -126,6 +127,15 @@ export default class UserInterface {
 		}
 	}
 
+	updateMissileColliders(delta) {
+		//update missile colliders
+		for (var i = this.bullets.length - 1; i >= 0; i--) {
+			this.bullets[i].update(delta, 200);
+			this.nets[i].update(delta, 200);
+			this.batColliders[i].update(delta, 100);
+		}
+	}
+
 	// CROSSHAIR
 	prepareCrosshair(x_pos, y_pos) {
 		this.crosshair.prepareObject(x_pos, y_pos);
@@ -135,6 +145,33 @@ export default class UserInterface {
 		this.crosshair.initObject();
 	}
 	
+	moveCrosshair(event) {
+		if (!this.isPaused()) {
+			this.crosshair.sprite.visible = this.shootableItem();
+			//top left based
+			let mousePosOnSphereAroundPlayer = new PIXI.Point(event.screenX, event.screenY);
+			mousePosOnSphereAroundPlayer.x /= window.screen.availWidth;
+			mousePosOnSphereAroundPlayer.x -= 0.5;
+			mousePosOnSphereAroundPlayer.y /= window.screen.availHeight;
+			mousePosOnSphereAroundPlayer.y -= 0.5;
+			this.shootDirection.x = mousePosOnSphereAroundPlayer.x;
+			this.shootDirection.y = mousePosOnSphereAroundPlayer.y;
+			let length = Math.sqrt(this.shootDirection.x * this.shootDirection.x + this.shootDirection.y * this.shootDirection.y);
+			if(length != 0) {
+				this.shootDirection.x /= length;
+				this.shootDirection.y /= length;
+			}
+		}
+	}
+
+	updateCrosshairOnScreen(playerSprite) {
+		//update crosshair
+		this.crosshair.sprite.x = playerSprite.x - this.crosshair.sprite.width / 2 
+			+ playerSprite.width / 2 + 100.0 *  this.shootDirection.x;
+		this.crosshair.sprite.y = playerSprite.y - this.crosshair.sprite.height / 2 
+			+ playerSprite.height / 2 + 100.0 * this.shootDirection.y;
+	}
+
 	shootableItem() {
 		return (this.currentItem === "pistol" || this.currentItem === "netgun");
 	}
@@ -165,4 +202,42 @@ export default class UserInterface {
 	initScore() {
 		this.score.initObject();
 	}
+
+	useItem(playerSprite, event) {
+		if (event.button===0 && !this.isPaused() && this.usableItem()) {
+			let angle = Math.acos(this.shootDirection.y);
+			angle *= this.shootDirection.x > 0.0 ? -1 : 1;
+			if (this.currentItem === "netgun") {
+				this.nets[this.currentNet].go(
+					playerSprite.x + playerSprite.width/2 - this.shootDirection.y * this.nets[0].sprite.width / 2,
+					playerSprite.y + playerSprite.height/2 + this.shootDirection.x * this.nets[0].sprite.height / 2,
+					10.0 * this.shootDirection.x,
+					10.0 * this.shootDirection.y,
+					angle,
+					true);
+				this.currentNet = (this.currentNet + 1) % 10;
+			} else if (this.currentItem === "pistol") {
+				this.bullets[this.currentBullet].go(
+					playerSprite.x + playerSprite.width/2 - this.shootDirection.y * this.bullets[0].sprite.width / 2,
+					playerSprite.y + playerSprite.height/2 + this.shootDirection.x * this.bullets[0].sprite.height / 2,
+					10.0 * this.shootDirection.x,
+					10.0 * this.shootDirection.y,
+					angle,
+					true);
+				this.currentBullet = (this.currentBullet + 1) % 10;
+			} else if (this.currentItem === "bat") {
+				this.batColliders[this.currentBatCollider].go(
+					playerSprite.x + playerSprite.width/2 - this.shootDirection.y * this.batColliders[0].sprite.width / 2,
+					playerSprite.y + playerSprite.height/2 + this.shootDirection.x * this.batColliders[0].sprite.height / 2,
+					10.0 * this.shootDirection.x,
+					10.0 * this.shootDirection.y,
+					angle,
+					false);
+				this.currentBatCollider = (this.currentBatCollider + 1) % 10;
+			} else if (this.currentItem === "whistle") {
+				// todo: call pet
+			}
+		}
+	}
+
 }

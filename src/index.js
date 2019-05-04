@@ -65,13 +65,13 @@ var m2 = new Monster(app, false);
 var m3 = new Monster(app, false);
 var monsters = [m0, m1, m2, m3];
 
-var bush0 = new Bush(app);
-
 var tree0 = new Tree(app);
 var house0 = new House(app);
 var house1 = new House(app);
+var bush0 = new Bush(app);
 
 var blockers = [tree0, house0, house1];
+var hiders = [bush0]
 
 var zSorter =  new ZSorter(app);
 app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
@@ -87,6 +87,7 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	player.prepareObject(mapWidth/2,mapHeight/2);
 	let playerWidth = player.playerSprite.height;
 	let playerHeight = player.playerSprite.height;
+	player.initObject();
 
 	// setup monsters in the corners
 	m0.prepareObject(100, 100, 0);
@@ -97,24 +98,26 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 		m.initObject();
 	});
 
-	// setup other map elements
-	bush0.prepareObject(10, 400, 0);
-	bush0.initObject();
-
+	// setup blockers
 	tree0.prepareObject(mapWidth - 100, 100, 0);
-	tree0.initObject();
-	
-	//house0.prepareObject(200, mapHeight - 500, 0);
 	house0.prepareObject(100, mapHeight - 300, 0);
 	house1.prepareObject(mapWidth - 200, mapHeight - 200, 1);
 
+	// setup hiders
+	bush0.prepareObject(10, 400, 0);
+
+	// init all and register z ordering
 	blockers.forEach(function(b) {
 		b.initObject();
+		zSorter.register(b.sprite);
 	});
 
+	hiders.forEach(function(h) {
+		h.initObject();
+		zSorter.register(h.sprite);
+	});
 
-	// initialize player and UI in the end
-	player.initObject();
+	// initialize UI in the end because its Z ordering is always the greatest
 	player.initUI();
 
 	// 4. PUT LOOPS RUNNING
@@ -130,6 +133,8 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	zSorter.register(m2.monsterSprite);
 	zSorter.register(m3.monsterSprite);
 	zSorter.register(player.playerSprite);
+	zSorter.register(tree0.sprite);
+	zSorter.register(bush0.sprite);
 	zSorter.register(house0.sprite);
 	zSorter.register(house1.sprite);
 

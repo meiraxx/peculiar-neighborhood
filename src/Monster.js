@@ -148,33 +148,18 @@ export default class Monster {
 
 	handleAllDetainerCollisions(player) {
 		let allVisibleNets = this.app.stage.children.filter(child => 
-			child.name.indexOf("net") !== -1 && child.visible === true);
+			child.name.indexOf("netCollider") !== -1 && child.active === true);
 		let allVisibleBullets = this.app.stage.children.filter(child => 
-			child.name.indexOf("bullet") !== -1 && child.visible === true);
+			child.name.indexOf("bulletCollider") !== -1 && child.active === true);
+		let allActiveBatColliders = this.app.stage.children.filter(child => 
+			child.name.indexOf("batCollider") !== -1 && child.active === true);
+
 		let staticBlockers = this.app.stage.children.filter(child => 
 			child.name.indexOf("blocker") !== -1);
 
+		// player/monster collision
 		if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite) !== "none") {
 			this.stopMonster();
-		}
-		
-		// net collision
-		if (!this.isDead() && !this.isCaptured() && 
-			allVisibleNets !== undefined && allVisibleNets.length !== 0) {
-			for (var i = 0; i < allVisibleNets.length; i++) {
-			    if(detainSpriteOutsideDetainer(allVisibleNets[i], this.monsterSprite) !== "none") {
-			    	// make it invisible
-			    	allVisibleNets[i].visible = false;
-			    	// convert health string to int
-			    	let healthValue = +this.healthBar.container.valueText.text;
-			    	// if monster health is below half
-			    	if (healthValue <= this.healthBar.container.maxHealth/2) {
-			    		// capture monster
-						this.captureMonster(player);
-						//return true;
-			    	}
-				}
-			}
 		}
 		
 		// bullet collision
@@ -182,16 +167,48 @@ export default class Monster {
 			allVisibleBullets !== undefined && allVisibleBullets.length !== 0) {
 			for (var i = 0; i < allVisibleBullets.length; i++) {
 			    if(detainSpriteOutsideDetainer(allVisibleBullets[i], this.monsterSprite) !== "none") {
-			    	// make bullet invisible
+			    	// make bullet invisible and inactive
+			    	allVisibleBullets[i].active = false;
 			    	allVisibleBullets[i].visible = false;
 			    	// harm monster
 					this.harmMonster(player, "pistol");
-					//return true;
 				}
 			}
 		}
 
-		// static blockers collision
+		// net collision
+		if (!this.isDead() && !this.isCaptured() && 
+			allVisibleNets !== undefined && allVisibleNets.length !== 0) {
+			for (var i = 0; i < allVisibleNets.length; i++) {
+			    if(detainSpriteOutsideDetainer(allVisibleNets[i], this.monsterSprite) !== "none") {
+			    	// make net invisible and inactive
+			    	allVisibleNets[i].active = false;
+			    	allVisibleNets[i].visible = false;
+			    	// convert health string to int
+			    	let healthValue = +this.healthBar.container.valueText.text;
+			    	// if monster health is below half
+			    	if (healthValue <= this.healthBar.container.maxHealth/2) {
+			    		// capture monster
+						this.captureMonster(player);
+			    	}
+				}
+			}
+		}
+
+		// bat colliders collision
+		if (!this.isDead() && !this.isCaptured() && 
+			allActiveBatColliders !== undefined && allActiveBatColliders.length !== 0) {
+			for (var i = 0; i < allActiveBatColliders.length; i++) {
+			    if(detainSpriteOutsideDetainer(allActiveBatColliders[i], this.monsterSprite) !== "none") {
+			    	// make bullet invisible
+			    	allActiveBatColliders[i].active = false;
+			    	// harm monster
+					this.harmMonster(player, "bat");
+				}
+			}
+		}
+
+		// static elements collision
 		if (!this.isDead() && !this.isCaptured() && 
 			staticBlockers !== undefined && staticBlockers.length !== 0) {
 			for (var i = 0; i < staticBlockers.length; i++) {
@@ -199,7 +216,6 @@ export default class Monster {
 					// monster reverts direction
 					this.reverseMonsterDirection();
 					this.moveMonster();
-					//return true;
 				}
 			}
 		}
@@ -236,9 +252,12 @@ export default class Monster {
 
 	harmMonster(player, weapon) {
 		if (weapon === "pistol") {
-			// weapon: 50% chance 1 dmg, 50% chance 2 dmg
+			// pistol: 50% chance 1 dmg, 50% chance 2 dmg
 			let randomInt = getRandomArbitraryInt(1, 2);
 			this.healthBar.subtractHealth(randomInt);
+		} else if (weapon === "bat") {
+			// bat: 3 dmg
+			this.healthBar.subtractHealth(3);
 		}
 
 		let healthValue = +this.healthBar.container.valueText.text;

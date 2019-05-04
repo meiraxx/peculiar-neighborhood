@@ -10,18 +10,18 @@ export default class Bush {
 
 	prepareObject(x_pos, y_pos, i) {
 		let bushTexture = this.app.loader.resources["assets/staticElements/bush.png"].texture;
-		this.bushSprite = new PIXI.Sprite(bushTexture);
-		this.bushSprite.scale.x = 0.2;
-		this.bushSprite.scale.y = 0.2;
-		this.bushSprite.x = x_pos;
-		this.bushSprite.y = y_pos;
-		this.bushSprite.name = "bush" + i;
-		this.bushSprite.yForZOrdering = this.bushSprite.y + this.bushSprite.height;
+		this.sprite = new PIXI.Sprite(bushTexture);
+		this.sprite.scale.x = 0.2;
+		this.sprite.scale.y = 0.2;
+		this.sprite.x = x_pos;
+		this.sprite.y = y_pos;
+		this.sprite.name = "bush" + i;
+		this.sprite.yForZOrdering = this.sprite.y + this.sprite.height;
 
 	}
 
 	initObject() {
-		this.app.stage.addChild(this.bushSprite);
+		this.app.stage.addChild(this.sprite);
 		console.log("bush initialized");
 	}
 

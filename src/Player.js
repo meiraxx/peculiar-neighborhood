@@ -37,7 +37,7 @@ export default class Player {
 		let playerBackTexture = this.app.loader.resources["assets/character/none/characterBack.png"].texture;
 		let playerRightTexture = this.app.loader.resources["assets/character/none/characterRight.png"].texture;
 		let playerLeftTexture = this.app.loader.resources["assets/character/none/characterLeft.png"].texture;
-		this.command = "down";
+		this.ui.command = "down";
 		
 		this.playerSprite = new PIXI.Sprite(playerFrontTexture);
 		this.playerSprite.scale.x = 0.20;
@@ -93,7 +93,7 @@ export default class Player {
 		// the speed by half on certain conditions
 		this.leftKey.press = () => {
 			if (!this.ui.isPaused()) {
-				this.command = "left";
+				this.ui.command = "left";
 				this.playerSprite.vx = -this.playerSprite.velocity;
 				this.playerSprite.vy = 0;
 				this.updatePlayerSprite();
@@ -107,7 +107,7 @@ export default class Player {
 
 		this.rightKey.press = () => {
 			if (!this.ui.isPaused()) {
-				this.command = "right";
+				this.ui.command = "right";
 				this.playerSprite.vx = this.playerSprite.velocity;
 				this.playerSprite.vy = 0;
 				this.updatePlayerSprite();
@@ -121,7 +121,7 @@ export default class Player {
 
 		this.downKey.press = () => {
 			if (!this.ui.isPaused()) {
-				this.command = "down";
+				this.ui.command = "down";
 				this.playerSprite.vx = 0;
 				this.playerSprite.vy = this.playerSprite.velocity;
 				this.updatePlayerSprite();
@@ -135,7 +135,7 @@ export default class Player {
 
 		this.upKey.press = () => {
 			if (!this.ui.isPaused()) {
-				this.command = "up";
+				this.ui.command = "up";
 				this.playerSprite.vx = 0;
 				this.playerSprite.vy = -this.playerSprite.velocity;
 				this.updatePlayerSprite();
@@ -254,60 +254,14 @@ export default class Player {
 
 		//mouse input
 		window.addEventListener("mousemove", event => {
-			if (!this.ui.isPaused()) {
-				this.ui.crosshair.sprite.visible = this.ui.usableItem();
-				//top left based
-				let mousePosOnSphereAroundPlayer = new PIXI.Point(event.screenX, event.screenY);
-				mousePosOnSphereAroundPlayer.x /= window.screen.availWidth;
-				mousePosOnSphereAroundPlayer.x -= 0.5;
-				mousePosOnSphereAroundPlayer.y /= window.screen.availHeight;
-				mousePosOnSphereAroundPlayer.y -= 0.5;
-				this.ui.shootDirection.x =   mousePosOnSphereAroundPlayer.x;
-				this.ui.shootDirection.y = mousePosOnSphereAroundPlayer.y;
-				let length = Math.sqrt(this.ui.shootDirection.x * this.ui.shootDirection.x + this.ui.shootDirection.y * this.ui.shootDirection.y);
-				if(length != 0) {
-					this.ui.shootDirection.x /= length;
-					this.ui.shootDirection.y /= length;
-				}
-			}
+			this.ui.moveCrosshair(event);
 		});
 
 		window.addEventListener("click", event => {
 			// mouse events:
 			// - right-handed: 0 for mouse1, 1 for wheel-click, 2 for mouse2
 			// - left-handed: 2 for mouse1, 1 for wheel-click, 0 for mouse2
-			if (!this.ui.isPaused() && event.button===0 && this.ui.usableItem()) {
-				let angle = Math.acos(this.ui.shootDirection.y);
-				angle *= this.ui.shootDirection.x > 0.0 ? -1 : 1;
-				if (this.ui.currentItem === "netgun") {
-					this.ui.nets[this.ui.currentNet].go(
-						this.playerSprite.x + this.playerSprite.width/2 - this.ui.shootDirection.y * this.ui.nets[0].sprite.width / 2,
-						this.playerSprite.y + this.playerSprite.height/2 + this.ui.shootDirection.x * this.ui.nets[0].sprite.height / 2,
-						10.0 * this.ui.shootDirection.x,
-						10.0 * this.ui.shootDirection.y,
-						angle);
-					this.ui.currentNet = (this.ui.currentNet + 1) % 10;
-				} else if (this.ui.currentItem === "pistol") {
-					this.ui.bullets[this.ui.currentBullet].go(
-						this.playerSprite.x + this.playerSprite.width/2 - this.ui.shootDirection.y * this.ui.bullets[0].sprite.width / 2,
-						this.playerSprite.y + this.playerSprite.height/2 + this.ui.shootDirection.x * this.ui.bullets[0].sprite.height / 2,
-						10.0 * this.ui.shootDirection.x,
-						10.0 * this.ui.shootDirection.y,
-						angle);
-					this.ui.currentBullet = (this.ui.currentBullet + 1) % 10;
-				} else if (this.ui.currentItem === "bat") {
-					// todo: hit with bat
-					this.ui.batColliders[this.ui.currentBatCollider].go(
-						this.playerSprite.x + this.playerSprite.width/2 - this.ui.shootDirection.y * this.ui.batColliders[0].sprite.width / 2,
-						this.playerSprite.y + this.playerSprite.height/2 + this.ui.shootDirection.x * this.ui.batColliders[0].sprite.height / 2,
-						10.0 * this.ui.shootDirection.x,
-						10.0 * this.ui.shootDirection.y,
-						angle);
-					this.ui.currentBatCollider = (this.ui.currentBatCollider + 1) % 10;
-				} else if (this.ui.currentItem === "whistle") {
-					// todo: call pet
-				}
-			}
+			this.ui.useItem(this.playerSprite, event);
 		});
 	}
 
@@ -363,7 +317,7 @@ export default class Player {
 	}
 
 	updatePlayerSprite() {
-		switch(this.command) {
+		switch(this.ui.command) {
 			case "left":
 				switch(this.ui.currentItem) {
 					case "none":
@@ -508,14 +462,8 @@ export default class Player {
 			let collided = this.handleAllDetainerCollisions();
 			this.handleContainerCollisionsAndMove();
 		}
-		//update crosshair
-		this.ui.crosshair.sprite.x = this.playerSprite.x - this.ui.crosshair.sprite.width / 2  + this.playerSprite.width / 2 + 100.0 *  this.ui.shootDirection.x;
-		this.ui.crosshair.sprite.y = this.playerSprite.y - this.ui.crosshair.sprite.height / 2 + this.playerSprite.height / 2 + 100.0 * this.ui.shootDirection.y;
-		//update bullets
-		for (var i = this.ui.bullets.length - 1; i >= 0; i--) {
-			this.ui.bullets[i].update(delta);
-			this.ui.nets[i].update(delta);
-		}
+		this.ui.updateCrosshairOnScreen(this.playerSprite);
+		this.ui.updateMissileColliders(delta);
 		//update zordering pos
 		this.playerSprite.yForZOrdering = this.playerSprite.y + this.playerSprite.height;
 	}
@@ -530,6 +478,7 @@ export default class Player {
 		let staticBlockers = this.app.stage.children.filter(child => 
 			child.name.indexOf("blocker") !== -1);
 
+		// player/monster collisions
 		if (monsters !== undefined && monsters.length !== 0) {
 			for (var i = 0; i < monsters.length; i++) {
 			    if (!monsters[i].captured && !monsters[i].dead &&
@@ -539,6 +488,7 @@ export default class Player {
 			}
 		}
 
+		// static elements collision
 		if (staticBlockers !== undefined && staticBlockers.length !== 0) {
 			for (var i = 0; i < staticBlockers.length; i++) {
 			    if (detainSpriteOutsideDetainer(this.playerSprite, staticBlockers[i]) !== "none"){

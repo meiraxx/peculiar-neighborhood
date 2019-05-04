@@ -1,9 +1,10 @@
+import * as PIXI from 'pixi.js'
 export default class Cards {
-	static loadResources() {
-        PIXI.loader.add("assets/cards/cardBat.png"); //1
-        PIXI.loader.add("assets/cards/cardPistol.png"); //2
-        PIXI.loader.add("assets/cards/cardNetgun.png"); //3
-        PIXI.loader.add("assets/cards/cardWhistle.png"); //4
+	static loadResources(app) {
+        app.loader.add("assets/cards/cardBat.png"); //1
+        app.loader.add("assets/cards/cardPistol.png"); //2
+        app.loader.add("assets/cards/cardNetgun.png"); //3
+        app.loader.add("assets/cards/cardWhistle.png"); //4
     }
 
     constructor(app) {
@@ -17,12 +18,12 @@ export default class Cards {
         this.container.x = x_pos;
         this.container.y = y_pos;
         this.container.name = "cards";
-
+        this.container._zIndex = Number.MAX_SAFE_INTEGER;
         // load cards textures
-        let cardBatTexture = PIXI.loader.resources["assets/cards/cardBat.png"].texture;
-        let cardPistolTexture = PIXI.loader.resources["assets/cards/cardPistol.png"].texture;
-        let cardNetgunTexture = PIXI.loader.resources["assets/cards/cardNetgun.png"].texture;
-        let cardWhistleTexture = PIXI.loader.resources["assets/cards/cardWhistle.png"].texture;
+        let cardBatTexture = this.app.loader.resources["assets/cards/cardBat.png"].texture;
+        let cardPistolTexture = this.app.loader.resources["assets/cards/cardPistol.png"].texture;
+        let cardNetgunTexture = this.app.loader.resources["assets/cards/cardNetgun.png"].texture;
+        let cardWhistleTexture = this.app.loader.resources["assets/cards/cardWhistle.png"].texture;
 
         // build sprites and scale them to 100x100
         let cardBatSprite = new PIXI.Sprite(cardBatTexture);

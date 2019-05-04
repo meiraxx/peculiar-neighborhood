@@ -6,12 +6,14 @@ import Viewport from "./lib/viewport";
 import Monster from "./Monster";
 import Tree from "./Tree";
 import House from "./House";
+import ZSorter from "./ZSorter";
+import * as PIXI from 'pixi.js'
 
 function loadProgressHandler(loader,resource) {
   console.log("loading " + resource.url + " "  + loader.progress + "%");
 }
 
-var PIXI = require("pixi.js");
+//var PIXI = require("pixi.js");
 PIXI.settings.RESOLUTION = 2;
 PIXI.settings.SORTABLE_CHILDREN = true;
 
@@ -46,12 +48,12 @@ viewport.moveTo(700, 800);
 viewport.zoom(700);
 
 // 1. LOAD ALL RESOURCES
-StaticMap.loadResources();
-Player.loadResources();
-Bush.loadResources();
-Tree.loadResources();
-Monster.loadResources();
-House.loadResources();
+StaticMap.loadResources(app);
+Player.loadResources(app);
+Bush.loadResources(app);
+Tree.loadResources(app);
+Monster.loadResources(app);
+House.loadResources(app);
 
 // 2. CONSTRUCT MAIN OBJECTS
 var staticMap = new StaticMap(app);
@@ -71,7 +73,8 @@ var house1 = new House(app);
 
 var blockers = [tree0, house0, house1];
 
-PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
+var zSorter =  new ZSorter(app);
+app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// 3. SETUP AND INITIALIZE OBJECTS
 	// setup background map
 	staticMap.prepareObject();
@@ -120,7 +123,18 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	monsters.forEach(function(m) {
 		m.initLoop(player);
 	});
-	
+
+	zSorter.register(staticMap.backgroundSprite);
+	zSorter.register(m0.monsterSprite);
+	zSorter.register(m1.monsterSprite);
+	zSorter.register(m2.monsterSprite);
+	zSorter.register(m3.monsterSprite);
+	zSorter.register(player.playerSprite);
+	zSorter.register(house0.sprite);
+	zSorter.register(house1.sprite);
+
+	zSorter.initLoop();
+
 });
 
 /*

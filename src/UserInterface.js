@@ -5,14 +5,15 @@ import Crosshair from "./Crosshair";
 import CardsInfo from "./CardsInfo";
 import Missile from "./Missile";
 import Score from "./Score";
+import * as PIXI from 'pixi.js'
 
 export default class UserInterface {
-	static loadResources() {
-		Cards.loadResources();
-		PauseScreen.loadResources();
-		Crosshair.loadResources();
-		Missile.loadResources();
-		CardsInfo.loadResources();
+	static loadResources(app) {
+		Cards.loadResources(app);
+		PauseScreen.loadResources(app);
+		Crosshair.loadResources(app);
+		Missile.loadResources(app);
+		CardsInfo.loadResources(app);
 	}
 	
 	constructor(app) {
@@ -25,11 +26,15 @@ export default class UserInterface {
 		this.shootDirection = new PIXI.Point(0,0);
 		this.currentBullet = 0;
 		this.currentNet = 0;
+		this.currentBatCollider = 0;
 		this.bullets = [];
 		this.nets = [];
+		this.batColliders = [];
+
 		for (var i = 10; i >= 0; i--) {
 			this.bullets.push(new Missile(app,"bullet"));
 			this.nets.push(new Missile(app,"net"));
+			this.batColliders.push(new Missile(app,"bat"));
 		}
 		this.cardsInfo = new CardsInfo(app);
 		this.score = new Score(app);
@@ -109,6 +114,7 @@ export default class UserInterface {
  		for (var i = 10; i >= 0; i--) {
 			this.bullets[i].prepareObject(x_pos, y_pos, i);
 			this.nets[i].prepareObject(x_pos, y_pos, i);
+			this.batColliders[i].prepareObject(x_pos, y_pos, i);
 		}
 	}
 
@@ -116,6 +122,7 @@ export default class UserInterface {
 		for (var i = 10; i >= 0; i--) {
 			this.bullets[i].initObject();
 			this.nets[i].initObject();
+			this.batColliders[i].initObject();
 		}
 	}
 
@@ -130,6 +137,11 @@ export default class UserInterface {
 	
 	shootableItem() {
 		return (this.currentItem === "pistol" || this.currentItem === "netgun");
+	}
+
+	usableItem() {
+		return (this.currentItem === "pistol" || this.currentItem === "netgun"
+			|| this.currentItem === "bat" || this.currentItem === "whistle");
 	}
 
 	// CARDS INFO

@@ -1,7 +1,9 @@
+import * as PIXI from 'pixi.js'
+
 export default class Tree {
 	
-	static loadResources() {
-		PIXI.loader.add("assets/staticElements/conifer.png");
+	static loadResources(app) {
+		app.loader.add("assets/staticElements/conifer.png");
 	}
 	
 	constructor(app) {
@@ -10,7 +12,7 @@ export default class Tree {
 	}
 	
 	prepareObject(x_pos, y_pos, i) {
-		let treeTexture = PIXI.loader.resources["assets/staticElements/conifer.png"].texture;
+		let treeTexture = this.app.loader.resources["assets/staticElements/conifer.png"].texture;
 		
 		this.sprite = new PIXI.Sprite(treeTexture);
 		this.sprite.scale.x = 0.3;
@@ -18,6 +20,8 @@ export default class Tree {
 		this.sprite.x = x_pos;
 		this.sprite.y = y_pos;
 		this.sprite.name = "blocker-tree" + i;
+	    this.sprite.yForZOrdering = this.sprite.y + this.sprite.height;
+
 	}
 
 	initObject() {

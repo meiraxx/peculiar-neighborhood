@@ -1,12 +1,14 @@
+import * as PIXI from 'pixi.js'
 export default class Fog {
 	
   constructor(app) {
 	this.app = app;
-	PIXI.loader.add("assets/fog.png");
   }
-  
+  static loadResources(app) {
+		app.loader.add("assets/fog.png");
+   }
   prepareObject() {
-	let fogTexture = PIXI.loader.resources["assets/fog.png"].texture;
+	let fogTexture = this.app.loader.resources["assets/fog.png"].texture;
 	this.fogSprite0 = new PIXI.Sprite(fogTexture);
 	this.fogSprite0.x = -1024;
 	this.fogSprite1 = new PIXI.Sprite(fogTexture);

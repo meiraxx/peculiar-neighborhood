@@ -1,3 +1,4 @@
+import * as PIXI from 'pixi.js'
 import { textStyle, getRoundedRectangle, getIntLength } from "./lib/PixiUtilMethods";
 
 export default class HealthBar {
@@ -18,6 +19,7 @@ export default class HealthBar {
         this.container.x = x_pos;
         this.container.y = y_pos;
         this.container.name = "healthbar";
+        this.container._zIndex = Number.MAX_SAFE_INTEGER;
 
         // create the max-health rectangle
         let innerBar = getRoundedRectangle(-width/2, 0, width, height, 3, 0x000000);
@@ -66,7 +68,7 @@ export default class HealthBar {
             this.container.outerBar.width = 0;
         }
         this.calculateHealthTextX();
-        this.container.valueText.setText(this.container.currHealth);
+        this.container.valueText.text = this.container.currHealth;
     }
 
     isChanged() {

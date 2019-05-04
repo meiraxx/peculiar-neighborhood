@@ -1,16 +1,17 @@
+import * as PIXI from 'pixi.js'
 import UserInterface from './UserInterface';
 import { getRandomArbitraryInt } from "./lib/UtilMethods";
 import { containSpriteInsideContainer, setTextureOnlyIfNeeded, detainSpriteOutsideDetainer } from "./lib/PixiUtilMethods";
 import HealthBar from "./HealthBar";
 
 export default class Monster {
-	static loadResources() {
-		PIXI.loader.add("assets/monsters/angryMonster.png");
-		PIXI.loader.add("assets/monsters/normalMonster.png");
-		PIXI.loader.add("assets/capturedMonsters/angryMonster.png");
-		PIXI.loader.add("assets/capturedMonsters/normalMonster.png");
-		PIXI.loader.add("assets/deadMonsters/angryMonster.png");
-		PIXI.loader.add("assets/deadMonsters/normalMonster.png");
+	static loadResources(app) {
+		app.loader.add("assets/monsters/angryMonster.png");
+		app.loader.add("assets/monsters/normalMonster.png");
+		app.loader.add("assets/capturedMonsters/angryMonster.png");
+		app.loader.add("assets/capturedMonsters/normalMonster.png");
+		app.loader.add("assets/deadMonsters/angryMonster.png");
+		app.loader.add("assets/deadMonsters/normalMonster.png");
 	}
 	
 	constructor(app, isAngry) {
@@ -23,19 +24,19 @@ export default class Monster {
 		// SETUP monster
 		//console.log("monster" + i);
 		if (this.isAngry) {
-			this.monsterTexture = PIXI.loader.resources["assets/monsters/angryMonster.png"].texture;
+			this.monsterTexture = this.app.loader.resources["assets/monsters/angryMonster.png"].texture;
 			this.capturedMonsterTexture = 
-				PIXI.loader.resources["assets/capturedMonsters/angryMonster.png"].texture;
+				this.app.loader.resources["assets/capturedMonsters/angryMonster.png"].texture;
 			this.deadMonsterTexture = 
-				PIXI.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
+				this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
 			this.healthBar.prepareObject(x_pos, y_pos - 12, 48, 8, 0xFF3300, 15);
 		}
 		else {
-			this.monsterTexture = PIXI.loader.resources["assets/monsters/normalMonster.png"].texture;
+			this.monsterTexture = this.app.loader.resources["assets/monsters/normalMonster.png"].texture;
 			this.capturedMonsterTexture = 
-				PIXI.loader.resources["assets/capturedMonsters/normalMonster.png"].texture;
+				this.app.loader.resources["assets/capturedMonsters/normalMonster.png"].texture;
 			this.deadMonsterTexture = 
-				PIXI.loader.resources["assets/deadMonsters/normalMonster.png"].texture;
+				this.app.loader.resources["assets/deadMonsters/normalMonster.png"].texture;
 			this.healthBar.prepareObject(x_pos, y_pos - 6, 32, 8, 0xFF3300, 10);
 		}
 
@@ -62,6 +63,8 @@ export default class Monster {
 		// hack to be able to move healthbar when finding children
 		this.monsterSprite.healthBar = this.healthBar;
 		this.monsterSprite.isAngry = this.isAngry;
+		this.monsterSprite.yForZOrdering = this.monsterSprite.y + this.monsterSprite.height;
+
 	}
 
 	initObject() {
@@ -84,6 +87,9 @@ export default class Monster {
 				this.handleContainerCollisionsAndMove();
 			}
 		}
+		//update z ordering
+		this.monsterSprite.yForZOrdering = this.monsterSprite.y + this.monsterSprite.height;
+
 	}
 
 	recalculateDirection(delta) {

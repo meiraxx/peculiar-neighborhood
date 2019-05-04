@@ -1,8 +1,9 @@
+import * as PIXI from 'pixi.js'
 
 export default class Missile {
-	static loadResources() {
-		PIXI.loader.add("assets/missiles/bullet.png");
-		PIXI.loader.add("assets/missiles/net.png");
+	static loadResources(app) {
+		app.loader.add("assets/missiles/bullet.png");
+		app.loader.add("assets/missiles/net.png");
 	}
 	
 	constructor(app, typeName) {
@@ -13,20 +14,25 @@ export default class Missile {
 	prepareObject(x_pos, y_pos, i) {
 		let tex;
 		if(this.typeName === "net") {
-			tex = PIXI.loader.resources["assets/missiles/net.png"].texture;	
+			tex = this.app.loader.resources["assets/missiles/net.png"].texture;	
 		} else if(this.typeName === "bullet") {
-			tex = PIXI.loader.resources["assets/missiles/bullet.png"].texture;	
+			tex = this.app.loader.resources["assets/missiles/bullet.png"].texture;
+		} else if (this.typeName === "bat") {
+			//tex = PIXI.Texture.EMPTY;
+			tex = this.app.loader.resources["assets/missiles/bullet.png"].texture;
 		}
 		
 		this.sprite = new PIXI.Sprite(tex);
 		this.sprite.x = x_pos;
 		this.sprite.y = y_pos;
 
-		if (this.typeName==="net") {
+		if (this.typeName === "net") {
 			this.sprite.scale.x = 0.2;
 			this.sprite.scale.y = 0.2;
-		}
-		else {
+		} else if (this.typeName === "bullet") {
+			this.sprite.scale.x = 0.4;
+			this.sprite.scale.y = 0.4;
+		} else if (this.typeName === "bat") {
 			this.sprite.scale.x = 0.4;
 			this.sprite.scale.y = 0.4;
 		}

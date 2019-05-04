@@ -59,26 +59,31 @@ export default class Player {
 		//this.rightKey = keyboard("ArrowRight");
 		//this.downKey = keyboard("ArrowDown");
 		//this.upKey = keyboard("ArrowUp");
+		// walk
 		this.leftKey = keyboard("a");
 		this.rightKey = keyboard("d");
 		this.downKey = keyboard("s");
 		this.upKey = keyboard("w");
 
+		// equip/unequip items
 		this.zeroKey = keyboard("0");
 		this.oneKey = keyboard("1");
 		this.twoKey = keyboard("2");
 		this.threeKey = keyboard("3");
+		this.fourKey = keyboard("4");
+
+		// see items info
 		this.f1Key = keyboard("F1");
 		this.f2Key = keyboard("F2");
 		this.f3Key = keyboard("F3");
+		this.f4Key = keyboard("F4");
 
+		// interact
 		this.fKey = keyboard("f");
 
+		// pause
 		this.pKey = keyboard("p");
 		this.escKey = keyboard("Escape");
-
-		// left, right, down, up
-		//this.commandArray = [false, false, false, false];
 
 		// MOVEMENT KEYS
 		// note: comment second conditions and movement resets on key press to obtain diagonal movements,
@@ -182,6 +187,16 @@ export default class Player {
 		this.threeKey.release = () => {
 		};
 
+		this.fourKey.press = () => {
+			if (!this.ui.isPaused()) {
+				this.ui.highlightCard("whistle");
+				this.ui.crosshair.sprite.visible = false;
+				this.updatePlayerSprite();
+			}
+		};
+		this.fourKey.release = () => {
+		};
+
 		this.f1Key.press = () => {
 			if (!this.ui.pauseScreen.container.visible) {
 				this.ui.toggleCardsInfo("cardBatInfo");
@@ -204,6 +219,14 @@ export default class Player {
 			}
 		};
 		this.f3Key.release = () => {
+		};
+
+		this.f4Key.press = () => {
+			if (!this.ui.pauseScreen.container.visible) {
+				this.ui.toggleCardsInfo("cardWhistleInfo");
+			}
+		};
+		this.f4Key.release = () => {
 		};
 
 		this.fKey.press = () => {
@@ -254,7 +277,7 @@ export default class Player {
 			if (!this.ui.isPaused() && event.button===0 && this.ui.shootableItem()) {
 				let angle = Math.acos( this.ui.shootDirection.y );
 				angle *= this.ui.shootDirection.x > 0.0 ? -1 : 1;
-				if( this.ui.currentItem === "netgun") {
+				if (this.ui.currentItem === "netgun") {
 					this.ui.nets[this.ui.currentNet].go(
 						this.playerSprite.x + this.playerSprite.width/2 - this.ui.shootDirection.y * this.ui.nets[0].sprite.width / 2,
 						this.playerSprite.y + this.playerSprite.height/2 + this.ui.shootDirection.x * this.ui.nets[0].sprite.height / 2,
@@ -262,7 +285,7 @@ export default class Player {
 						10.0 * this.ui.shootDirection.y,
 						angle);
 					this.ui.currentNet = (this.ui.currentNet + 1) % 10;
-				} else {
+				} else if (this.ui.currentItem === "pistol") {
 					this.ui.bullets[this.ui.currentBullet].go(
 						this.playerSprite.x + this.playerSprite.width/2 - this.ui.shootDirection.y * this.ui.bullets[0].sprite.width / 2,
 						this.playerSprite.y + this.playerSprite.height/2 + this.ui.shootDirection.x * this.ui.bullets[0].sprite.height / 2,
@@ -270,8 +293,11 @@ export default class Player {
 						10.0 * this.ui.shootDirection.y,
 						angle);
 					this.ui.currentBullet = (this.ui.currentBullet + 1) % 10;
+				} else if (this.ui.currentItem === "bat") {
+					// todo: hit with bat
+				} else if (this.ui.currentItem === "whistle") {
+					// todo: call pet
 				}
-				
 			}
 		});
 	}
@@ -296,8 +322,8 @@ export default class Player {
 
 		if (monsters !== undefined && monsters.length !== 0 && !this.isGrabbing) {
 			for (var i = 0; i < monsters.length; i++) {
-			    //if (monsters[i].captured && detainSpriteOutsideDetainer(this.playerSprite, monsters[i]) !== "none") {
-			    if (monsters[i].captured && checkDynamicIntoDynamicCollision(this.playerSprite, monsters[i])) {
+			    if (monsters[i].captured && checkDynamicIntoDynamicCollision(this.playerSprite, monsters[i])
+			    	&& !this.isGrabbing) {
 			    	for (var j = 0; j < this.grabbedMonstersList.length; j++) {
 						if (this.grabbedMonstersList[j]===monsters[i]) {
 							return;
@@ -343,6 +369,9 @@ export default class Player {
 					case "netgun":
 						this.playerTexture = PIXI.loader.resources["assets/character/netgun/characterLeft.png"].texture;
 						break;
+					case "whistle":
+						this.playerTexture = PIXI.loader.resources["assets/character/netgun/characterLeft.png"].texture;
+						break;
 					default:
 						// do nothing
 				}
@@ -359,6 +388,9 @@ export default class Player {
 						this.playerTexture = PIXI.loader.resources["assets/character/pistol/characterRight.png"].texture;
 						break;
 					case "netgun":
+						this.playerTexture = PIXI.loader.resources["assets/character/netgun/characterRight.png"].texture;
+						break;
+					case "whistle":
 						this.playerTexture = PIXI.loader.resources["assets/character/netgun/characterRight.png"].texture;
 						break;
 					default:
@@ -379,6 +411,9 @@ export default class Player {
 					case "netgun":
 						this.playerTexture = PIXI.loader.resources["assets/character/netgun/characterFront.png"].texture;
 						break;
+					case "whistle":
+						this.playerTexture = PIXI.loader.resources["assets/character/netgun/characterFront.png"].texture;
+						break;
 					default:
 						// do nothing
 				}
@@ -395,6 +430,9 @@ export default class Player {
 						this.playerTexture = PIXI.loader.resources["assets/character/pistol/characterBack.png"].texture;
 						break;
 					case "netgun":
+						this.playerTexture = PIXI.loader.resources["assets/character/netgun/characterBack.png"].texture;
+						break;
+					case "whistle":
 						this.playerTexture = PIXI.loader.resources["assets/character/netgun/characterBack.png"].texture;
 						break;
 					default:
@@ -458,10 +496,8 @@ export default class Player {
 
 	playerLoop(delta) {
 		if (!this.ui.isPaused() && this.playerIsMoving()) {
-			let collided = this.handleGenericStaticCollisions();
-			if (!collided) {
-				this.handleContainerCollisionsAndMove();
-			}
+			let collided = this.handleAllDetainerCollisions();
+			this.handleContainerCollisionsAndMove();
 		}
 		//update crosshair
 		this.ui.crosshair.sprite.x = this.playerSprite.x - this.ui.crosshair.sprite.width / 2  + this.playerSprite.width / 2 + 100.0 *  this.ui.shootDirection.x;
@@ -473,30 +509,32 @@ export default class Player {
 		}
 	}
 
-	handleGenericStaticCollisions() {
+	stopPlayer() {
+		this.playerSprite.vx = 0;
+		this.playerSprite.vy = 0;
+	}
+
+	handleAllDetainerCollisions() {
+		let monsters = this.app.stage.children.filter(child => child.name.indexOf("monster") !== -1);
 		let staticBlockers = this.app.stage.children.filter(child => 
 			child.name.indexOf("blocker") !== -1);
 
-		let playerHitsHouse = undefined;
-		if (staticBlockers !== undefined && staticBlockers.length !== 0) {
-			for (var i = 0; i < staticBlockers.length; i++) {
-			    playerHitsHouse = detainSpriteOutsideDetainer(this.playerSprite, staticBlockers[i]);
-			    if (playerHitsHouse !== "none"){
-			    	break;
-			    }	
+		if (monsters !== undefined && monsters.length !== 0) {
+			for (var i = 0; i < monsters.length; i++) {
+			    if (!monsters[i].captured && !monsters[i].dead &&
+			    	detainSpriteOutsideDetainer(this.playerSprite, monsters[i]) !== "none") {
+					this.stopPlayer();
+				}
 			}
 		}
 
-		if (playerHitsHouse===undefined) {
-			return false;
+		if (staticBlockers !== undefined && staticBlockers.length !== 0) {
+			for (var i = 0; i < staticBlockers.length; i++) {
+			    if (detainSpriteOutsideDetainer(this.playerSprite, staticBlockers[i]) !== "none"){
+			    	this.stopPlayer();
+			    }
+			}
 		}
-		else if (playerHitsHouse !== "none") {
-			// character hit house: reset his velocity
-			this.playerSprite.vx = 0;
-			this.playerSprite.vy = 0;
-			return true;
-		}
-		return false;
 	}
 
 	handleContainerCollisionsAndMove() {

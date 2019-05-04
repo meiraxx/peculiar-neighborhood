@@ -21,6 +21,7 @@ export default class CardsInfo {
 		let cardBatInfo = PIXI.loader.resources["assets/cards/cardBat.png"].texture;
 		let cardPistolInfo = PIXI.loader.resources["assets/cards/cardPistol.png"].texture;
 		let cardNetgunInfo = PIXI.loader.resources["assets/cards/cardNetgun.png"].texture;
+		let cardWhistleInfo = PIXI.loader.resources["assets/cards/cardWhistle.png"].texture;
 
 		let cardBatInfoSprite = new PIXI.Sprite(cardBatInfo);
 		cardBatInfoSprite.name = "cardBatInfo";
@@ -34,10 +35,15 @@ export default class CardsInfo {
 		cardNetgunInfoSprite.name = "cardNetgunInfo";
 		cardNetgunInfoSprite.visible = false;
 
+		let cardWhistleInfoSprite = new PIXI.Sprite(cardWhistleInfo);
+		cardWhistleInfoSprite.name = "cardWhistleInfo";
+		cardWhistleInfoSprite.visible = false;
+
 		this.container.addChild(cardBatInfoSprite);
 		this.container.addChild(cardPistolInfoSprite);
 		this.container.addChild(cardNetgunInfoSprite);
-
+		this.container.addChild(cardWhistleInfoSprite);
+		
 		this.displayed = false;
 	}
 

@@ -3,6 +3,7 @@ export default class Cards {
         PIXI.loader.add("assets/cards/cardBat.png"); //1
         PIXI.loader.add("assets/cards/cardPistol.png"); //2
         PIXI.loader.add("assets/cards/cardNetgun.png"); //3
+        PIXI.loader.add("assets/cards/cardWhistle.png"); //4
     }
 
     constructor(app) {
@@ -21,6 +22,7 @@ export default class Cards {
         let cardBatTexture = PIXI.loader.resources["assets/cards/cardBat.png"].texture;
         let cardPistolTexture = PIXI.loader.resources["assets/cards/cardPistol.png"].texture;
         let cardNetgunTexture = PIXI.loader.resources["assets/cards/cardNetgun.png"].texture;
+        let cardWhistleTexture = PIXI.loader.resources["assets/cards/cardWhistle.png"].texture;
 
         // build sprites and scale them to 100x100
         let cardBatSprite = new PIXI.Sprite(cardBatTexture);
@@ -40,17 +42,25 @@ export default class Cards {
         cardNetgunSprite.x = cardPistolSprite.x + 30;
         cardNetgunSprite.name = "cardNetgun";
 
+        let cardWhistleSprite = new PIXI.Sprite(cardWhistleTexture);
+        cardWhistleSprite.scale.x = 0.10;
+        cardWhistleSprite.scale.y = 0.10;
+        cardWhistleSprite.x = cardNetgunSprite.x + 30;
+        cardWhistleSprite.name = "cardWhistle";
+
         // add card sprites to cards container and sort them by zIndex
         this.container.addChild(cardBatSprite);
         this.container.addChild(cardPistolSprite);
         this.container.addChild(cardNetgunSprite);
+        this.container.addChild(cardWhistleSprite);
 
-        this.resortCards(3, 2, 1);
+        this.resortCards(4, 3, 2, 1);
 
         // add the sprites to class for later use
         this.container.cardBatSprite = cardBatSprite;
         this.container.cardPistolSprite = cardPistolSprite;
         this.container.cardNetgunSprite = cardNetgunSprite;
+        this.container.cardWhistleSprite = cardWhistleSprite;
     }
 
     initObject() {
@@ -58,36 +68,49 @@ export default class Cards {
         console.log("cards initialized");
     }
 
-    resortCards(batZ, pistolZ, netgunZ) {
+    resortCards(batZ, pistolZ, netgunZ, whistleZ) {
         this.container.getChildByName("cardBat").zIndex = batZ;
         this.container.getChildByName("cardPistol").zIndex = pistolZ;
         this.container.getChildByName("cardNetgun").zIndex = netgunZ;
+        this.container.getChildByName("cardWhistle").zIndex = whistleZ;
         this.container.children.sort((itemA, itemB) => itemA.zIndex - itemB.zIndex);
     }
 
     highlightCard(card) {
         if (card === "bat") {
-            this.resortCards(3, 2, 1);
+            this.resortCards(4, 3, 2, 1);
             if (this.container.cardBatSprite.y === 0) {
                 this.container.cardBatSprite.y -= 10;
                 this.container.cardPistolSprite.y = 0;
                 this.container.cardNetgunSprite.y = 0;
+                this.container.cardWhistleSprite.y = 0;
             }
         }
         else if (card === "pistol") {
-            this.resortCards(1, 3, 2);
+            this.resortCards(3, 4, 2, 1);
             if (this.container.cardPistolSprite.y === 0) {
                 this.container.cardPistolSprite.y -= 10;
                 this.container.cardBatSprite.y = 0;
                 this.container.cardNetgunSprite.y = 0;
+                this.container.cardWhistleSprite.y = 0;
             }
         }
         else if (card === "netgun") {
-            this.resortCards(1, 2, 3);
+            this.resortCards(1, 2, 4, 3);
             if (this.container.cardNetgunSprite.y === 0) {
                 this.container.cardNetgunSprite.y -= 10;
                 this.container.cardBatSprite.y = 0;
                 this.container.cardPistolSprite.y = 0;
+                this.container.cardWhistleSprite.y = 0;
+            }
+        }
+        else if (card === "whistle") {
+            this.resortCards(1, 2, 3, 4);
+            if (this.container.cardWhistleSprite.y === 0) {
+                this.container.cardWhistleSprite.y -= 10;
+                this.container.cardBatSprite.y = 0;
+                this.container.cardPistolSprite.y = 0;
+                this.container.cardNetgunSprite.y = 0;
             }
         }
         else if (card === "none") {

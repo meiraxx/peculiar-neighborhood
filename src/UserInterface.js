@@ -78,8 +78,8 @@ export default class UserInterface {
 		this.cards.initObject();
 	}
 
-	resortCards(batZ, pistolZ, netgunZ) {
-		this.cards.resortCards(batZ, pistolZ, netgunZ);
+	resortCards(whistleZ, batZ, pistolZ, netgunZ) {
+		this.cards.resortCards(whistleZ, batZ, pistolZ, netgunZ);
 	}
 
 	highlightCard(card) {

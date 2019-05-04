@@ -82,7 +82,6 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 
 	// setup player character and UI
 	player.prepareObject(mapWidth/2,mapHeight/2);
-	player.initObject();
 	let playerWidth = player.playerSprite.height;
 	let playerHeight = player.playerSprite.height;
 
@@ -110,7 +109,9 @@ PIXI.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 		b.initObject();
 	});
 
-	// initialize UI in the end
+
+	// initialize player and UI in the end
+	player.initObject();
 	player.initUI();
 
 	// 4. PUT LOOPS RUNNING

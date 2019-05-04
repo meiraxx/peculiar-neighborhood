@@ -79,7 +79,7 @@ export default class Monster {
 	monsterLoop(delta, player) {
 		if (!player.ui.isPaused() && !this.isCaptured() && !this.isDead()) {
 			this.recalculateDirection(delta);
-			let collided = this.handleDynamicCollisions(player);
+			let collided = this.handleAllDetainerCollisions(player);
 			if (!collided) {
 				this.handleContainerCollisionsAndMove();
 			}
@@ -140,7 +140,7 @@ export default class Monster {
 		}
 	}
 
-	handleDynamicCollisions(player) {
+	handleAllDetainerCollisions(player) {
 		let allVisibleNets = this.app.stage.children.filter(child => 
 			child.name.indexOf("net") !== -1 && child.visible === true);
 		let allVisibleBullets = this.app.stage.children.filter(child => 
@@ -148,6 +148,11 @@ export default class Monster {
 		let staticBlockers = this.app.stage.children.filter(child => 
 			child.name.indexOf("blocker") !== -1);
 
+		if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite) !== "none") {
+			this.stopMonster();
+		}
+		
+		// net collision
 		if (!this.isDead() && !this.isCaptured() && 
 			allVisibleNets !== undefined && allVisibleNets.length !== 0) {
 			for (var i = 0; i < allVisibleNets.length; i++) {
@@ -158,14 +163,15 @@ export default class Monster {
 			    	let healthValue = +this.healthBar.container.valueText.text;
 			    	// if monster health is below half
 			    	if (healthValue <= this.healthBar.container.maxHealth/2) {
-			    		// stop monster
-						this.stopMonster(player);
-						return true;
+			    		// capture monster
+						this.captureMonster(player);
+						//return true;
 			    	}
 				}
 			}
 		}
 		
+		// bullet collision
 		if (!this.isDead() && !this.isCaptured() && 
 			allVisibleBullets !== undefined && allVisibleBullets.length !== 0) {
 			for (var i = 0; i < allVisibleBullets.length; i++) {
@@ -174,11 +180,12 @@ export default class Monster {
 			    	allVisibleBullets[i].visible = false;
 			    	// harm monster
 					this.harmMonster(player, "pistol");
-					return true;
+					//return true;
 				}
 			}
 		}
 
+		// static blockers collision
 		if (!this.isDead() && !this.isCaptured() && 
 			staticBlockers !== undefined && staticBlockers.length !== 0) {
 			for (var i = 0; i < staticBlockers.length; i++) {
@@ -186,7 +193,7 @@ export default class Monster {
 					// monster reverts direction
 					this.reverseMonsterDirection();
 					this.moveMonster();
-					return true;
+					//return true;
 				}
 			}
 		}
@@ -207,12 +214,16 @@ export default class Monster {
 		}
 	}
 
-	stopMonster(player) {
+	stopMonster() {
+		this.monsterSprite.vx = 0;
+		this.monsterSprite.vy = 0;
+	}
+
+	captureMonster(player) {
 		// monster must be with less than half of his HP to be captured
 		setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
 		this.monsterSprite.captured = true;
-		this.monsterSprite.vx = 0;
-		this.monsterSprite.vy = 0;
+		this.stopMonster();
 		player.ui.score.addScore(this.isAngry?2:1);
 		// else monster not stopped!
 	}

@@ -1,4 +1,6 @@
 import * as PIXI from 'pixi.js'
+import { applyFilter } from "./lib/PixiUtilMethods";
+
 export default class CardsInfo {
 	static loadResources(app) {
 		// already loaded in cards
@@ -61,7 +63,6 @@ export default class CardsInfo {
 		let otherCardsInfo = this.container.children.filter(child => child.name != cardInfoName);
 		let cardInfo = this.container.getChildByName(cardInfoName);
 
-		// toggle needs WebGL because of "filters"
 		if (this.displayed === true) {
 			otherCardsInfo.forEach(function(ci) {		
 				ci.visible = false;
@@ -69,12 +70,7 @@ export default class CardsInfo {
 		}
 		
 		if (this.displayed === true && cardInfo.visible === true) {
-			let colorMatrix = new PIXI.filters.ColorMatrixFilter();
-			// must clear color matrix instead of resetting it because
-			// performance is greatly affected if this is on
-			otherElements.forEach(function(element) {
-				element.filters = undefined;
-			});
+			applyFilter(otherElements, "reset");
 			// put our card visible and others invisible
 			otherCardsInfo.forEach(function(ci) {		
 				ci.visible = false;
@@ -83,13 +79,7 @@ export default class CardsInfo {
 			this.displayed = false;
 		}
 		else {
-			let colorMatrix = new PIXI.filters.ColorMatrixFilter();
-			otherElements.forEach(function(element) {
-				element.filters = [colorMatrix];
-			});
-			//colorMatrix.night(0.2, true);
-			//colorMatrix.predator(1, true);
-			colorMatrix.brightness(0.3, false);
+			applyFilter(otherElements, "darken");
 			cardInfo.visible = true;
 			this.displayed = true;
 		}

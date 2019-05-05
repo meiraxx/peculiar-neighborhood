@@ -54,7 +54,7 @@ export default class Player {
  		this.grabbedMonstersList = [];
 
 		// SETUP player UI
-		this.ui.prepareObject(x_pos, y_pos);
+		this.ui.prepareObject(x_pos, y_pos, this.viewport, this.playerSprite);
 
 		// KEY STROKE EVENTS
 		//this.leftKey = keyboard("ArrowLeft");
@@ -459,7 +459,7 @@ export default class Player {
 
 	playerLoop(delta) {
 		if (!this.ui.isPaused() && this.playerIsMoving()) {
-			let collided = this.handleAllDetainerCollisions();
+			this.handleAllDetainerCollisions();
 			this.handleContainerCollisionsAndMove();
 		}
 		this.ui.updateCrosshairOnScreen(this.playerSprite);

@@ -30,6 +30,7 @@ export default class UserInterface {
 		this.bullets = [];
 		this.nets = [];
 		this.batColliders = [];
+		this.paused = false;
 
 		for (var i = 10; i >= 0; i--) {
 			this.bullets.push(new Missile(app,"bulletCollider"));
@@ -40,18 +41,24 @@ export default class UserInterface {
 		this.score = new Score(app);
 	}
 
-	prepareObject(x_pos, y_pos) {
+	prepareObject(x_pos, y_pos, viewport, playerSprite) {
 		this.currentItem = "none";
+		// position relative to player
 		this.prepareHealthbar(x_pos - 1, y_pos - 4);
-		this.prepareCards(x_pos - 530, y_pos + 178);
 		this.prepareCrosshair(x_pos, y_pos);
 		this.prepareMissiles(x_pos, y_pos);
 		this.prepareCardsInfo(x_pos, y_pos);
 
-		// viewportwidth/2
-		// -viewportheight/2 - player height/2
-		this.prepareScore(x_pos + 405, y_pos - 230);
-		this.preparePauseScreen(x_pos, y_pos);
+		// position relative to viewport
+		console.log("width: " + viewport.width + ", height: " + viewport.height);
+		console.log(viewport.center.x + "," + viewport.center.y)
+		console.log(x_pos + "," + y_pos)
+		this.prepareCards(-20, viewport.center.y - 110);
+
+		// relative to both player and viewport
+		this.prepareScore(viewport.center.x + 217, 
+			viewport.center.y + playerSprite.height/2 - 568);
+		this.preparePauseScreen(x_pos, viewport.center.y + playerSprite.height/2 - 338);
 	}
 
 	initObject() {
@@ -102,11 +109,12 @@ export default class UserInterface {
 	}
 
 	togglePause() {
-		this.pauseScreen.toggle();
+		this.pauseScreen.toggle(this);
 	}
 
 	isPaused() {
-		return (this.pauseScreen.container.visible || this.cardsInfo.displayed);
+		return (this.pauseScreen.container.visible || this.cardsInfo.displayed) ||
+			this.paused;
 	}
 
 
@@ -201,6 +209,10 @@ export default class UserInterface {
 
 	initScore() {
 		this.score.initObject();
+	}
+
+	addScore(value) {
+		this.score.addScore(value);
 	}
 
 	useItem(playerSprite, event) {

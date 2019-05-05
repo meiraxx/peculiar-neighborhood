@@ -239,6 +239,7 @@ function checkDynamicIntoDynamicCollision(sprite1,sprite2) {
 }
 
 function applyFilter(elementArray, filter) {
+	// needs WEBGL
 	let colorMatrix = new PIXI.filters.ColorMatrixFilter();
 
 	if (filter==="reset") {

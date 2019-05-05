@@ -75,14 +75,15 @@ export default class PauseScreen {
 		console.log("pause screen initialized");
 	}
 
-	toggle() {
+	toggle(ui) {
 		// recalculate what other elements are on the map
 		let otherElements = this.app.stage.children.filter(child => child.name !== "pauseScreen" 
 			&& child.name !== "cardsInfo");
 
-		// toggle needs WebGL because of "filters"
 		if (this.container.visible) {
-			applyFilter(otherElements, "reset");
+			if (!ui.cardsInfo.displayed) {
+				applyFilter(otherElements, "reset");
+			}
 			this.container.visible = false;
 		}
 		else {

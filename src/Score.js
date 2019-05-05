@@ -22,14 +22,12 @@ export default class Score {
         this.changeContainer = new PIXI.Container();
         this.changeContainer.x = x2_pos;
         this.changeContainer.y = y2_pos;
-        console.log(x2_pos + "," + y2_pos);
         this.changeContainer.name = "changeScoreContainer";
         this.changeContainer._zIndex = Number.MAX_SAFE_INTEGER;
         this.scoreChangeText = new PIXI.Text("score +0", textStyle("scoreChangeText"));
         this.scoreChangeText.resolution = 2;
         this.scoreChangeText.visible = true;
         this.changeContainer.addChild(this.scoreChangeText);
-        
     }
 
     initObject() {

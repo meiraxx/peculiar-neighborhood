@@ -44,6 +44,7 @@ export default class Player {
 		this.playerSprite.scale.y = 0.20;
 		this.playerSprite.x = Math.round(x_pos - (this.playerSprite.width/2));
 		this.playerSprite.y = y_pos;
+		console.log(this.playerSprite.x + "," + this.playerSprite.y)
 		this.playerSprite.vx = 0;
 		this.playerSprite.vy = 0;
 		this.playerSprite.yForZOrdering = this.playerSprite.y + this.playerSprite.height;
@@ -52,6 +53,11 @@ export default class Player {
  		this.isGrabbing = false;
  		this.grabbedMonster = undefined;
  		this.grabbedMonstersList = [];
+ 		console.log(window.innerWidth + "," + window.innerHeight)
+
+		this.viewport.moveTo(window.innerWidth/2 - this.playerSprite.width/2 - 18
+			, window.innerHeight + this.playerSprite.height);
+		this.viewport.zoom(700);
 
 		// SETUP player UI
 		this.ui.prepareObject(x_pos, y_pos, this.viewport, this.playerSprite);
@@ -162,7 +168,7 @@ export default class Player {
 		this.oneKey.press = () => {
 			if (!this.ui.isPaused()) {
 				this.ui.highlightCard("bat");
-				this.ui.crosshair.sprite.visible = false;
+				this.ui.crosshair.sprite.visible = true;
 				this.updatePlayerSprite();
 			}
 		};

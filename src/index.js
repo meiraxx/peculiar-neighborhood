@@ -7,13 +7,13 @@ import Monster from "./Monster";
 import Tree from "./Tree";
 import House from "./House";
 import ZSorter from "./ZSorter";
-import * as PIXI from 'pixi.js'
+import * as PIXI from 'pixi.js';
+
 
 function loadProgressHandler(loader,resource) {
   console.log("loading " + resource.url + " "  + loader.progress + "%");
 }
 
-//var PIXI = require("pixi.js");
 PIXI.settings.RESOLUTION = 2;
 PIXI.settings.SORTABLE_CHILDREN = true;
 
@@ -30,6 +30,8 @@ const appHeight = 1536;
 
 // pixi app object
 let app = new PIXI.Application({
+		autoStart: false,
+		sharedTicker: true,
 		width: appWidth,         // default: 800
 		height: appHeight,        // default: 600
 		antialias: false,    // default: false
@@ -44,8 +46,6 @@ document.body.appendChild(app.view);
 
 //Viewport creation for easily controllable 2D camera
 var viewport = new Viewport(app.renderer, 700, 800, app.stage);
-viewport.moveTo(700, 800);
-viewport.zoom(700);
 
 // 1. LOAD ALL RESOURCES
 StaticMap.loadResources(app);
@@ -74,6 +74,8 @@ var blockers = [tree0, house0, house1];
 var hiders = [bush0]
 
 var zSorter =  new ZSorter(app);
+
+
 app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// 3. SETUP AND INITIALIZE OBJECTS
 	// setup background map
@@ -141,6 +143,17 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	zSorter.initLoop();
 
 });
+
+let ticker = PIXI.Ticker.shared;
+ticker.autoStart = false;
+ticker.stop();
+
+function animate(time) {
+    ticker.update(time);
+    app.renderer.render(app.stage);
+    requestAnimationFrame(animate);
+}
+animate(performance.now());
 
 /*
 let music = document.createElement("audio");

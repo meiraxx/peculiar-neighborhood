@@ -6,7 +6,7 @@ export default class HealthBar {
     	this.app = app;
     }
 
-    prepareObject(x_pos, y_pos, width, height, colorCode, maxHealth) {
+    prepareObject(x_pos, y_pos, width, height, barColorCode, textColorCode, maxHealth) {
         //green: 0x4CBB17; red: 0xFF3300
         // create the health bar
         this.container = new PIXI.Container();
@@ -29,7 +29,7 @@ export default class HealthBar {
         // create the current-health rectangle with an outline effect
         let diffValue = width/32;
         let outerBar = getRoundedRectangle(-width/2 + diffValue/2, diffValue/2, width - diffValue,
-            height - diffValue, 3, colorCode);
+            height - diffValue, 3, barColorCode);
         this.container.addChild(outerBar);
         this.container.outerBar = outerBar;
 
@@ -38,7 +38,9 @@ export default class HealthBar {
 
         this.calculateHealthTextX();
         this.container.valueText.y = -15;
+        this.container.valueText.style.fill = textColorCode;
         this.container.valueText.resolution = 2;
+        
         this.container.addChild(this.container.valueText);
 
         this.changedBar = false;
@@ -73,6 +75,10 @@ export default class HealthBar {
 
     isChanged() {
         return this.changedBar;
+    }
+
+    changeTextColor(colorcode) {
+        this.container.valueText.style.fill = colorcode;
     }
 
     changeBarColor(colorcode) {

@@ -6,44 +6,67 @@ export default class Score {
     	this.app = app;
     }
 
-    prepareObject(x_pos, y_pos) {
-        let style = textStyle("scoreText");
-        this.container = new PIXI.Container();
-        this.container.x = x_pos;
-        this.container.y = y_pos;
-        this.container.name = "scoreContainer";
-        this.container._zIndex = Number.MAX_SAFE_INTEGER;
-
+    prepareObject(x1_pos, y1_pos, x2_pos, y2_pos) {
+        this.totalContainer = new PIXI.Container();
+        this.totalContainer.x = x1_pos;
+        this.totalContainer.y = y1_pos;
+        this.totalContainer.name = "totalScoreContainer";
+        this.totalContainer._zIndex = Number.MAX_SAFE_INTEGER;
         this.previousValue = 0;
-        this.scoreText = new PIXI.Text("Score: " + 0, style);
-        this.scoreText.resolution = 2;
 
-        this.container.addChild(this.scoreText);
+        this.totalScoreText = new PIXI.Text("Score: " + 0, textStyle("totalScoreText"));
+        this.totalScoreText.resolution = 2;
+        this.totalContainer.addChild(this.totalScoreText);
+
+
+        this.changeContainer = new PIXI.Container();
+        this.changeContainer.x = x2_pos;
+        this.changeContainer.y = y2_pos;
+        console.log(x2_pos + "," + y2_pos);
+        this.changeContainer.name = "changeScoreContainer";
+        this.changeContainer._zIndex = Number.MAX_SAFE_INTEGER;
+        this.scoreChangeText = new PIXI.Text("score +0", textStyle("scoreChangeText"));
+        this.scoreChangeText.resolution = 2;
+        this.scoreChangeText.visible = true;
+        this.changeContainer.addChild(this.scoreChangeText);
+        
     }
 
     initObject() {
-        this.app.stage.addChild(this.container);
+        this.app.stage.addChild(this.totalContainer);
+        this.app.stage.addChild(this.changeContainer);
 		console.log("score initialized");
     }
 
-    addScore(value) {
+    addScore(value, viewport) {
+        if (value > 0) {
+            this.scoreChangeText.text = "score +" + value;
+            this.scoreChangeText.style.fill = 0x00FF00;
+            this.scoreChangeText.visible = true;
+        } else {
+            this.scoreChangeText.text = "score " + value;
+            this.scoreChangeText.style.fill = 0xFF0000;
+            this.scoreChangeText.visible = true;
+        }
+
         let resultValue = this.previousValue + value;
         // score addition cases
         if (resultValue >= 10 && this.previousValue < 10) {
-            this.container.x -= 10;
+            this.totalContainer.x -= 10;
         }
         else if (resultValue >= 100 && this.previousValue < 100) {
-            this.container.x -= 10;
+            this.totalContainer.x -= 10;
         }
         // score subtraction cases
         else if (resultValue <= 10 && this.previousValue > 10) {
-            this.container.x += 10;
+            this.totalContainer.x += 10;
         }
         else if (resultValue <= 100 && this.previousValue > 100) {
-            this.container.x += 10;
+            this.totalContainer.x += 10;
         }
         
-        this.scoreText.text = "Score: " + resultValue;
+        this.totalScoreText.text = "Score: " + resultValue;
+        this.totalScoreText.style.fill = (resultValue===0)?0xFFFFFF:(resultValue>0)?0x00FF00:0xFF0000;
         this.previousValue = resultValue;
     }
 }

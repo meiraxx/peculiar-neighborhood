@@ -38,7 +38,7 @@ export default class Player {
 		let playerRightTexture = this.app.loader.resources["assets/character/none/characterRight.png"].texture;
 		let playerLeftTexture = this.app.loader.resources["assets/character/none/characterLeft.png"].texture;
 		this.ui.command = "down";
-		
+
 		this.playerSprite = new PIXI.Sprite(playerFrontTexture);
 		this.playerSprite.scale.x = 0.20;
 		this.playerSprite.scale.y = 0.20;
@@ -422,7 +422,8 @@ export default class Player {
 			// move invisible pause screen
 			this.ui.pauseScreen.container.x += this.playerSprite.vx;
 			// move score text
-			this.ui.score.container.x += this.playerSprite.vx;
+			this.ui.score.totalContainer.x += this.playerSprite.vx;
+			this.ui.score.changeContainer.x += this.playerSprite.vx;
 			// move grabbed monster
 			if (this.isGrabbing) {
 				this.grabbedMonster.x += this.playerSprite.vx;
@@ -442,7 +443,8 @@ export default class Player {
 			// move invisible pause screen
 			this.ui.pauseScreen.container.y += this.playerSprite.vy;
 			// move score text
-			this.ui.score.container.y += this.playerSprite.vy;
+			this.ui.score.totalContainer.y += this.playerSprite.vy;
+			this.ui.score.changeContainer.y += this.playerSprite.vy;
 			// move grabbed monster
 			if (this.isGrabbing) {
 				this.grabbedMonster.y += this.playerSprite.vy;

@@ -31,6 +31,8 @@ export default class UserInterface {
 		this.nets = [];
 		this.batColliders = [];
 		this.paused = false;
+		this.currentClicks = 0;
+		this.clickerLimit = 4;
 
 		for (var i = 10; i >= 0; i--) {
 			this.bullets.push(new Missile(app,"bulletCollider"));
@@ -43,6 +45,8 @@ export default class UserInterface {
 
 	prepareObject(x_pos, y_pos, viewport, playerSprite) {
 		this.currentItem = "none";
+		this.viewport = viewport;
+
 		// position relative to player
 		this.prepareHealthbar(x_pos - 1, y_pos - 4);
 		this.prepareCrosshair(x_pos, y_pos);
@@ -50,14 +54,14 @@ export default class UserInterface {
 		this.prepareCardsInfo(x_pos, y_pos);
 
 		// position relative to viewport
-		console.log("width: " + viewport.width + ", height: " + viewport.height);
-		console.log(viewport.center.x + "," + viewport.center.y)
-		console.log(x_pos + "," + y_pos)
+		//console.log("width: " + viewport.width + ", height: " + viewport.height);
+		//console.log(viewport.center.x + "," + viewport.center.y)
+		console.log(x_pos + "," + y_pos);
 		this.prepareCards(-20, viewport.center.y - 110);
 
 		// relative to both player and viewport
-		this.prepareScore(viewport.center.x + 217, 
-			viewport.center.y + playerSprite.height/2 - 568);
+		this.prepareScore(viewport.center.x + 217, viewport.center.y + playerSprite.height/2 - 568, 
+			x_pos, y_pos);
 		this.preparePauseScreen(x_pos, viewport.center.y + playerSprite.height/2 - 338);
 	}
 
@@ -74,7 +78,7 @@ export default class UserInterface {
 
 	// HEALTHBAR
 	prepareHealthbar(x_pos, y_pos) {
-		this.healthBar.prepareObject(x_pos, y_pos, 64, 8, 0x4CBB17, 20);
+		this.healthBar.prepareObject(x_pos, y_pos, 64, 8, 0x4CBB17, 0xFFFFFF, 20);
 	}
 
 	initHealthbar() {
@@ -203,8 +207,8 @@ export default class UserInterface {
 	}
 
 	// SCORE
-	prepareScore(x_pos, y_pos) {
-		this.score.prepareObject(x_pos, y_pos);
+	prepareScore(x1_pos, y1_pos, x2_pos, y2_pos) {
+		this.score.prepareObject(x1_pos, y1_pos, x2_pos, y2_pos);
 	}
 
 	initScore() {
@@ -212,7 +216,7 @@ export default class UserInterface {
 	}
 
 	addScore(value) {
-		this.score.addScore(value);
+		this.score.addScore(value, this.viewport);
 	}
 
 	useItem(playerSprite, event) {

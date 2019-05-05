@@ -46,12 +46,24 @@ function textStyle(choice) {
 		    fill: ['#d8c3d0'],
 		});
 	}
-	else if (choice === "scoreText") {
+	else if (choice === "totalScoreText") {
 		textStyle = new PIXI.TextStyle({
 		    fontFamily: 'Courier New',
 		    fontSize: 20,
 		    align : 'right',
 		    fill: ['#ffffff'],
+		    stroke: '#000000',
+		    strokeThickness: 2,
+		});
+	}
+	else if (choice === "scoreChangeText") {
+		textStyle = new PIXI.TextStyle({
+		    fontFamily: 'Courier New',
+		    fontSize: 11,
+		    align : 'right',
+		    fill: ['#ffffff'],
+		    stroke: '#000000',
+		    strokeThickness: 1,
 		});
 	}
 	return textStyle;

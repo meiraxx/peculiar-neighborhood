@@ -29,7 +29,7 @@ export default class Monster {
 				this.app.loader.resources["assets/capturedMonsters/angryMonster.png"].texture;
 			this.deadMonsterTexture = 
 				this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
-			this.healthBar.prepareObject(x_pos, y_pos - 12, 48, 8, 0xFF3300, 15);
+			this.healthBar.prepareObject(x_pos, y_pos - 12, 48, 8, 0xFF3300, 0xFFFFFF, 15);
 		}
 		else {
 			this.monsterTexture = this.app.loader.resources["assets/monsters/normalMonster.png"].texture;
@@ -37,7 +37,7 @@ export default class Monster {
 				this.app.loader.resources["assets/capturedMonsters/normalMonster.png"].texture;
 			this.deadMonsterTexture = 
 				this.app.loader.resources["assets/deadMonsters/normalMonster.png"].texture;
-			this.healthBar.prepareObject(x_pos, y_pos - 6, 32, 8, 0xFF3300, 10);
+			this.healthBar.prepareObject(x_pos, y_pos - 6, 32, 8, 0xFF3300, 0xFFFFFF, 10);
 		}
 
 		this.monsterSprite = new PIXI.Sprite(this.monsterTexture);
@@ -84,8 +84,10 @@ export default class Monster {
 	monsterLoop(delta, player) {
 		if (!player.ui.isPaused() && !this.isCaptured() && !this.isDead()) {
 			this.recalculateDirection(delta);
-			this.handleAllDetainerCollisions(player);
-			this.handleContainerCollisionsAndMove();
+			if (this.handleAllDetainerCollisions(player)) {
+				this.handleContainerCollisions();
+			}
+			this.moveMonster();
 		}
 		//update z ordering
 		this.monsterSprite.yForZOrdering = this.monsterSprite.y + this.monsterSprite.height;
@@ -118,13 +120,12 @@ export default class Monster {
 		}
 	}
 
-	handleContainerCollisionsAndMove() {
+	handleContainerCollisions() {
 		let monsterHitsMapBound = containSpriteInsideContainer(this.monsterSprite, 
 				{x: 0, y: 0, width: 1024, height: 1024});
 		if (monsterHitsMapBound !== "none") {
 			this.reverseMonsterDirection();
 		}
-		this.moveMonster();
 	}
 
 	moveMonster(vx, vy) {
@@ -159,20 +160,19 @@ export default class Monster {
 			child.name.indexOf("blocker") !== -1);
 
 		if (this.isBlocker()) {
-			// player/monster collision
-			if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite) !== "none") {
-				this.stopMonster();
-				return;
-			}
-
-			// monster/monster collision
+			// monster/monster collision (most common, dont return)
 			if (populatedArray(otherMonsters)) {
 				for (var i = 0; i < otherMonsters.length; i++) {
 				    if(detainSpriteOutsideDetainer(this.monsterSprite, otherMonsters[i]) !== "none") {
 				    	this.reverseMonsterDirection();
-				    	return;
 					}
 				}
+			}
+
+			// player/monster collision
+			if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite) !== "none") {
+				this.stopMonster();
+				return false;
 			}
 
 			// bullet collision
@@ -184,7 +184,7 @@ export default class Monster {
 				    	allActiveBullets[i].visible = false;
 				    	// harm monster
 						this.getHarmed(player, "pistol");
-						return;
+						return false;
 					}
 				}
 			}
@@ -202,7 +202,7 @@ export default class Monster {
 				    	if (healthValue <= this.healthBar.container.maxHealth/2) {
 				    		// capture monster
 							this.maybeGetCaptured(player);
-							return;
+							return false;
 				    	}
 					}
 				}
@@ -216,7 +216,7 @@ export default class Monster {
 				    	allActiveBatColliders[i].active = false;
 				    	// harm monster
 						this.getHarmed(player, "bat");
-						return;
+						return false;
 					}
 				}
 			}
@@ -227,11 +227,12 @@ export default class Monster {
 				    if(detainSpriteOutsideDetainer(this.monsterSprite, staticBlockers[i])!=="none") {
 						// monster reverts direction
 						this.reverseMonsterDirection();
-						return;
+						return false;
 					}
 				}
 			}
 		}
+		return true;
 	}
 
 	isBlocker() {
@@ -299,9 +300,19 @@ export default class Monster {
 
 	getHarmed(player, weapon) {
 		if (weapon === "pistol") {
-			// pistol: 50% chance 1 dmg, 50% chance 2 dmg
-			let randomInt = getRandomArbitraryInt(1, 2);
-			this.healthBar.subtractHealth(randomInt);
+			// pistol: 49% chance 1 dmg, 49% chance 2 dmg, 2% change 15 dmg
+			// be careful not to kill the monsters!
+			let superCriticalProb = 0.02;
+			let randomNumber = Math.random();
+
+			if (randomNumber < superCriticalProb) {
+				this.healthBar.subtractHealth(15);
+			} else {
+				// normal hit
+				let randomInt = getRandomArbitraryInt(1, 2);
+				this.healthBar.subtractHealth(randomInt)
+			}
+			
 		} else if (weapon === "bat") {
 			// bat: 3 dmg
 			this.healthBar.subtractHealth(3);
@@ -312,9 +323,11 @@ export default class Monster {
 		if (!this.healthBar.isChanged() && healthValue <= this.healthBar.container.maxHealth/2) {
 			// healthbar color change
 			this.healthBar.changeBarColor(0xffffff);
+			this.healthBar.changeTextColor(0xffffff);
 		}
+
 		// if health is 0 then monster is dead
-		else if (healthValue === 0) {
+		if (healthValue === 0) {
 			this.killMonster(player);
 		}
 		// else monster is ok!

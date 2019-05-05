@@ -1,0 +1,5 @@
+TODOS:
+- Make placeholders in the new static map for COLORED houses, trees, cars;
+- Monster attack placeholders: angry monster - melee attacks, normal monster - ranged attacks (green spit);
+- Limit weapons: javascript click event needs to be limited;
+- Whistle action: pet comes, grabs monster and drops him at his home.

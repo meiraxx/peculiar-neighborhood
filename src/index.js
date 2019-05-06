@@ -54,7 +54,7 @@ Bush.loadResources(app);
 Tree.loadResources(app);
 Monster.loadResources(app);
 House.loadResources(app);
-
+Fog.loadResources(app);
 // 2. CONSTRUCT MAIN OBJECTS
 var staticMap = new StaticMap(app);
 var player = new Player(app, viewport);
@@ -73,6 +73,7 @@ var bush0 = new Bush(app);
 var blockers = [tree0, house0, house1];
 var hiders = [bush0]
 
+var fog = new Fog(app);
 var zSorter =  new ZSorter(app);
 app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// 3. SETUP AND INITIALIZE OBJECTS
@@ -82,6 +83,8 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	let mapWidth = staticMap.backgroundSprite.width;
 	let mapHeight = staticMap.backgroundSprite.height;
 	let colliderThickness = 100;
+
+	fog.prepareObject();
 
 	// setup player character and UI
 	player.prepareObject(mapWidth/2,mapHeight/2);
@@ -106,6 +109,7 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// setup hiders
 	bush0.prepareObject(10, 400, 0);
 
+
 	// init all and register z ordering
 	blockers.forEach(function(b) {
 		b.initObject();
@@ -117,6 +121,9 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 		zSorter.register(h.sprite);
 	});
 
+	//fog is topmost except ui
+	fog.initObject();
+	fog.initLoop();
 	// initialize UI in the end because its Z ordering is always the greatest
 	player.initUI();
 

@@ -5,6 +5,7 @@ import Crosshair from "./Crosshair";
 import CardsInfo from "./CardsInfo";
 import Missile from "./Missile";
 import Score from "./Score";
+import Clock from "./Clock";
 import * as PIXI from 'pixi.js'
 
 export default class UserInterface {
@@ -14,6 +15,7 @@ export default class UserInterface {
 		Crosshair.loadResources(app);
 		Missile.loadResources(app);
 		CardsInfo.loadResources(app);
+		Clock.loadResources(app);
 	}
 	
 	constructor(app) {
@@ -22,6 +24,7 @@ export default class UserInterface {
 		this.cards = new Cards(this.app);
 		this.pauseScreen = new PauseScreen(this.app);
 		this.crosshair = new Crosshair(this.app);
+		this.clock = new Clock(this.app);
 		// initialize 10 bullet objects (max bullets in screen at the same time)
 		this.shootDirection = new PIXI.Point(0,0);
 		this.currentBullet = 0;
@@ -52,7 +55,7 @@ export default class UserInterface {
 		this.prepareCrosshair(x_pos, y_pos);
 		this.prepareMissiles(x_pos, y_pos);
 		this.prepareCardsInfo(x_pos, y_pos);
-
+		this.prepareClock(viewport.center.x + 200, viewport.center.y  - 490);
 		// position relative to viewport
 		this.prepareCards(-20, viewport.center.y - 110);
 
@@ -69,8 +72,21 @@ export default class UserInterface {
 		this.initMissiles();
 		this.initCardsInfo();
 		this.initScore();
+		this.initClock();
 		// pause screen always in the end
 		this.initPauseScreen();
+	}
+
+	prepareClock(x_pos,y_pos) {
+		this.clock.prepareObject(x_pos,y_pos);
+	}
+	initClock() {
+		this.clock.initObject();
+		this.clock.totalTime = 2000.0;
+	}
+	updateClock(delta) {
+		if(!this.isPaused())
+			this.clock.update(delta);
 	}
 
 	// HEALTHBAR
@@ -144,6 +160,7 @@ export default class UserInterface {
 			this.batColliders[i].update(delta, 60);
 		}
 	}
+
 
 	// CROSSHAIR
 	prepareCrosshair(x_pos, y_pos) {

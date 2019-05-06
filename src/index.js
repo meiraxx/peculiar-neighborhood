@@ -126,8 +126,12 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	//fog is topmost except ui
 	fog.initObject();
 	fog.initLoop();
+
+
 	// initialize UI in the end because its Z ordering is always the greatest
 	player.initUI();
+	
+
 
 	// 4. PUT LOOPS RUNNING
 	player.initLoop();

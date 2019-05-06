@@ -427,6 +427,7 @@ export default class Player {
 			// move score text
 			this.ui.score.totalContainer.x += this.playerSprite.vx;
 			this.ui.score.changeContainer.x += this.playerSprite.vx;
+			this.ui.clock.container.x += this.playerSprite.vx;
 			// move grabbed monster
 			if (this.isGrabbing) {
 				this.grabbedMonster.x += this.playerSprite.vx;
@@ -448,6 +449,7 @@ export default class Player {
 			// move score text
 			this.ui.score.totalContainer.y += this.playerSprite.vy;
 			this.ui.score.changeContainer.y += this.playerSprite.vy;
+			this.ui.clock.container.y += this.playerSprite.vy;
 			// move grabbed monster
 			if (this.isGrabbing) {
 				this.grabbedMonster.y += this.playerSprite.vy;
@@ -469,6 +471,7 @@ export default class Player {
 		}
 		this.ui.updateCrosshairOnScreen(this.playerSprite);
 		this.ui.updateMissileColliders(delta);
+		this.ui.updateClock(delta);
 		//update zordering pos
 		this.playerSprite.yForZOrdering = this.playerSprite.y + this.playerSprite.height;
 	}

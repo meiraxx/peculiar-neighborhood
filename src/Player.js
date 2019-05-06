@@ -53,6 +53,9 @@ export default class Player {
  		this.grabbedMonster = undefined;
  		this.grabbedMonstersList = [];
 
+		this.viewport.moveTo(this.viewport._width, this.viewport._height + this.playerSprite.height*3);
+		this.viewport.zoom(700);
+
 		// SETUP player UI
 		this.ui.prepareObject(x_pos, y_pos, this.viewport, this.playerSprite);
 
@@ -162,7 +165,7 @@ export default class Player {
 		this.oneKey.press = () => {
 			if (!this.ui.isPaused()) {
 				this.ui.highlightCard("bat");
-				this.ui.crosshair.sprite.visible = false;
+				this.ui.crosshair.sprite.visible = true;
 				this.updatePlayerSprite();
 			}
 		};

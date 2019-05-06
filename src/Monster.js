@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import UserInterface from './UserInterface';
 import { getRandomArbitraryInt, populatedArray } from "./lib/UtilMethods";
-import { containSpriteInsideContainer, setTextureOnlyIfNeeded, detainSpriteOutsideDetainer, applyFilter } from "./lib/PixiUtilMethods";
+import { containSpriteInsideContainer, setTextureOnlyIfNeeded, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision, applyFilter } from "./lib/PixiUtilMethods";
 import HealthBar from "./HealthBar";
 
 export default class Monster {
@@ -58,9 +58,15 @@ export default class Monster {
 		this.monsterSprite.captured = false;
 		this.monsterSprite.dead = false;
 		this.monsterSprite.grabbed = false;
-		this.newDirTimeStep = 50.0;
 		this.timeSinceNewDir = 0.0;
-		this.monsterStopped = false;
+		this.newDirTimeStep = 50.0;
+		this.CaptureLoopInited = false;
+
+		this.timeSinceTwitch = 0.0;
+		this.newTwitchDirTime = 5.0;
+		this.twitchDirectionShift = 0;
+		this.totalTwitchCounter = 0;
+		this.animationDone = false;
 
 		// hack to be able to move healthbar when finding children
 		this.monsterSprite.healthBar = this.healthBar;
@@ -82,15 +88,72 @@ export default class Monster {
 	}
 
 	monsterLoop(delta, player) {
-		if (!player.ui.isPaused() && !this.isCaptured() && !this.isDead()) {
-			this.recalculateDirection(delta);
-			if (this.handleAllDetainerCollisions(player)) {
-				this.handleContainerCollisions();
+		if (this.isNotIgnorable()) {
+			this.handleAllDetainerCollisions(player)
+			this.handleContainerCollisions();
+			if (!player.ui.isPaused()) {
+				this.recalculateDirection(delta);
+				this.moveMonster();
 			}
-			this.moveMonster();
 		}
 		//update z ordering
 		this.monsterSprite.yForZOrdering = this.monsterSprite.y + this.monsterSprite.height;
+	}
+
+	handleMissileCollisions(player) {
+		// OPTIMIZED FUNCTION: assumes only one type of collider collides at the same time w/ monster
+		let allActiveNets = this.app.stage.children.filter(child => 
+			child.name.indexOf("netCollider") !== -1 && child.active === true);
+		// net collision
+		if (populatedArray(allActiveNets)) {
+			for (var i = 0; i < allActiveNets.length; i++) {
+			    //if(detainSpriteOutsideDetainer(allActiveNets[i], this.monsterSprite) !== "none") {
+			    if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveNets[i])) {
+			    	// make net invisible and inactive
+			    	allActiveNets[i].active = false;
+			    	allActiveNets[i].visible = false;
+			    	// convert health string to int
+			    	let healthValue = +this.healthBar.container.valueText.text;
+			    	// if monster health is below half
+			    	if (healthValue <= this.healthBar.container.maxHealth/2) {
+			    		// capture monster
+						this.maybeGetCaptured(player);
+			    	}
+				}
+			}
+			return;
+		}
+
+		let allActiveBullets = this.app.stage.children.filter(child => 
+			child.name.indexOf("bulletCollider") !== -1 && child.active === true);
+		if (populatedArray(allActiveBullets)) {
+			for (var i = 0; i < allActiveBullets.length; i++) {
+			    //if(detainSpriteOutsideDetainer(allActiveBullets[i], this.monsterSprite) !== "none") {
+			    if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveBullets[i])) {
+			    	// make bullet invisible and inactive
+			    	allActiveBullets[i].active = false;
+			    	allActiveBullets[i].visible = false;
+			    	// harm monster
+					this.getHarmed(player, "pistol");
+				}
+			}
+			return;
+		}
+
+		let allActiveBatColliders = this.app.stage.children.filter(child => 
+			child.name.indexOf("batCollider") !== -1 && child.active === true);
+		if (populatedArray(allActiveBatColliders)) {
+			for (var i = 0; i < allActiveBatColliders.length; i++) {
+				//if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveBatColliders[i])) {
+			    if(detainSpriteOutsideDetainer(allActiveBatColliders[i], this.monsterSprite) !== "none") {
+			    	// make bullet invisible
+			    	allActiveBatColliders[i].active = false;
+			    	// harm monster
+					this.getHarmed(player, "bat");
+				}
+			}
+			return;
+		}
 	}
 
 	recalculateDirection(delta) {
@@ -128,7 +191,7 @@ export default class Monster {
 		}
 	}
 
-	moveMonster(vx, vy) {
+	moveMonster() {
 		if (this.monsterSprite.vx !== 0) {
 			// walking horizontally
 			this.monsterSprite.x += this.monsterSprite.vx;
@@ -146,96 +209,59 @@ export default class Monster {
 		}
 	}
 
+	twitchMonster(valueX, valueY) {
+		let oldMonsterSpriteVX = this.monsterSprite.vx;
+		let oldMonsterSpriteVY = this.monsterSprite.vy;
+		this.monsterSprite.vx = valueX;
+		this.monsterSprite.vy = valueY;
+		this.moveMonster();
+		this.monsterSprite.vx = oldMonsterSpriteVX;
+		this.monsterSprite.vy = oldMonsterSpriteVY;
+	}
+
 	handleAllDetainerCollisions(player) {
-		let allActiveNets = this.app.stage.children.filter(child => 
-			child.name.indexOf("netCollider") !== -1 && child.active === true);
-		let allActiveBullets = this.app.stage.children.filter(child => 
-			child.name.indexOf("bulletCollider") !== -1 && child.active === true);
-		let allActiveBatColliders = this.app.stage.children.filter(child => 
-			child.name.indexOf("batCollider") !== -1 && child.active === true);
-		let otherMonsters = this.app.stage.children.filter(child =>
-			child.name !== this.monsterSprite.name && child.name.indexOf("monster") !== -1);
+		let otherLiveMonsters = this.app.stage.children.filter(child =>
+			child.name !== this.monsterSprite.name && child.name.indexOf("monster") !== -1 &&
+			!child.captured && !child.dead);
 
 		let staticBlockers = this.app.stage.children.filter(child => 
 			child.name.indexOf("blocker") !== -1);
 
-		if (this.isBlocker()) {
-			// monster/monster collision (most common, dont return)
-			if (populatedArray(otherMonsters)) {
-				for (var i = 0; i < otherMonsters.length; i++) {
-				    if(detainSpriteOutsideDetainer(this.monsterSprite, otherMonsters[i]) !== "none") {
-				    	this.reverseMonsterDirection();
-					}
-				}
-			}
+		this.handleMissileCollisions(player);
 
-			// player/monster collision
-			if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite) !== "none") {
-				this.stopMonster();
-				return false;
-			}
+		// player/monster collision
+		//if (checkDynamicIntoDynamicCollision(this.monsterSprite, player.playerSprite)) {
+		if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite) !== "none") {
+			// TODO: strategic stop
+			this.stopMonster();
+		}
 
-			// bullet collision
-			if (populatedArray(allActiveBullets)) {
-				for (var i = 0; i < allActiveBullets.length; i++) {
-				    if(detainSpriteOutsideDetainer(allActiveBullets[i], this.monsterSprite) !== "none") {
-				    	// make bullet invisible and inactive
-				    	allActiveBullets[i].active = false;
-				    	allActiveBullets[i].visible = false;
-				    	// harm monster
-						this.getHarmed(player, "pistol");
-						return false;
-					}
-				}
-			}
-
-			// net collision
-			if (populatedArray(allActiveNets)) {
-				for (var i = 0; i < allActiveNets.length; i++) {
-				    if(detainSpriteOutsideDetainer(allActiveNets[i], this.monsterSprite) !== "none") {
-				    	// make net invisible and inactive
-				    	allActiveNets[i].active = false;
-				    	allActiveNets[i].visible = false;
-				    	// convert health string to int
-				    	let healthValue = +this.healthBar.container.valueText.text;
-				    	// if monster health is below half
-				    	if (healthValue <= this.healthBar.container.maxHealth/2) {
-				    		// capture monster
-							this.maybeGetCaptured(player);
-							return false;
-				    	}
-					}
-				}
-			}
-
-			// bat colliders collision
-			if (populatedArray(allActiveBatColliders)) {
-				for (var i = 0; i < allActiveBatColliders.length; i++) {
-				    if(detainSpriteOutsideDetainer(allActiveBatColliders[i], this.monsterSprite) !== "none") {
-				    	// make bullet invisible
-				    	allActiveBatColliders[i].active = false;
-				    	// harm monster
-						this.getHarmed(player, "bat");
-						return false;
-					}
-				}
-			}
-
-			// static elements collision
-			if (populatedArray(staticBlockers)) {
-				for (var i = 0; i < staticBlockers.length; i++) {
-				    if(detainSpriteOutsideDetainer(this.monsterSprite, staticBlockers[i])!=="none") {
-						// monster reverts direction
-						this.reverseMonsterDirection();
-						return false;
-					}
+		// monster/monster collision
+		if (populatedArray(otherLiveMonsters)) {
+			for (var i = 0; i < otherLiveMonsters.length; i++) {
+			    if(detainSpriteOutsideDetainer(this.monsterSprite, otherLiveMonsters[i]) !== "none") {
+		    	//if (checkDynamicIntoDynamicCollision(this.monsterSprite, otherLiveMonsters[i])) {
+			    	// TODO: strategic stop
+			    	this.stopMonster();
+			    	break;
 				}
 			}
 		}
-		return true;
+		
+
+		// static elements collision
+		if (populatedArray(staticBlockers)) {
+			for (var i = 0; i < staticBlockers.length; i++) {
+			    if(detainSpriteOutsideDetainer(this.monsterSprite, staticBlockers[i])!=="none") {
+					// monster reverts direction
+					this.reverseMonsterDirection();
+					break;
+				}
+			}
+		}
 	}
 
-	isBlocker() {
+	isNotIgnorable() {
 		return (!this.isDead() && !this.isCaptured());
 	}
 
@@ -255,47 +281,70 @@ export default class Monster {
 	stopMonster() {
 		this.monsterSprite.vx = 0;
 		this.monsterSprite.vy = 0;
-		this.monsterStopped = true;
 	}
 
-	tryToEscape(player) {
-		// recalculate what other elements are on the map
+	animatedCapture(delta, player) {
 		let otherElements = this.app.stage.children.filter(child => 
 			child.name !== this.monsterSprite.name);
-
-		let doubleHealthValue = (+this.healthBar.container.valueText.text - 1)*2;
-		let maxHealthValue = this.healthBar.container.maxHealth;
-
-		let escapeProbability = doubleHealthValue/maxHealthValue;
-		let randomNumber = Math.random();
-		let monsterCaught = (randomNumber >= escapeProbability);
-
-
-		player.ui.paused = true;
-		applyFilter(otherElements, "darken");
-
-		// TODO: 
-		// this is supposed to be an animation where the viewport goes to the monster
-		// and he twitches trying to escape like in Pokemon
-		if (monsterCaught) {
-			// monster caught
-			this.monsterSprite.captured = true;
-			this.stopMonster();
-			player.ui.addScore(this.isAngry?2:1);
-		} else {
-			// monster escaped
-			setTextureOnlyIfNeeded(this.monsterSprite, this.monsterTexture);
+		if (!this.animationDone) {
+			console.log("Hi");
+			this.timeSinceTwitch += delta;
+			setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
+			player.ui.paused = true;
+			applyFilter(otherElements, "darken");
+			
+			if(this.timeSinceTwitch > this.newTwitchDirTime) {
+				this.timeSinceTwitch = 0.0;
+				if (this.twitchDirectionShift===0) {
+					this.twitchMonster(0, -2); // up
+				} else if (this.twitchDirectionShift===1) {
+					this.twitchMonster(0, 2); // back-down
+				}
+				else if (this.twitchDirectionShift===2) {
+					this.twitchMonster(0, 2); // down
+				} else if (this.twitchDirectionShift===3) {
+					this.twitchMonster(0, -2); // back-up
+				}
+				this.totalTwitchCounter += 1;
+				this.twitchDirectionShift = (this.twitchDirectionShift+1)%4;
+			}
 		}
 
-		applyFilter(otherElements, "reset");
-		player.ui.paused = false;
+		if (this.totalTwitchCounter === 16) {
+			player.ui.paused = false;
+			this.totalTwitchCounter = 0;
+			this.animationDone = true;
+			applyFilter(otherElements, "reset");
+
+			let doubleHealthValue = (+this.healthBar.container.valueText.text - 1)*2;
+			let maxHealthValue = this.healthBar.container.maxHealth;
+			let escapeProbability = doubleHealthValue/maxHealthValue;
+			let randomNumber = Math.random();
+			let monsterCaught = (randomNumber >= escapeProbability);
+			
+			if (monsterCaught) {
+				// monster caught
+				this.monsterSprite.captured = true;
+				setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
+				this.stopMonster();
+				console.log("apanhado");
+				player.ui.addScore(this.isAngry?2:1);
+			} else {
+				// monster escaped
+				console.log("escapou");
+				console.log(this.monsterSprite.captured);
+				console.log(this.monsterSprite.dead);
+				setTextureOnlyIfNeeded(this.monsterSprite, this.monsterTexture);
+			}
+		}
 	}
 
 	maybeGetCaptured(player) {
-		// monster must be with less than half of his HP to be captured
-		setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
-		this.stopMonster();
-		this.tryToEscape(player);
+		this.animationDone = false;
+		if (!this.CaptureLoopInited) {
+			this.app.ticker.add(delta => this.animatedCapture(delta, player));
+			this.CaptureLoopInited = true;
+		}
 	}
 
 	getHarmed(player, weapon) {

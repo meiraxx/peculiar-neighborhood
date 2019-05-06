@@ -54,9 +54,6 @@ export default class UserInterface {
 		this.prepareCardsInfo(x_pos, y_pos);
 
 		// position relative to viewport
-		//console.log("width: " + viewport.width + ", height: " + viewport.height);
-		//console.log(viewport.center.x + "," + viewport.center.y)
-		console.log(x_pos + "," + y_pos);
 		this.prepareCards(-20, viewport.center.y - 110);
 
 		// relative to both player and viewport
@@ -144,7 +141,7 @@ export default class UserInterface {
 		for (var i = this.bullets.length - 1; i >= 0; i--) {
 			this.bullets[i].update(delta, 200);
 			this.nets[i].update(delta, 200);
-			this.batColliders[i].update(delta, 100);
+			this.batColliders[i].update(delta, 60);
 		}
 	}
 
@@ -185,7 +182,8 @@ export default class UserInterface {
 	}
 
 	shootableItem() {
-		return (this.currentItem === "pistol" || this.currentItem === "netgun");
+		return (this.currentItem === "pistol" || this.currentItem === "netgun" || 
+			this.currentItem === "bat");
 	}
 
 	usableItem() {

@@ -288,7 +288,6 @@ export default class Monster {
 		let otherElements = this.app.stage.children.filter(child => 
 			child.name !== this.monsterSprite.name);
 		if (!this.animationDone) {
-			console.log("Hi");
 			this.timeSinceTwitch += delta;
 			setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
 			player.ui.paused = true;
@@ -328,13 +327,9 @@ export default class Monster {
 				this.monsterSprite.captured = true;
 				setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
 				this.stopMonster();
-				console.log("apanhado");
 				player.ui.addScore(this.isAngry?2:1);
 			} else {
 				// monster escaped
-				console.log("escapou");
-				console.log(this.monsterSprite.captured);
-				console.log(this.monsterSprite.dead);
 				setTextureOnlyIfNeeded(this.monsterSprite, this.monsterTexture);
 			}
 		}

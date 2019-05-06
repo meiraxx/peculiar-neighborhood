@@ -158,6 +158,7 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 app.ticker = PIXI.Ticker.shared;
 app.ticker.autoStart = false;
 app.ticker.stop();
+app.ticker.integerFPS = Math.round(app.ticker.FPS);
 
 function animate(time) {
     app.ticker.update(time);

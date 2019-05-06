@@ -55,7 +55,7 @@ export default class UserInterface {
 		this.prepareCrosshair(x_pos, y_pos);
 		this.prepareMissiles(x_pos, y_pos);
 		this.prepareCardsInfo(x_pos, y_pos);
-		this.prepareClock(viewport.center.x + 200, viewport.center.y  - 490);
+		this.prepareClock(viewport.center.x + 220, viewport.center.y - 490);
 		// position relative to viewport
 		this.prepareCards(-20, viewport.center.y - 110);
 
@@ -82,7 +82,6 @@ export default class UserInterface {
 	}
 	initClock() {
 		this.clock.initObject();
-		this.clock.totalTime = 2000.0;
 	}
 	updateClock(delta) {
 		if(!this.isPaused())

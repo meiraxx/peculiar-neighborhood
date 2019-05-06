@@ -65,6 +65,15 @@ function textStyle(choice) {
 		    stroke: '#000000',
 		    strokeThickness: 1,
 		});
+	} else if (choice === "timeText") {
+		textStyle = new PIXI.TextStyle({
+		    fontFamily: 'Courier New',
+		    fontSize: 13,
+		    align : 'right',
+		    fill: ['#000000'],
+		    stroke: '#ff0000',
+		    strokeThickness: 1,
+		});
 	}
 	return textStyle;
 }

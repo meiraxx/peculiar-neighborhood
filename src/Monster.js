@@ -60,8 +60,8 @@ export default class Monster {
 		this.monsterSprite.grabbed = false;
 		this.timeSinceNewDir = 0.0;
 		this.newDirTimeStep = 50.0;
+		this.CaptureLoopInited = false;
 
-		this.monsterStopped = false;
 		this.timeSinceTwitch = 0.0;
 		this.newTwitchDirTime = 5.0;
 		this.twitchDirectionShift = 0;
@@ -229,21 +229,25 @@ export default class Monster {
 
 		this.handleMissileCollisions(player);
 
+		// player/monster collision
+		//if (checkDynamicIntoDynamicCollision(this.monsterSprite, player.playerSprite)) {
+		if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite) !== "none") {
+			// TODO: strategic stop
+			this.stopMonster();
+		}
+
 		// monster/monster collision
 		if (populatedArray(otherLiveMonsters)) {
 			for (var i = 0; i < otherLiveMonsters.length; i++) {
 			    if(detainSpriteOutsideDetainer(this.monsterSprite, otherLiveMonsters[i]) !== "none") {
 		    	//if (checkDynamicIntoDynamicCollision(this.monsterSprite, otherLiveMonsters[i])) {
+			    	// TODO: strategic stop
 			    	this.stopMonster();
+			    	break;
 				}
 			}
 		}
-
-		// player/monster collision
-		//if (checkDynamicIntoDynamicCollision(this.monsterSprite, player.playerSprite)) {
-		if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite) !== "none") {
-			this.stopMonster();
-		}
+		
 
 		// static elements collision
 		if (populatedArray(staticBlockers)) {
@@ -251,11 +255,10 @@ export default class Monster {
 			    if(detainSpriteOutsideDetainer(this.monsterSprite, staticBlockers[i])!=="none") {
 					// monster reverts direction
 					this.reverseMonsterDirection();
-					return false;
+					break;
 				}
 			}
 		}
-		return true;
 	}
 
 	isNotIgnorable() {
@@ -278,18 +281,17 @@ export default class Monster {
 	stopMonster() {
 		this.monsterSprite.vx = 0;
 		this.monsterSprite.vy = 0;
-		this.monsterStopped = true;
 	}
 
 	animatedCapture(delta, player) {
 		let otherElements = this.app.stage.children.filter(child => 
 			child.name !== this.monsterSprite.name);
 		if (!this.animationDone) {
+			console.log("Hi");
 			this.timeSinceTwitch += delta;
 			setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
 			player.ui.paused = true;
 			applyFilter(otherElements, "darken");
-			//console.log(this.monsterSprite.x + "," + this.monsterSprite.y);
 			
 			if(this.timeSinceTwitch > this.newTwitchDirTime) {
 				this.timeSinceTwitch = 0.0;
@@ -311,7 +313,6 @@ export default class Monster {
 		if (this.totalTwitchCounter === 16) {
 			player.ui.paused = false;
 			this.totalTwitchCounter = 0;
-			this.timeSinceTwitch = 0.0;
 			this.animationDone = true;
 			applyFilter(otherElements, "reset");
 
@@ -335,14 +336,15 @@ export default class Monster {
 				console.log(this.monsterSprite.dead);
 				setTextureOnlyIfNeeded(this.monsterSprite, this.monsterTexture);
 			}
-			this.app.ticker = this.app.ticker.remove(this.animatedCapture);
-			console.log(this.app.ticker);
 		}
 	}
 
 	maybeGetCaptured(player) {
 		this.animationDone = false;
-		this.app.ticker.add(delta => this.animatedCapture(delta, player));
+		if (!this.CaptureLoopInited) {
+			this.app.ticker.add(delta => this.animatedCapture(delta, player));
+			this.CaptureLoopInited = true;
+		}
 	}
 
 	getHarmed(player, weapon) {

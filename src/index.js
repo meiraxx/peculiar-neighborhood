@@ -30,14 +30,14 @@ const appHeight = 1536;
 
 // pixi app object
 let app = new PIXI.Application({
-		autoStart: false,
-		sharedTicker: true,
 		width: appWidth,         // default: 800
 		height: appHeight,        // default: 600
 		antialias: false,    // default: false
 		transparent: false, // default: false
 		resolution: 1,       // default: 1
-		forceCanvas: false 	// default: false
+		forceCanvas: false, // default: false
+		autoStart: false,
+		//sharedTicker: true,
 	}
 );
 
@@ -144,12 +144,12 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 
 });
 
-let ticker = PIXI.Ticker.shared;
-ticker.autoStart = false;
-ticker.stop();
+app.ticker = PIXI.Ticker.shared;
+app.ticker.autoStart = false;
+app.ticker.stop();
 
 function animate(time) {
-    ticker.update(time);
+    app.ticker.update(time);
     app.renderer.render(app.stage);
     requestAnimationFrame(animate);
 }

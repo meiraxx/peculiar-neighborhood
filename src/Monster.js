@@ -89,10 +89,12 @@ export default class Monster {
 
 	monsterLoop(delta, player) {
 		if (this.isNotIgnorable()) {
+			if (!player.ui.isPaused()) {
+				this.recalculateDirection(delta);
+			}
 			this.handleAllDetainerCollisions(player)
 			this.handleContainerCollisions();
 			if (!player.ui.isPaused()) {
-				this.recalculateDirection(delta);
 				this.moveMonster();
 			}
 		}
@@ -247,7 +249,6 @@ export default class Monster {
 				}
 			}
 		}
-		
 
 		// static elements collision
 		if (populatedArray(staticBlockers)) {

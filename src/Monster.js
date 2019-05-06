@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import UserInterface from './UserInterface';
 import { getRandomArbitraryInt, populatedArray } from "./lib/UtilMethods";
-import { containSpriteInsideContainer, setTextureOnlyIfNeeded, detainSpriteOutsideDetainer, applyFilter } from "./lib/PixiUtilMethods";
+import { containSpriteInsideContainer, setTextureOnlyIfNeeded, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision, applyFilter } from "./lib/PixiUtilMethods";
 import HealthBar from "./HealthBar";
 
 export default class Monster {
@@ -63,8 +63,10 @@ export default class Monster {
 
 		this.monsterStopped = false;
 		this.timeSinceTwitch = 0.0;
-		this.newTwitchDirTime = 20.0;
-		this.twitchDirectionCounter = 0;
+		this.newTwitchDirTime = 5.0;
+		this.twitchDirectionShift = 0;
+		this.totalTwitchCounter = 0;
+		this.animationDone = false;
 
 		// hack to be able to move healthbar when finding children
 		this.monsterSprite.healthBar = this.healthBar;
@@ -86,12 +88,11 @@ export default class Monster {
 	}
 
 	monsterLoop(delta, player) {
-		this.handleNetCollisions(player);
-		if (!this.isCaptured() && !this.isDead()) {
-			this.recalculateDirection(delta);
+		if (this.isNotIgnorable()) {
 			this.handleAllDetainerCollisions(player)
 			this.handleContainerCollisions();
 			if (!player.ui.isPaused()) {
+				this.recalculateDirection(delta);
 				this.moveMonster();
 			}
 		}
@@ -99,13 +100,15 @@ export default class Monster {
 		this.monsterSprite.yForZOrdering = this.monsterSprite.y + this.monsterSprite.height;
 	}
 
-	handleNetCollisions(player) {
+	handleMissileCollisions(player) {
+		// OPTIMIZED FUNCTION: assumes only one type of collider collides at the same time w/ monster
 		let allActiveNets = this.app.stage.children.filter(child => 
 			child.name.indexOf("netCollider") !== -1 && child.active === true);
 		// net collision
 		if (populatedArray(allActiveNets)) {
 			for (var i = 0; i < allActiveNets.length; i++) {
-			    if(detainSpriteOutsideDetainer(allActiveNets[i], this.monsterSprite) !== "none") {
+			    //if(detainSpriteOutsideDetainer(allActiveNets[i], this.monsterSprite) !== "none") {
+			    if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveNets[i])) {
 			    	// make net invisible and inactive
 			    	allActiveNets[i].active = false;
 			    	allActiveNets[i].visible = false;
@@ -115,10 +118,41 @@ export default class Monster {
 			    	if (healthValue <= this.healthBar.container.maxHealth/2) {
 			    		// capture monster
 						this.maybeGetCaptured(player);
-						return false;
 			    	}
 				}
 			}
+			return;
+		}
+
+		let allActiveBullets = this.app.stage.children.filter(child => 
+			child.name.indexOf("bulletCollider") !== -1 && child.active === true);
+		if (populatedArray(allActiveBullets)) {
+			for (var i = 0; i < allActiveBullets.length; i++) {
+			    //if(detainSpriteOutsideDetainer(allActiveBullets[i], this.monsterSprite) !== "none") {
+			    if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveBullets[i])) {
+			    	// make bullet invisible and inactive
+			    	allActiveBullets[i].active = false;
+			    	allActiveBullets[i].visible = false;
+			    	// harm monster
+					this.getHarmed(player, "pistol");
+				}
+			}
+			return;
+		}
+
+		let allActiveBatColliders = this.app.stage.children.filter(child => 
+			child.name.indexOf("batCollider") !== -1 && child.active === true);
+		if (populatedArray(allActiveBatColliders)) {
+			for (var i = 0; i < allActiveBatColliders.length; i++) {
+				//if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveBatColliders[i])) {
+			    if(detainSpriteOutsideDetainer(allActiveBatColliders[i], this.monsterSprite) !== "none") {
+			    	// make bullet invisible
+			    	allActiveBatColliders[i].active = false;
+			    	// harm monster
+					this.getHarmed(player, "bat");
+				}
+			}
+			return;
 		}
 	}
 
@@ -167,8 +201,6 @@ export default class Monster {
 		else if (this.monsterSprite.vy !== 0) {
 			// walking vertically
 			this.monsterSprite.y += this.monsterSprite.vy;
-			console.log("HERE:" + this.monsterSprite.vy);
-			console.log("HERE:" + this.monsterSprite.y);
 			// move healthbar
 			this.healthBar.container.y += this.monsterSprite.vy;
 		}
@@ -188,74 +220,45 @@ export default class Monster {
 	}
 
 	handleAllDetainerCollisions(player) {
-		let allActiveBullets = this.app.stage.children.filter(child => 
-			child.name.indexOf("bulletCollider") !== -1 && child.active === true);
-		let allActiveBatColliders = this.app.stage.children.filter(child => 
-			child.name.indexOf("batCollider") !== -1 && child.active === true);
-		let otherMonsters = this.app.stage.children.filter(child =>
-			child.name !== this.monsterSprite.name && child.name.indexOf("monster") !== -1);
+		let otherLiveMonsters = this.app.stage.children.filter(child =>
+			child.name !== this.monsterSprite.name && child.name.indexOf("monster") !== -1 &&
+			!child.captured && !child.dead);
 
 		let staticBlockers = this.app.stage.children.filter(child => 
 			child.name.indexOf("blocker") !== -1);
 
-		if (this.isBlocker()) {
-			// monster/monster collision (most common, dont return)
-			if (populatedArray(otherMonsters)) {
-				for (var i = 0; i < otherMonsters.length; i++) {
-				    if(detainSpriteOutsideDetainer(this.monsterSprite, otherMonsters[i]) !== "none") {
-				    	this.reverseMonsterDirection();
-					}
+		this.handleMissileCollisions(player);
+
+		// monster/monster collision
+		if (populatedArray(otherLiveMonsters)) {
+			for (var i = 0; i < otherLiveMonsters.length; i++) {
+			    if(detainSpriteOutsideDetainer(this.monsterSprite, otherLiveMonsters[i]) !== "none") {
+		    	//if (checkDynamicIntoDynamicCollision(this.monsterSprite, otherLiveMonsters[i])) {
+			    	this.stopMonster();
 				}
 			}
+		}
 
-			// player/monster collision
-			if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite) !== "none") {
-				this.stopMonster();
-				return false;
-			}
+		// player/monster collision
+		//if (checkDynamicIntoDynamicCollision(this.monsterSprite, player.playerSprite)) {
+		if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite) !== "none") {
+			this.stopMonster();
+		}
 
-			// bullet collision
-			if (populatedArray(allActiveBullets)) {
-				for (var i = 0; i < allActiveBullets.length; i++) {
-				    if(detainSpriteOutsideDetainer(allActiveBullets[i], this.monsterSprite) !== "none") {
-				    	// make bullet invisible and inactive
-				    	allActiveBullets[i].active = false;
-				    	allActiveBullets[i].visible = false;
-				    	// harm monster
-						this.getHarmed(player, "pistol");
-						return false;
-					}
-				}
-			}
-
-			// bat colliders collision
-			if (populatedArray(allActiveBatColliders)) {
-				for (var i = 0; i < allActiveBatColliders.length; i++) {
-				    if(detainSpriteOutsideDetainer(allActiveBatColliders[i], this.monsterSprite) !== "none") {
-				    	// make bullet invisible
-				    	allActiveBatColliders[i].active = false;
-				    	// harm monster
-						this.getHarmed(player, "bat");
-						return false;
-					}
-				}
-			}
-
-			// static elements collision
-			if (populatedArray(staticBlockers)) {
-				for (var i = 0; i < staticBlockers.length; i++) {
-				    if(detainSpriteOutsideDetainer(this.monsterSprite, staticBlockers[i])!=="none") {
-						// monster reverts direction
-						this.reverseMonsterDirection();
-						return false;
-					}
+		// static elements collision
+		if (populatedArray(staticBlockers)) {
+			for (var i = 0; i < staticBlockers.length; i++) {
+			    if(detainSpriteOutsideDetainer(this.monsterSprite, staticBlockers[i])!=="none") {
+					// monster reverts direction
+					this.reverseMonsterDirection();
+					return false;
 				}
 			}
 		}
 		return true;
 	}
 
-	isBlocker() {
+	isNotIgnorable() {
 		return (!this.isDead() && !this.isCaptured());
 	}
 
@@ -279,58 +282,67 @@ export default class Monster {
 	}
 
 	animatedCapture(delta, player) {
-		this.timeSinceTwitch += delta;
-		// TODO: 
-		// this is supposed to be an animation where the viewport goes to the monster
-		// and he twitches trying to escape like in Pokemon
 		let otherElements = this.app.stage.children.filter(child => 
 			child.name !== this.monsterSprite.name);
-		player.ui.paused = true;
-		applyFilter(otherElements, "darken");
-		//console.log(this.monsterSprite.x + "," + this.monsterSprite.y);
-		setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
-		if(this.timeSinceTwitch > this.newTwitchDirTime) {
-			this.timeSinceTwitch = 0.0;
-			console.log(this.twitchDirectionCounter);
-			if (this.twitchDirectionCounter===0) {
-				this.twitchMonster(0, -1); // up
-			} else if (this.twitchDirectionCounter===1) {
-				this.twitchMonster(0, 1); // down
-			} else if (this.twitchDirectionCounter===2) {
-				this.twitchMonster(-1, 0); // left
-			} else if (this.twitchDirectionCounter===3) {
-				this.twitchMonster(1, 0); // right
+		if (!this.animationDone) {
+			this.timeSinceTwitch += delta;
+			setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
+			player.ui.paused = true;
+			applyFilter(otherElements, "darken");
+			//console.log(this.monsterSprite.x + "," + this.monsterSprite.y);
+			
+			if(this.timeSinceTwitch > this.newTwitchDirTime) {
+				this.timeSinceTwitch = 0.0;
+				if (this.twitchDirectionShift===0) {
+					this.twitchMonster(0, -2); // up
+				} else if (this.twitchDirectionShift===1) {
+					this.twitchMonster(0, 2); // back-down
+				}
+				else if (this.twitchDirectionShift===2) {
+					this.twitchMonster(0, 2); // down
+				} else if (this.twitchDirectionShift===3) {
+					this.twitchMonster(0, -2); // back-up
+				}
+				this.totalTwitchCounter += 1;
+				this.twitchDirectionShift = (this.twitchDirectionShift+1)%4;
 			}
-
-			this.twitchDirectionCounter = (this.twitchDirectionCounter+1)%2;
 		}
-		
 
-		//player.ui.viewport.moveTo(this.monsterSprite.x, this.monsterSprite.y);
-		//player.ui.paused = false;
-	}
+		if (this.totalTwitchCounter === 16) {
+			player.ui.paused = false;
+			this.totalTwitchCounter = 0;
+			this.timeSinceTwitch = 0.0;
+			this.animationDone = true;
+			applyFilter(otherElements, "reset");
 
-	maybeGetCaptured(player) {
-		let doubleHealthValue = (+this.healthBar.container.valueText.text - 1)*2;
-		let maxHealthValue = this.healthBar.container.maxHealth;
-
-		let escapeProbability = doubleHealthValue/maxHealthValue;
-		let randomNumber = Math.random();
-		let monsterCaught = (randomNumber >= escapeProbability);
-
-		this.app.ticker.add(delta => this.animatedCapture(delta, player));
-
-		if (!player.ui.isPaused()) {
+			let doubleHealthValue = (+this.healthBar.container.valueText.text - 1)*2;
+			let maxHealthValue = this.healthBar.container.maxHealth;
+			let escapeProbability = doubleHealthValue/maxHealthValue;
+			let randomNumber = Math.random();
+			let monsterCaught = (randomNumber >= escapeProbability);
+			
 			if (monsterCaught) {
 				// monster caught
 				this.monsterSprite.captured = true;
+				setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
 				this.stopMonster();
+				console.log("apanhado");
 				player.ui.addScore(this.isAngry?2:1);
 			} else {
 				// monster escaped
+				console.log("escapou");
+				console.log(this.monsterSprite.captured);
+				console.log(this.monsterSprite.dead);
 				setTextureOnlyIfNeeded(this.monsterSprite, this.monsterTexture);
 			}
+			this.app.ticker = this.app.ticker.remove(this.animatedCapture);
+			console.log(this.app.ticker);
 		}
+	}
+
+	maybeGetCaptured(player) {
+		this.animationDone = false;
+		this.app.ticker.add(delta => this.animatedCapture(delta, player));
 	}
 
 	getHarmed(player, weapon) {

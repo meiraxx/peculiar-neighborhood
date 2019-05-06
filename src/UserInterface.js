@@ -141,7 +141,7 @@ export default class UserInterface {
 		for (var i = this.bullets.length - 1; i >= 0; i--) {
 			this.bullets[i].update(delta, 200);
 			this.nets[i].update(delta, 200);
-			this.batColliders[i].update(delta, 100);
+			this.batColliders[i].update(delta, 60);
 		}
 	}
 

@@ -48,22 +48,9 @@ export default class Score {
         }
 
         let resultValue = this.previousValue + value;
-        // score addition cases
-        if (resultValue >= 10 && this.previousValue < 10) {
-            this.totalContainer.x -= 10;
-        }
-        else if (resultValue >= 100 && this.previousValue < 100) {
-            this.totalContainer.x -= 10;
-        }
-        // score subtraction cases
-        else if (resultValue <= 10 && this.previousValue > 10) {
-            this.totalContainer.x += 10;
-        }
-        else if (resultValue <= 100 && this.previousValue > 100) {
-            this.totalContainer.x += 10;
-        }
         
         this.totalScoreText.text = "Score: " + resultValue;
+        this.totalScoreText.x = -this.totalScoreText.text.length;
         this.totalScoreText.style.fill = (resultValue===0)?0xFFFFFF:(resultValue>0)?0x00FF00:0xFF0000;
         this.previousValue = resultValue;
     }

@@ -313,7 +313,7 @@ export default class Player {
 			}
 			console.log("valid drop");
 			this.isGrabbing = false;
-			this.ui.score.addScore(this.grabbedMonster.isAngry?2:1);
+			this.ui.score.addScore(this.grabbedMonster.isAngry?(2*this.ui.clock.timeText.text):(1*this.ui.clock.timeText.text));
 			this.grabbedMonstersList.push(this.grabbedMonster);
 			this.grabbedMonster = undefined;
 		}

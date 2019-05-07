@@ -89,12 +89,11 @@ export default class Monster {
 
 	monsterLoop(delta, player) {
 		if (this.isNotIgnorable()) {
+			this.handleMissileCollisions(player);
 			if (!player.ui.isPaused()) {
 				this.recalculateDirection(delta);
-			}
-			this.handleAllDetainerCollisions(player)
-			this.handleContainerCollisions();
-			if (!player.ui.isPaused()) {
+				this.handleAllDetainerCollisions(player)
+				this.handleContainerCollisions();
 				this.moveMonster();
 			}
 		}
@@ -109,8 +108,8 @@ export default class Monster {
 		// net collision
 		if (populatedArray(allActiveNets)) {
 			for (var i = 0; i < allActiveNets.length; i++) {
-			    //if(detainSpriteOutsideDetainer(allActiveNets[i], this.monsterSprite) !== "none") {
-			    if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveNets[i])) {
+			    if(detainSpriteOutsideDetainer(allActiveNets[i], this.monsterSprite) !== "none") {
+			    //if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveNets[i])) {
 			    	// make net invisible and inactive
 			    	allActiveNets[i].active = false;
 			    	allActiveNets[i].visible = false;
@@ -229,8 +228,6 @@ export default class Monster {
 		let staticBlockers = this.app.stage.children.filter(child => 
 			child.name.indexOf("blocker") !== -1);
 
-		this.handleMissileCollisions(player);
-
 		// player/monster collision
 		//if (checkDynamicIntoDynamicCollision(this.monsterSprite, player.playerSprite)) {
 		if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite) !== "none") {
@@ -327,7 +324,7 @@ export default class Monster {
 				this.monsterSprite.captured = true;
 				setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
 				this.stopMonster();
-				player.ui.addScore(this.isAngry?2:1);
+				player.ui.addScore(this.isAngry?(2*player.ui.clock.timeText.text):(1*player.ui.clock.timeText.text));
 			} else {
 				// monster escaped
 				setTextureOnlyIfNeeded(this.monsterSprite, this.monsterTexture);
@@ -383,7 +380,7 @@ export default class Monster {
 		this.monsterSprite.dead = true;
 		this.monsterSprite.vx = 0;
 		this.monsterSprite.vy = 0;
-		player.ui.addScore(this.isAngry?-2:-1);
+		player.ui.addScore(this.isAngry?(-2*player.ui.clock.timeText.text):(-1*player.ui.clock.timeText.text));
 	}
 
 	isCaptured() {

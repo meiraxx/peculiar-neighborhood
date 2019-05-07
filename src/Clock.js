@@ -80,7 +80,10 @@ export default class Clock {
         this.frameCounter += 1;
         // with FPS = 60, delta = 1/60 s (this.app.ticker.FPS)
         if (this.frameCounter === this.app.ticker.integerFPS) {
-            this.timeText.text = +this.timeText.text - 1;
+            if (this.timeText.text > 0) {
+                this.timeText.text = this.timeText.text - 1;
+            }
+            // else new wave
             this.frameCounter = 0;
         }
     }

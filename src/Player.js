@@ -492,6 +492,7 @@ export default class Player {
 			    if (!monsters[i].captured && !monsters[i].dead &&
 			    	detainSpriteOutsideDetainer(this.playerSprite, monsters[i]) !== "none") {
 					this.stopPlayer();
+					return;
 				}
 			}
 		}
@@ -501,6 +502,7 @@ export default class Player {
 			for (var i = 0; i < staticBlockers.length; i++) {
 			    if (detainSpriteOutsideDetainer(this.playerSprite, staticBlockers[i]) !== "none"){
 			    	this.stopPlayer();
+			    	return;
 			    }
 			}
 		}
@@ -513,9 +515,9 @@ export default class Player {
 
 		if (playerHitsMapBound !== "none") {
 			// character hit map bounds: character stays in-place
+			this.stopPlayer();
 		}
-		else {
-			this.movePlayer();
-		}
+
+		this.movePlayer();
 	}
 }

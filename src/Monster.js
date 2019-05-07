@@ -109,8 +109,7 @@ export default class Monster {
 			this.handleMissileCollisions(delta, player);
 			if (!player.ui.isPaused()) {
 				this.handleAllDetainerCollisions(player)
-				this.handleContainerCollisions();
-				this.moveMonster();
+				this.handleContainerCollisionsAndMove();
 			}
 		}
 		//update z ordering
@@ -195,17 +194,16 @@ export default class Monster {
 				this.monsterSprite.vx = 0;
 				this.monsterSprite.vy = -2;
 			}
-			//this.monsterSprite.vx = 0;
-			//this.monsterSprite.vy = 0;
 		}
 	}
 
-	handleContainerCollisions() {
+	handleContainerCollisionsAndMove() {
 		let monsterHitsMapBound = containSpriteInsideContainer(this.monsterSprite, 
 				{x: 0, y: 0, width: 2048, height: 1536});
 		if (monsterHitsMapBound !== "none") {
 			this.reverseMonsterDirection();
 		}
+		this.moveMonster();
 	}
 
 	moveMonster() {
@@ -245,20 +243,17 @@ export default class Monster {
 			child.name.indexOf("blocker") !== -1);
 
 		// player/monster collision
-		//if (checkDynamicIntoDynamicCollision(this.monsterSprite, player.playerSprite)) {
 		if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite) !== "none") {
-			// TODO: strategic stop
 			this.stopMonster();
+			return;
 		}
 
 		// monster/monster collision
 		if (populatedArray(otherLiveMonsters)) {
 			for (var i = 0; i < otherLiveMonsters.length; i++) {
 			    if(detainSpriteOutsideDetainer(this.monsterSprite, otherLiveMonsters[i]) !== "none") {
-		    	//if (checkDynamicIntoDynamicCollision(this.monsterSprite, otherLiveMonsters[i])) {
-			    	// TODO: strategic stop
 			    	this.stopMonster();
-			    	break;
+			    	return;
 				}
 			}
 		}
@@ -266,10 +261,10 @@ export default class Monster {
 		// static elements collision
 		if (populatedArray(staticBlockers)) {
 			for (var i = 0; i < staticBlockers.length; i++) {
-			    if(detainSpriteOutsideDetainer(this.monsterSprite, staticBlockers[i])!=="none") {
+			    if(detainSpriteOutsideDetainer(this.monsterSprite, staticBlockers[i]) !== "none") {
 					// monster reverts direction
 					this.reverseMonsterDirection();
-					break;
+					return;
 				}
 			}
 		}

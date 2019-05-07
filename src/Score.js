@@ -37,6 +37,7 @@ export default class Score {
     }
 
     addScore(value, viewport) {
+        // score change text
         if (value > 0) {
             this.scoreChangeText.text = "score +" + value;
             this.scoreChangeText.style.fill = 0x00FF00;
@@ -47,8 +48,12 @@ export default class Score {
             this.scoreChangeText.visible = true;
         }
 
-        let resultValue = this.previousValue + value;
+        if (this.scoreChangeText.alpha < 1) {
+            this.scoreChangeText.alpha += .01;
+        }
         
+        // total score text
+        let resultValue = this.previousValue + value;
         this.totalScoreText.text = "Score: " + resultValue;
         this.totalScoreText.x = -this.totalScoreText.text.length;
         this.totalScoreText.style.fill = (resultValue===0)?0xFFFFFF:(resultValue>0)?0x00FF00:0xFF0000;

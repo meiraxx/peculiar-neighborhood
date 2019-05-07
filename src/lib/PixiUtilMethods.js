@@ -59,7 +59,7 @@ function textStyle(choice) {
 	else if (choice === "scoreChangeText") {
 		textStyle = new PIXI.TextStyle({
 		    fontFamily: 'Courier New',
-		    fontSize: 11,
+		    fontSize: 13,
 		    align : 'right',
 		    fill: ['#ffffff'],
 		    stroke: '#000000',
@@ -117,32 +117,36 @@ function containSpriteInsideContainer(sprite, container) {
 		unitvy = 0;
 	}
 
+	let condtop = sprite.y + unitvy <= container.y && unitvy < 0;
+
+	let condleft = sprite.x + unitvx <= container.x && unitvx < 0;
+
+	let condright = sprite.x + sprite.width - unitvx >= container.width && unitvx > 0;
+
+	let condbottom = sprite.y + sprite.height - unitvy >= container.height && unitvy > 0;
+
 	// top hit
-	if (sprite.y + unitvy <= container.y && unitvy < 0) {
-		//console.log("Top hit: " + sprite.y);
-		sprite.y = container.y;
+	if (condtop) {
+		//sprite.y = container.y;
 		collision = "top";
 	}
 
-	// bottom hit
-	if (sprite.y + sprite.height - unitvy >= container.height && unitvy > 0) {
-		//console.log("Bottom hit: " + sprite.y);
-		sprite.y = container.height - sprite.height + unitvy;
-		collision = "bottom";
-	}
-
 	// left hit
-	if (sprite.x + unitvx <= container.x && unitvx < 0) {
-		//console.log("Left hit: " + sprite.x);
-		sprite.x = container.x;
+	if (condleft) {
+		//sprite.x = container.x;
 		collision = "left";
 	}
 
 	// right hit
-	if (sprite.x + sprite.width - unitvx >= container.width && unitvx > 0) {
-		//console.log("Right hit: " + sprite.x);
-		sprite.x = container.width - sprite.width + unitvx;
+	if (condright) {
+		//sprite.x = container.width - sprite.width + unitvx;
 		collision = "right";
+	}
+
+	// bottom hit
+	if (condbottom) {
+		//sprite.y = container.height - sprite.height + unitvy;
+		collision = "bottom";
 	}
 
 	return collision;
@@ -167,17 +171,13 @@ function detainSpriteOutsideDetainer(sprite, detainer) {
 	let detainerMinX = detainer.x;
 	let detainerMaxX = detainer.x + detainer.width;
 
-	if (sprite.y + sprite.vy >= detainerMaxY) {
-		//
-	}
-	else if (sprite.x + sprite.vx >= detainerMaxX) {
-		//
-	}
-	else if (sprite.y + sprite.vy + sprite.height <= detainerMinY) {
-		//
-	}
-	else if (sprite.x + sprite.vx + sprite.width <= detainerMinX) {
-		//
+	let condNonCollision1 = sprite.y + sprite.vy >= detainerMaxY;
+	let condNonCollision2 = sprite.x + sprite.vx >= detainerMaxX;
+	let condNonCollision3 = sprite.y + sprite.vy + sprite.height <= detainerMinY;
+	let condNonCollision4 = sprite.x + sprite.vx + sprite.width <= detainerMinX;
+
+	if (condNonCollision1 || condNonCollision2 || condNonCollision3 || condNonCollision4) {
+		// no collision
 	}
 	// collision in all other cases
 	else {
@@ -191,26 +191,28 @@ function detainSpriteOutsideDetainer(sprite, detainer) {
 		let condbottom = sprite.y >= detainerMaxY &&
 			sprite.y + sprite.vy < detainerMaxY && unitvy < 0;
 
-		//console.log(sprite.vx + "," + sprite.vy);
-		//console.log(sprite.y + "," + (sprite.y + sprite.vy) + "," + detainerMaxY);
-		//console.log("" + [condtop, condleft, condright, condbottom]);
+		if (condtop || condleft || condright || condbottom) {
+			sprite.vx = 0;
+			sprite.vy = 0;
+		}
+
 		if (condtop) {
-			sprite.y = detainerMinY - sprite.height;
+			//sprite.y = detainerMinY - sprite.height;
 			collision = "top";
 		}
 
 		if (condleft) {
-			sprite.x = detainerMinX - sprite.width;
+			//sprite.x = detainerMinX - sprite.width;
 			collision = "left";
 		}
 
 		if (condright) {
-			sprite.x = detainerMaxX;
+			//sprite.x = detainerMaxX;
 			collision = "right";
 		}
 
 		if (condbottom) {
-			sprite.y = detainerMaxY;
+			//sprite.y = detainerMaxY;
 			collision = "bottom";
 		}
 	}

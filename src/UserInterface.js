@@ -55,7 +55,7 @@ export default class UserInterface {
 		this.prepareCrosshair(x_pos, y_pos);
 		this.prepareMissiles(x_pos, y_pos);
 		this.prepareCardsInfo(x_pos, y_pos);
-		this.prepareClock(viewport.center.x + 220, viewport.center.y - 490);
+		this.prepareClock(viewport.center.x + 220, viewport.center.y - 490, 300.0);
 
 		// relative to both player and viewport
 		this.prepareCards(viewport.center.x - 718, viewport.center.y - 108);
@@ -76,8 +76,8 @@ export default class UserInterface {
 		this.initPauseScreen();
 	}
 
-	prepareClock(x_pos,y_pos) {
-		this.clock.prepareObject(x_pos,y_pos);
+	prepareClock(x_pos, y_pos, clockTime) {
+		this.clock.prepareObject(x_pos, y_pos, clockTime);
 	}
 	initClock() {
 		this.clock.initObject();
@@ -89,7 +89,7 @@ export default class UserInterface {
 
 	// HEALTHBAR
 	prepareHealthbar(x_pos, y_pos) {
-		this.healthBar.prepareObject(x_pos, y_pos, 64, 8, 0x4CBB17, 0xFFFFFF, 20);
+		this.healthBar.prepareObject(x_pos, y_pos - 6, 64, 8, 0x4CBB17, 0xFFFFFF, 20);
 	}
 
 	initHealthbar() {

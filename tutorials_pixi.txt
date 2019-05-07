@@ -2,3 +2,6 @@ http://proclive.io/shooting-tutorial/
 https://codepen.io/spaarwt001/pen/mqxRvZ
 http://www.html5gamedevs.com/topic/30424-animation-of-sprite-movement/
 https://gameofbombs.github.io/pixi-bin/index.html?s=flip&f=cards.js&title=Cards
+
+https://pixijs.download/v5.0.0/docs/PIXI.AnimatedSprite.html
+https://stackoverflow.com/questions/38667990/adding-fadein-transition-to-pixi-sprite

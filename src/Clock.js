@@ -9,12 +9,12 @@ export default class Clock {
 
     constructor(app) {
     	this.app = app;
-        this.currentTime = 0.0;
-        this.totalTime = 2000.0;
-        this.frameCounter = 0;
     }
 
-    prepareObject(x_pos, y_pos) {
+    prepareObject(x_pos, y_pos, time) {
+        this.currentTime = 0.0;
+        this.totalTime = time;
+        this.frameCounter = 0;
         this.container = new PIXI.Container();
 
         // cards-container global position
@@ -57,7 +57,7 @@ export default class Clock {
             this.clockSprite.width*2.5, this.clockSprite.height + 4, 2, rectangleClockColor);
 
         // TEXT
-        this.timeText = new PIXI.Text(300, textStyle("timeText"));
+        this.timeText = new PIXI.Text(time, textStyle("timeText"));
         this.timeText.x = this.clockSprite.width*1.4;
         this.timeText.y = this.clockSprite.height/2 - this.timeText.height/2;
         this.timeText.resolution = 2;
@@ -75,12 +75,13 @@ export default class Clock {
     }
   
     update(delta) {
-        this.currentTime += delta;
-        this.clockHandSpriteContainer.rotation = 2.0 * Math.PI * (this.currentTime / this.totalTime);
         this.frameCounter += 1;
         // with FPS = 60, delta = 1/60 s (this.app.ticker.FPS)
         if (this.frameCounter === this.app.ticker.integerFPS) {
             if (this.timeText.text > 0) {
+                this.currentTime += 1;
+                let radius = (this.currentTime / this.totalTime);
+                this.clockHandSpriteContainer.rotation = 2.0 * Math.PI * radius;
                 this.timeText.text = this.timeText.text - 1;
             }
             // else new wave
@@ -88,7 +89,10 @@ export default class Clock {
         }
     }
 
-    resetClock() {
+    resetClock(newTime) {
+        this.currentTime = 0.0;
+        this.totalTime = newTime;
+        this.frameCounter = 0;
         this.clockHandSpriteContainer.rotation = 0.0;
     }
 

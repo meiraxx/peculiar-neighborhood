@@ -11,6 +11,7 @@ export default class Monster {
 		app.loader.add("assets/capturedMonsters/angryMonster.png");
 		app.loader.add("assets/capturedMonsters/normalMonster.png");
 		app.loader.add("assets/deadMonsters/angryMonster.png");
+		app.loader.add("assets/deadMonsters/normalMonster0.png");
 		app.loader.add("assets/deadMonsters/normalMonster1.png");
 		app.loader.add("assets/deadMonsters/normalMonster2.png");
 		app.loader.add("assets/deadMonsters/normalMonster3.png");
@@ -29,6 +30,8 @@ export default class Monster {
 			this.monsterTexture = this.app.loader.resources["assets/monsters/angryMonster.png"].texture;
 			this.capturedMonsterTexture = 
 				this.app.loader.resources["assets/capturedMonsters/angryMonster.png"].texture;
+
+			this.deadMonsterTexture0 = this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
 			this.deadMonsterTexture1 = this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
 			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
 			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
@@ -38,15 +41,18 @@ export default class Monster {
 			this.monsterTexture = this.app.loader.resources["assets/monsters/normalMonster.png"].texture;
 			this.capturedMonsterTexture = 
 				this.app.loader.resources["assets/capturedMonsters/normalMonster.png"].texture;
+			
+			this.deadMonsterTexture0 = this.app.loader.resources["assets/deadMonsters/normalMonster0.png"].texture;
 			this.deadMonsterTexture1 = this.app.loader.resources["assets/deadMonsters/normalMonster1.png"].texture;
 			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/normalMonster2.png"].texture;
 			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/normalMonster3.png"].texture;
 			this.healthBar.prepareObject(x_pos, y_pos - 6, 32, 8, 0xFF3300, 0xFFFFFF, 10);
 		}
-		this.deadMonsterTextureArray = [this.deadMonsterTexture1, this.deadMonsterTexture2, this.deadMonsterTexture3];
+		this.deadMonsterTextureArray = [this.deadMonsterTexture0, this.deadMonsterTexture1,
+			this.deadMonsterTexture2, this.deadMonsterTexture3];
 
-		this.monsterSprite = new PIXI.AnimatedSprite([this.monsterTexture, this.monsterTexture, this.monsterTexture], true);
-		this.monsterSprite.animationSpeed = 0.02;
+		this.monsterSprite = new PIXI.AnimatedSprite([this.monsterTexture], true);
+		this.monsterSprite.animationSpeed = 0.025;
 		this.monsterSprite.loop = false;
 
 		if (this.isAngry) {
@@ -139,8 +145,8 @@ export default class Monster {
 			child.name.indexOf("bulletCollider") !== -1 && child.active === true);
 		if (populatedArray(allActiveBullets)) {
 			for (var i = 0; i < allActiveBullets.length; i++) {
-			    //if(detainSpriteOutsideDetainer(allActiveBullets[i], this.monsterSprite) !== "none") {
-			    if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveBullets[i])) {
+			    if(detainSpriteOutsideDetainer(allActiveBullets[i], this.monsterSprite) !== "none") {
+			    //if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveBullets[i])) {
 			    	// make bullet invisible and inactive
 			    	allActiveBullets[i].active = false;
 			    	allActiveBullets[i].visible = false;
@@ -155,12 +161,12 @@ export default class Monster {
 			child.name.indexOf("batCollider") !== -1 && child.active === true);
 		if (populatedArray(allActiveBatColliders)) {
 			for (var i = 0; i < allActiveBatColliders.length; i++) {
-				//if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveBatColliders[i])) {
-			    if(detainSpriteOutsideDetainer(allActiveBatColliders[i], this.monsterSprite) !== "none") {
+				if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveBatColliders[i])) {
+			    //if(detainSpriteOutsideDetainer(allActiveBatColliders[i], this.monsterSprite) !== "none") {
 			    	// make bullet invisible
 			    	allActiveBatColliders[i].active = false;
 			    	// harm monster
-					this.getHarmed(player, "bat");
+					this.getHarmed(delta, player, "bat");
 				}
 			}
 			return;
@@ -296,8 +302,7 @@ export default class Monster {
 			child.name !== this.monsterSprite.name);
 		if (!this.animationDone) {
 			this.timeSinceTwitch += delta;
-			setTexturesOnlyIfNeeded(this.monsterSprite, [this.capturedMonsterTexture, 
-				this.capturedMonsterTexture, this.capturedMonsterTexture]);
+			setTexturesOnlyIfNeeded(this.monsterSprite, [this.capturedMonsterTexture]);
 			player.ui.paused = true;
 			applyFilter(otherElements, "darken");
 			
@@ -333,13 +338,12 @@ export default class Monster {
 			if (monsterCaught) {
 				// monster caught
 				this.monsterSprite.captured = true;
-				setTexturesOnlyIfNeeded(this.monsterSprite, [this.capturedMonsterTexture, 
-					this.capturedMonsterTexture, this.capturedMonsterTexture]);
+				setTexturesOnlyIfNeeded(this.monsterSprite, [this.capturedMonsterTexture]);
 				this.stopMonster();
 				player.ui.addScore(this.isAngry?(2*player.ui.clock.timeText.text):(1*player.ui.clock.timeText.text));
 			} else {
 				// monster escaped
-				setTexturesOnlyIfNeeded(this.monsterSprite, [this.monsterTexture, this.monsterTexture, this.monsterTexture]);
+				setTexturesOnlyIfNeeded(this.monsterSprite, [this.monsterTexture]);
 			}
 		}
 	}
@@ -391,6 +395,7 @@ export default class Monster {
 		setTexturesOnlyIfNeeded(this.monsterSprite, this.deadMonsterTextureArray);
 		this.monsterSprite.play();
 		this.monsterSprite.dead = true;
+		console.log(this.monsterSprite.getBounds());
 		this.monsterSprite.vx = 0;
 		this.monsterSprite.vy = 0;
 		player.ui.addScore(this.isAngry?(-2*player.ui.clock.timeText.text):(-1*player.ui.clock.timeText.text));

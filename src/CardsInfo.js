@@ -12,8 +12,6 @@ export default class CardsInfo {
 
 	prepareObject(x_pos, y_pos) {
 		this.container = new PIXI.Container();
-		this.container.x = x_pos - 50; //hardcoded playerWidth/2
-        this.container.y = y_pos;
         this.container.x = x_pos - 150; //hardcoded playerWidth/2
         this.container.y = y_pos - 100;
         this.container.scale.x = 0.30;

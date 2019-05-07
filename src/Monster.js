@@ -46,7 +46,7 @@ export default class Monster {
 			this.deadMonsterTexture1 = this.app.loader.resources["assets/deadMonsters/normalMonster1.png"].texture;
 			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/normalMonster2.png"].texture;
 			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/normalMonster3.png"].texture;
-			this.healthBar.prepareObject(x_pos, y_pos - 6, 32, 8, 0xFF3300, 0xFFFFFF, 10);
+			this.healthBar.prepareObject(x_pos, y_pos - 12, 32, 8, 0xFF3300, 0xFFFFFF, 10);
 		}
 		this.deadMonsterTextureArray = [this.deadMonsterTexture0, this.deadMonsterTexture1,
 			this.deadMonsterTexture2, this.deadMonsterTexture3];
@@ -202,7 +202,7 @@ export default class Monster {
 
 	handleContainerCollisions() {
 		let monsterHitsMapBound = containSpriteInsideContainer(this.monsterSprite, 
-				{x: 0, y: 0, width: 1024, height: 1024});
+				{x: 0, y: 0, width: 2048, height: 1536});
 		if (monsterHitsMapBound !== "none") {
 			this.reverseMonsterDirection();
 		}

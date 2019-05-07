@@ -73,7 +73,7 @@ var bush0 = new Bush(app);
 var blockers = [tree0, house0, house1];
 var hiders = [bush0]
 
-var fog = new Fog(app);
+//var fog = new Fog(app);
 var zSorter =  new ZSorter(app);
 
 
@@ -82,17 +82,19 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// setup background map
 	staticMap.prepareObject();
 	staticMap.initObject();
+	zSorter.register(staticMap.backgroundSprite);
 	let mapWidth = staticMap.backgroundSprite.width;
 	let mapHeight = staticMap.backgroundSprite.height;
 	let colliderThickness = 100;
 
-	fog.prepareObject();
+	//fog.prepareObject();
 
 	// setup player character and UI
 	player.prepareObject(mapWidth/2,mapHeight/2);
 	let playerWidth = player.playerSprite.height;
 	let playerHeight = player.playerSprite.height;
 	player.initObject();
+	zSorter.register(player.playerSprite);
 
 	// setup monsters in the corners
 	m0.prepareObject(100, 100, 0);
@@ -101,6 +103,7 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	m3.prepareObject(200, 200, 3);
 	monsters.forEach(function(m) {
 		m.initObject();
+		zSorter.register(m.monsterSprite);
 	});
 
 	// setup blockers
@@ -124,7 +127,7 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	});
 
 	//fog is topmost except ui
-	fog.initObject();
+	//fog.initObject();
 
 
 	// initialize UI in the end because its Z ordering is always the greatest
@@ -138,18 +141,7 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	monsters.forEach(function(m) {
 		m.initLoop(player);
 	});
-	fog.initLoop(player);
-	
-	zSorter.register(staticMap.backgroundSprite);
-	zSorter.register(m0.monsterSprite);
-	zSorter.register(m1.monsterSprite);
-	zSorter.register(m2.monsterSprite);
-	zSorter.register(m3.monsterSprite);
-	zSorter.register(player.playerSprite);
-	zSorter.register(tree0.sprite);
-	zSorter.register(bush0.sprite);
-	zSorter.register(house0.sprite);
-	zSorter.register(house1.sprite);
+	//fog.initLoop(player);
 
 	zSorter.initLoop();
 

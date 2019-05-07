@@ -53,7 +53,7 @@ export default class Player {
  		this.grabbedMonster = undefined;
  		this.grabbedMonstersList = [];
 
-		this.viewport.moveTo(this.viewport._width, this.viewport._height + this.playerSprite.height*3);
+		this.viewport.moveTo(x_pos + this.viewport._width/4, y_pos + this.viewport._height/2 + this.playerSprite.height/2);
 		this.viewport.zoom(700);
 
 		// SETUP player UI
@@ -507,8 +507,9 @@ export default class Player {
 	}
 
 	handleContainerCollisionsAndMove() {
+		// map width and map height
 		let playerHitsMapBound = containSpriteInsideContainer(this.playerSprite, 
-				{x: 0, y: 0, width: 1024, height: 1024});
+				{x: 0, y: 0, width: 2048, height: 1536});
 
 		if (playerHitsMapBound !== "none") {
 			// character hit map bounds: character stays in-place

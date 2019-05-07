@@ -23,7 +23,7 @@ export default class Score {
         this.changeContainer.x = x2_pos;
         this.changeContainer.y = y2_pos;
         this.changeContainer.name = "changeScoreContainer";
-        this.changeContainer._zIndex = Number.MAX_SAFE_INTEGER;
+        this.changeContainer._zIndex = Number.MAX_SAFE_INTEGER-1;
         this.scoreChangeText = new PIXI.Text("score +0", textStyle("scoreChangeText"));
         this.scoreChangeText.resolution = 2;
         this.scoreChangeText.visible = true;

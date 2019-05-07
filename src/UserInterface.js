@@ -56,11 +56,10 @@ export default class UserInterface {
 		this.prepareMissiles(x_pos, y_pos);
 		this.prepareCardsInfo(x_pos, y_pos);
 		this.prepareClock(viewport.center.x + 220, viewport.center.y - 490);
-		// position relative to viewport
-		this.prepareCards(-20, viewport.center.y - 110);
 
 		// relative to both player and viewport
-		this.prepareScore(viewport.center.x + 217, viewport.center.y + playerSprite.height/2 - 568, 
+		this.prepareCards(viewport.center.x - 718, viewport.center.y - 108);
+		this.prepareScore(viewport.center.x + 218, viewport.center.y - 518, 
 			x_pos, y_pos);
 		this.preparePauseScreen(x_pos, viewport.center.y + playerSprite.height/2 - 338);
 	}

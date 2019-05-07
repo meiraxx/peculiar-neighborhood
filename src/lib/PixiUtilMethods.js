@@ -84,6 +84,12 @@ function setTextureOnlyIfNeeded(sprite, newTexture) {
 	}
 }
 
+function setTexturesOnlyIfNeeded(animatedSprite, newTextures) {
+	if (animatedSprite.textures !== newTextures) {
+		animatedSprite.textures = newTextures;
+	}
+}
+
 function getRoundedRectangle(x_pos, y_pos, width, height, roundFactor, colorcode) {
 	let roundedRectangle = new PIXI.Graphics();
 	roundedRectangle.beginFill(colorcode);
@@ -286,4 +292,4 @@ function applyFilter(elementArray, filter) {
 	
 }
 
-export {textStyle, setTextureOnlyIfNeeded, getRoundedRectangle, containSpriteInsideContainer, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision, applyFilter};
+export {textStyle, setTextureOnlyIfNeeded, setTexturesOnlyIfNeeded, getRoundedRectangle, containSpriteInsideContainer, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision, applyFilter};

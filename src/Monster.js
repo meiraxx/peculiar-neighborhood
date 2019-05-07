@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import UserInterface from './UserInterface';
 import { getRandomArbitraryInt, populatedArray } from "./lib/UtilMethods";
-import { containSpriteInsideContainer, setTextureOnlyIfNeeded, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision, applyFilter } from "./lib/PixiUtilMethods";
+import { containSpriteInsideContainer, setTexturesOnlyIfNeeded, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision, applyFilter } from "./lib/PixiUtilMethods";
 import HealthBar from "./HealthBar";
 
 export default class Monster {
@@ -11,7 +11,9 @@ export default class Monster {
 		app.loader.add("assets/capturedMonsters/angryMonster.png");
 		app.loader.add("assets/capturedMonsters/normalMonster.png");
 		app.loader.add("assets/deadMonsters/angryMonster.png");
-		app.loader.add("assets/deadMonsters/normalMonster.png");
+		app.loader.add("assets/deadMonsters/normalMonster1.png");
+		app.loader.add("assets/deadMonsters/normalMonster2.png");
+		app.loader.add("assets/deadMonsters/normalMonster3.png");
 	}
 	
 	constructor(app, isAngry) {
@@ -27,20 +29,26 @@ export default class Monster {
 			this.monsterTexture = this.app.loader.resources["assets/monsters/angryMonster.png"].texture;
 			this.capturedMonsterTexture = 
 				this.app.loader.resources["assets/capturedMonsters/angryMonster.png"].texture;
-			this.deadMonsterTexture = 
-				this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
+			this.deadMonsterTexture1 = this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
+			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
+			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
 			this.healthBar.prepareObject(x_pos, y_pos - 12, 48, 8, 0xFF3300, 0xFFFFFF, 15);
 		}
 		else {
 			this.monsterTexture = this.app.loader.resources["assets/monsters/normalMonster.png"].texture;
 			this.capturedMonsterTexture = 
 				this.app.loader.resources["assets/capturedMonsters/normalMonster.png"].texture;
-			this.deadMonsterTexture = 
-				this.app.loader.resources["assets/deadMonsters/normalMonster.png"].texture;
+			this.deadMonsterTexture1 = this.app.loader.resources["assets/deadMonsters/normalMonster1.png"].texture;
+			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/normalMonster2.png"].texture;
+			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/normalMonster3.png"].texture;
 			this.healthBar.prepareObject(x_pos, y_pos - 6, 32, 8, 0xFF3300, 0xFFFFFF, 10);
 		}
+		this.deadMonsterTextureArray = [this.deadMonsterTexture1, this.deadMonsterTexture2, this.deadMonsterTexture3];
 
-		this.monsterSprite = new PIXI.Sprite(this.monsterTexture);
+		this.monsterSprite = new PIXI.AnimatedSprite([this.monsterTexture, this.monsterTexture, this.monsterTexture], true);
+		this.monsterSprite.animationSpeed = 0.02;
+		this.monsterSprite.loop = false;
+
 		if (this.isAngry) {
 			this.monsterSprite.scale.x = 0.06;
 			this.monsterSprite.scale.y = 0.06;
@@ -89,9 +97,11 @@ export default class Monster {
 
 	monsterLoop(delta, player) {
 		if (this.isNotIgnorable()) {
-			this.handleMissileCollisions(player);
 			if (!player.ui.isPaused()) {
 				this.recalculateDirection(delta);
+			}
+			this.handleMissileCollisions(delta, player);
+			if (!player.ui.isPaused()) {
 				this.handleAllDetainerCollisions(player)
 				this.handleContainerCollisions();
 				this.moveMonster();
@@ -101,15 +111,15 @@ export default class Monster {
 		this.monsterSprite.yForZOrdering = this.monsterSprite.y + this.monsterSprite.height;
 	}
 
-	handleMissileCollisions(player) {
+	handleMissileCollisions(delta, player) {
 		// OPTIMIZED FUNCTION: assumes only one type of collider collides at the same time w/ monster
 		let allActiveNets = this.app.stage.children.filter(child => 
 			child.name.indexOf("netCollider") !== -1 && child.active === true);
 		// net collision
 		if (populatedArray(allActiveNets)) {
 			for (var i = 0; i < allActiveNets.length; i++) {
-			    if(detainSpriteOutsideDetainer(allActiveNets[i], this.monsterSprite) !== "none") {
-			    //if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveNets[i])) {
+			    //if(detainSpriteOutsideDetainer(allActiveNets[i], this.monsterSprite) !== "none") {
+			    if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveNets[i])) {
 			    	// make net invisible and inactive
 			    	allActiveNets[i].active = false;
 			    	allActiveNets[i].visible = false;
@@ -135,7 +145,7 @@ export default class Monster {
 			    	allActiveBullets[i].active = false;
 			    	allActiveBullets[i].visible = false;
 			    	// harm monster
-					this.getHarmed(player, "pistol");
+					this.getHarmed(delta, player, "pistol");
 				}
 			}
 			return;
@@ -286,7 +296,8 @@ export default class Monster {
 			child.name !== this.monsterSprite.name);
 		if (!this.animationDone) {
 			this.timeSinceTwitch += delta;
-			setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
+			setTexturesOnlyIfNeeded(this.monsterSprite, [this.capturedMonsterTexture, 
+				this.capturedMonsterTexture, this.capturedMonsterTexture]);
 			player.ui.paused = true;
 			applyFilter(otherElements, "darken");
 			
@@ -322,12 +333,13 @@ export default class Monster {
 			if (monsterCaught) {
 				// monster caught
 				this.monsterSprite.captured = true;
-				setTextureOnlyIfNeeded(this.monsterSprite, this.capturedMonsterTexture);
+				setTexturesOnlyIfNeeded(this.monsterSprite, [this.capturedMonsterTexture, 
+					this.capturedMonsterTexture, this.capturedMonsterTexture]);
 				this.stopMonster();
 				player.ui.addScore(this.isAngry?(2*player.ui.clock.timeText.text):(1*player.ui.clock.timeText.text));
 			} else {
 				// monster escaped
-				setTextureOnlyIfNeeded(this.monsterSprite, this.monsterTexture);
+				setTexturesOnlyIfNeeded(this.monsterSprite, [this.monsterTexture, this.monsterTexture, this.monsterTexture]);
 			}
 		}
 	}
@@ -340,7 +352,7 @@ export default class Monster {
 		}
 	}
 
-	getHarmed(player, weapon) {
+	getHarmed(delta, player, weapon) {
 		if (weapon === "pistol") {
 			// pistol: 49% chance 1 dmg, 49% chance 2 dmg, 2% change 15 dmg
 			// be careful not to kill the monsters!
@@ -370,13 +382,14 @@ export default class Monster {
 
 		// if health is 0 then monster is dead
 		if (healthValue === 0) {
-			this.killMonster(player);
+			this.killMonster(delta, player);
 		}
 		// else monster is ok!
 	}
 
-	killMonster(player) {
-		setTextureOnlyIfNeeded(this.monsterSprite, this.deadMonsterTexture);
+	killMonster(delta, player) {
+		setTexturesOnlyIfNeeded(this.monsterSprite, this.deadMonsterTextureArray);
+		this.monsterSprite.play();
 		this.monsterSprite.dead = true;
 		this.monsterSprite.vx = 0;
 		this.monsterSprite.vy = 0;

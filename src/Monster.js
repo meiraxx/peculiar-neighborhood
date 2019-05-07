@@ -144,8 +144,8 @@ export default class Monster {
 			child.name.indexOf("bulletCollider") !== -1 && child.active === true);
 		if (populatedArray(allActiveBullets)) {
 			for (var i = 0; i < allActiveBullets.length; i++) {
-			    if(detainSpriteOutsideDetainer(allActiveBullets[i], this.monsterSprite) !== "none") {
-			    //if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveBullets[i])) {
+			    //if(detainSpriteOutsideDetainer(allActiveBullets[i], this.monsterSprite) !== "none") {
+			    if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveBullets[i])) {
 			    	// make bullet invisible and inactive
 			    	allActiveBullets[i].active = false;
 			    	allActiveBullets[i].visible = false;

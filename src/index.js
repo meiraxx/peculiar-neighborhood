@@ -125,7 +125,6 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 
 	//fog is topmost except ui
 	fog.initObject();
-	fog.initLoop();
 
 
 	// initialize UI in the end because its Z ordering is always the greatest
@@ -139,7 +138,8 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	monsters.forEach(function(m) {
 		m.initLoop(player);
 	});
-
+	fog.initLoop(player);
+	
 	zSorter.register(staticMap.backgroundSprite);
 	zSorter.register(m0.monsterSprite);
 	zSorter.register(m1.monsterSprite);

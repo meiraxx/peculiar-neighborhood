@@ -176,20 +176,20 @@ export default class Monster {
 
 			let randomNumber = Math.random();
 			if (randomNumber >= 0 && randomNumber < 0.25) {
-				this.monsterSprite.vx = 2;
+				this.monsterSprite.vx = this.isAngry?4:2;
 				this.monsterSprite.vy = 0;
 			}
 			else if (randomNumber >= 0.25 && randomNumber < 0.50) {
 				this.monsterSprite.vx = 0;
-				this.monsterSprite.vy = 2;
+				this.monsterSprite.vy = this.isAngry?4:2;
 			}
 			else if (randomNumber >= 0.50 && randomNumber < 0.75) {
-				this.monsterSprite.vx = -2;
+				this.monsterSprite.vx = this.isAngry?-4:-2;
 				this.monsterSprite.vy = 0;
 			}
 			else if (randomNumber >= 0.75 && randomNumber < 1) {
 				this.monsterSprite.vx = 0;
-				this.monsterSprite.vy = -2;
+				this.monsterSprite.vy = this.isAngry?-4:-2;
 			}
 		}
 	}

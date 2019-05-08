@@ -7,8 +7,8 @@ import Monster from "./Monster";
 import Tree from "./Tree";
 import House from "./House";
 import ZSorter from "./ZSorter";
-import * as PIXI from 'pixi.js';
-
+import * as PIXI from "pixi.js";
+//import "pixi-sound";
 
 function loadProgressHandler(loader,resource) {
   console.log("loading " + resource.url + " "  + loader.progress + "%");
@@ -146,6 +146,15 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	zSorter.initLoop();
 
 });
+
+/*
+PIXI.sound.Sound.from({
+    url: 'assets/soundtrack.mp3',
+    autoPlay: true,
+    complete: function() {
+        console.log('Sound finished');
+    }
+});*/
 
 app.ticker = PIXI.Ticker.shared;
 app.ticker.autoStart = false;

@@ -104,7 +104,7 @@ function setGraphicsFillColor(graphicsObject, colorcode) {
     return graphicsObject;
 }
 
-function containSpriteInsideContainer(sprite, container) {
+function containSpriteInsideContainer(sprite, container, action = "stop") {
 	let collision = "none";
 	let unitvx = sprite.vx/Math.abs(sprite.vx);
 	let unitvy = sprite.vy/Math.abs(sprite.vy);
@@ -124,6 +124,18 @@ function containSpriteInsideContainer(sprite, container) {
 	let condright = sprite.x + sprite.width - unitvx >= container.width && unitvx > 0;
 
 	let condbottom = sprite.y + sprite.height - unitvy >= container.height && unitvy > 0;
+
+	if (condtop || condleft || condright || condbottom) {
+		if (action === "stop") {
+			sprite.vx = 0;
+			sprite.vy = 0;
+		} else if (action === "revert") {
+			sprite.vx *= -1;
+			sprite.vy *= -1;
+		} else if (action === "noaction") {
+			// no action
+		}
+	}
 
 	// top hit
 	if (condtop) {
@@ -152,7 +164,7 @@ function containSpriteInsideContainer(sprite, container) {
 	return collision;
 }
 
-function detainSpriteOutsideDetainer(sprite, detainer) {
+function detainSpriteOutsideDetainer(sprite, detainer, action = "stop") {
 	let collision = "none";
 
 	let unitvx = sprite.vx/Math.abs(sprite.vx);
@@ -165,7 +177,7 @@ function detainSpriteOutsideDetainer(sprite, detainer) {
 	if (isNaN(unitvy)) {
 		unitvy = 0;
 	}
-
+	
 	let detainerMinY = detainer.y;
 	let detainerMaxY = detainer.y + detainer.height;
 	let detainerMinX = detainer.x;
@@ -192,8 +204,15 @@ function detainSpriteOutsideDetainer(sprite, detainer) {
 			sprite.y + sprite.vy < detainerMaxY && unitvy < 0;
 
 		if (condtop || condleft || condright || condbottom) {
-			sprite.vx = 0;
-			sprite.vy = 0;
+			if (action === "stop") {
+				sprite.vx = 0;
+				sprite.vy = 0;
+			} else if (action === "revert") {
+				sprite.vx *= -1;
+				sprite.vy *= -1;
+			} else if (action === "noaction") {
+				// no action
+			}
 		}
 
 		if (condtop) {

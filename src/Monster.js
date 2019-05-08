@@ -123,7 +123,6 @@ export default class Monster {
 		// net collision
 		if (populatedArray(allActiveNets)) {
 			for (var i = 0; i < allActiveNets.length; i++) {
-			    //if(detainSpriteOutsideDetainer(allActiveNets[i], this.monsterSprite) !== "none") {
 			    if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveNets[i])) {
 			    	// make net invisible and inactive
 			    	allActiveNets[i].active = false;
@@ -144,7 +143,6 @@ export default class Monster {
 			child.name.indexOf("bulletCollider") !== -1 && child.active === true);
 		if (populatedArray(allActiveBullets)) {
 			for (var i = 0; i < allActiveBullets.length; i++) {
-			    //if(detainSpriteOutsideDetainer(allActiveBullets[i], this.monsterSprite) !== "none") {
 			    if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveBullets[i])) {
 			    	// make bullet invisible and inactive
 			    	allActiveBullets[i].active = false;
@@ -161,7 +159,6 @@ export default class Monster {
 		if (populatedArray(allActiveBatColliders)) {
 			for (var i = 0; i < allActiveBatColliders.length; i++) {
 				if (checkDynamicIntoDynamicCollision(this.monsterSprite, allActiveBatColliders[i])) {
-			    //if(detainSpriteOutsideDetainer(allActiveBatColliders[i], this.monsterSprite) !== "none") {
 			    	// make bullet invisible
 			    	allActiveBatColliders[i].active = false;
 			    	// harm monster
@@ -199,10 +196,8 @@ export default class Monster {
 
 	handleContainerCollisionsAndMove() {
 		let monsterHitsMapBound = containSpriteInsideContainer(this.monsterSprite, 
-				{x: 0, y: 0, width: 2048, height: 1536});
-		if (monsterHitsMapBound !== "none") {
-			this.reverseMonsterDirection();
-		}
+				{x: 0, y: 0, width: 2048, height: 1536}, "revert");
+
 		this.moveMonster();
 	}
 
@@ -243,16 +238,14 @@ export default class Monster {
 			child.name.indexOf("blocker") !== -1);
 
 		// player/monster collision
-		if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite) !== "none") {
-			this.stopMonster();
+		if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite, "stop") !== "none") {
 			return;
 		}
 
 		// monster/monster collision
 		if (populatedArray(otherLiveMonsters)) {
 			for (var i = 0; i < otherLiveMonsters.length; i++) {
-			    if(detainSpriteOutsideDetainer(this.monsterSprite, otherLiveMonsters[i]) !== "none") {
-			    	this.stopMonster();
+			    if(detainSpriteOutsideDetainer(this.monsterSprite, otherLiveMonsters[i], "stop") !== "none") {
 			    	return;
 				}
 			}
@@ -261,9 +254,7 @@ export default class Monster {
 		// static elements collision
 		if (populatedArray(staticBlockers)) {
 			for (var i = 0; i < staticBlockers.length; i++) {
-			    if(detainSpriteOutsideDetainer(this.monsterSprite, staticBlockers[i]) !== "none") {
-					// monster reverts direction
-					this.reverseMonsterDirection();
+			    if(detainSpriteOutsideDetainer(this.monsterSprite, staticBlockers[i], "revert") !== "none") {
 					return;
 				}
 			}
@@ -272,19 +263,6 @@ export default class Monster {
 
 	isNotIgnorable() {
 		return (!this.isDead() && !this.isCaptured());
-	}
-
-	reverseMonsterDirection() {
-		// if monsters hits wall we reverse his speed so he doesn't stop moving
-		if (this.monsterSprite.vx !== 0) {
-			this.monsterSprite.vx *= -1;
-		}
-		else if (this.monsterSprite.vy !== 0){
-			this.monsterSprite.vy *= -1;
-		}
-		else {
-			// shouldn't happen
-		}
 	}
 
 	stopMonster() {

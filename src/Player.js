@@ -476,11 +476,6 @@ export default class Player {
 		this.playerSprite.yForZOrdering = this.playerSprite.y + this.playerSprite.height;
 	}
 
-	stopPlayer() {
-		this.playerSprite.vx = 0;
-		this.playerSprite.vy = 0;
-	}
-
 	handleAllDetainerCollisions() {
 		let monsters = this.app.stage.children.filter(child => child.name.indexOf("monster") !== -1);
 		let staticBlockers = this.app.stage.children.filter(child => 
@@ -490,8 +485,7 @@ export default class Player {
 		if (monsters !== undefined && monsters.length !== 0) {
 			for (var i = 0; i < monsters.length; i++) {
 			    if (!monsters[i].captured && !monsters[i].dead &&
-			    	detainSpriteOutsideDetainer(this.playerSprite, monsters[i]) !== "none") {
-					this.stopPlayer();
+			    	detainSpriteOutsideDetainer(this.playerSprite, monsters[i], "stop") !== "none") {
 					return;
 				}
 			}
@@ -500,8 +494,7 @@ export default class Player {
 		// static elements collision
 		if (staticBlockers !== undefined && staticBlockers.length !== 0) {
 			for (var i = 0; i < staticBlockers.length; i++) {
-			    if (detainSpriteOutsideDetainer(this.playerSprite, staticBlockers[i]) !== "none"){
-			    	this.stopPlayer();
+			    if (detainSpriteOutsideDetainer(this.playerSprite, staticBlockers[i], "stop") !== "none"){
 			    	return;
 			    }
 			}
@@ -511,12 +504,7 @@ export default class Player {
 	handleContainerCollisionsAndMove() {
 		// map width and map height
 		let playerHitsMapBound = containSpriteInsideContainer(this.playerSprite, 
-				{x: 0, y: 0, width: 2048, height: 1536});
-
-		if (playerHitsMapBound !== "none") {
-			// character hit map bounds: character stays in-place
-			this.stopPlayer();
-		}
+				{x: 0, y: 0, width: 2048, height: 1536}, "stop");
 
 		this.movePlayer();
 	}

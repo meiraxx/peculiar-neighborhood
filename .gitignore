@@ -94,3 +94,5 @@ typings/
 
 # Intellij
 .idea/
+
+package-lock.json

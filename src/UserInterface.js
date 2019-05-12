@@ -55,7 +55,7 @@ export default class UserInterface {
 		this.prepareCrosshair(x_pos, y_pos);
 		this.prepareMissiles(x_pos, y_pos);
 		this.prepareCardsInfo(x_pos, y_pos);
-		this.prepareClock(viewport.center.x + 220, viewport.center.y - 490, 300.0);
+		this.prepareClock(viewport.center.x + 222, viewport.center.y - 490, 300.0);
 
 		// relative to both player and viewport
 		this.prepareCards(viewport.center.x - 718, viewport.center.y - 108);

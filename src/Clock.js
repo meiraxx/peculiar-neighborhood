@@ -45,16 +45,24 @@ export default class Clock {
         this.clockHandSprite.x = - this.clockHandSprite.width / 2;
         this.clockHandSprite.y = - this.clockHandSprite.height;
 
+        let betweenContainersHeight = this.clockSprite.height/32;
+        let betweenContainersWidth = this.clockSprite.width/32;
+
         // shadow rectangle
-        let shadowRectangle = getRoundedRectangle(1, -1, 
-            this.clockSprite.width*2.5 + this.clockSprite.width*0.02,
-            this.clockSprite.height + 4 + this.clockSprite.height*0.02,
-            2, 0x000000);
+        //let shadowRectangle = getRoundedRectangle(1, -1, 
+        //    this.clockSprite.width*2.5 + this.clockSprite.width*0.02,
+        //    this.clockSprite.height + 4 + this.clockSprite.height*0.02,
+        //    2, 0x000000);
+
+        let shadowRectangle = getRoundedRectangle(- betweenContainersWidth, -2 - betweenContainersHeight, 
+            this.clockSprite.width*2.5 + this.clockSprite.width*0.02 + betweenContainersHeight,
+            this.clockSprite.height + 4 + this.clockSprite.height*0.02 + betweenContainersHeight,
+            4, 0xFF0000);
 
         // RECTANGLE
         let rectangleClockColor = 0xF1EDE1;
         let rectangleClock = getRoundedRectangle(0, -2, 
-            this.clockSprite.width*2.5, this.clockSprite.height + 4, 2, rectangleClockColor);
+            this.clockSprite.width*2.5, this.clockSprite.height + 4, 4, rectangleClockColor);
 
         // TEXT
         this.timeText = new PIXI.Text(time, textStyle("timeText"));

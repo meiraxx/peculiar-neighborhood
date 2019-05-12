@@ -100,6 +100,7 @@ export default class Player {
 				this.playerSprite.vx = -this.playerSprite.velocity;
 				this.playerSprite.vy = 0;
 				this.updatePlayerSprite();
+				this.ui.constrainCrosshair(this.ui.command);
 			}
 		};
 		this.leftKey.release = () => {
@@ -114,6 +115,7 @@ export default class Player {
 				this.playerSprite.vx = this.playerSprite.velocity;
 				this.playerSprite.vy = 0;
 				this.updatePlayerSprite();
+				this.ui.constrainCrosshair(this.ui.command);
 			}
 		};
 		this.rightKey.release = () => {
@@ -128,6 +130,7 @@ export default class Player {
 				this.playerSprite.vx = 0;
 				this.playerSprite.vy = this.playerSprite.velocity;
 				this.updatePlayerSprite();
+				this.ui.constrainCrosshair(this.ui.command);
 			}
 		};
 		this.downKey.release = () => {
@@ -142,6 +145,7 @@ export default class Player {
 				this.playerSprite.vx = 0;
 				this.playerSprite.vy = -this.playerSprite.velocity;
 				this.updatePlayerSprite();
+				this.ui.constrainCrosshair(this.ui.command);
 			}
 		};
 		this.upKey.release = () => {
@@ -257,7 +261,7 @@ export default class Player {
 
 		//mouse input
 		window.addEventListener("mousemove", event => {
-			this.ui.moveCrosshair(event);
+			this.ui.moveCrosshair(event,this.ui.command);
 		});
 
 		window.addEventListener("click", event => {

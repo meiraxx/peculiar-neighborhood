@@ -169,7 +169,26 @@ export default class UserInterface {
 		this.crosshair.initObject();
 	}
 	
-	moveCrosshair(event) {
+	constrainCrosshair(playerMovementDirectionString) {
+		//constrain to 180 fov of player
+		switch(playerMovementDirectionString) {
+			case "left":
+				this.shootDirection.x = Math.min(-this.shootDirection.x, this.shootDirection.x);
+				break;
+			case "right":
+				this.shootDirection.x = Math.max(-this.shootDirection.x, this.shootDirection.x);
+				break;
+			case "up":
+				this.shootDirection.y = Math.min(-this.shootDirection.y, this.shootDirection.y);
+				break;
+			case "down":
+				this.shootDirection.y = Math.max(-this.shootDirection.y, this.shootDirection.y);
+				break;
+		}
+
+	}
+
+	moveCrosshair(event, playerMovementDirectionString) {
 		if (!this.isPaused()) {
 			this.crosshair.sprite.visible = this.shootableItem();
 			//top left based
@@ -178,13 +197,16 @@ export default class UserInterface {
 			mousePosOnSphereAroundPlayer.x -= 0.5;
 			mousePosOnSphereAroundPlayer.y /= window.screen.availHeight;
 			mousePosOnSphereAroundPlayer.y -= 0.5;
+
 			this.shootDirection.x = mousePosOnSphereAroundPlayer.x;
 			this.shootDirection.y = mousePosOnSphereAroundPlayer.y;
+			this.constrainCrosshair(playerMovementDirectionString);
 			let length = Math.sqrt(this.shootDirection.x * this.shootDirection.x + this.shootDirection.y * this.shootDirection.y);
 			if(length != 0) {
 				this.shootDirection.x /= length;
 				this.shootDirection.y /= length;
 			}
+			
 		}
 	}
 

@@ -73,7 +73,7 @@ var bush0 = new Bush(app);
 var blockers = [tree0, house0, house1];
 var hiders = [bush0]
 
-//var fog = new Fog(app);
+var fog = new Fog(app);
 var zSorter =  new ZSorter(app);
 
 
@@ -87,7 +87,7 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	let mapHeight = staticMap.backgroundSprite.height;
 	let colliderThickness = 100;
 
-	//fog.prepareObject();
+	fog.prepareObject();
 
 	// setup player character and UI
 	player.prepareObject(mapWidth/2,mapHeight/2);
@@ -127,7 +127,7 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	});
 
 	//fog is topmost except ui
-	//fog.initObject();
+	fog.initObject();
 
 
 	// initialize UI in the end because its Z ordering is always the greatest
@@ -141,7 +141,7 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	monsters.forEach(function(m) {
 		m.initLoop(player);
 	});
-	//fog.initLoop(player);
+	fog.initLoop(player);
 
 	zSorter.initLoop();
 

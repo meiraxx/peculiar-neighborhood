@@ -7,7 +7,10 @@ import HealthBar from "./HealthBar";
 export default class Monster {
 	static loadResources(app) {
 		app.loader.add("assets/monsters/angryMonster.png");
-		app.loader.add("assets/monsters/normalMonster.png");
+		app.loader.add("assets/monsters/normal/normalMonsterFront.png");
+		app.loader.add("assets/monsters/normal/normalMonsterBack.png");
+		app.loader.add("assets/monsters/normal/normalMonsterRight.png");
+		app.loader.add("assets/monsters/normal/normalMonsterLeft.png");
 		app.loader.add("assets/capturedMonsters/angryMonster.png");
 		app.loader.add("assets/capturedMonsters/normalMonster.png");
 		app.loader.add("assets/deadMonsters/angryMonster.png");
@@ -27,7 +30,11 @@ export default class Monster {
 		// SETUP monster
 		//console.log("monster" + i);
 		if (this.isAngry) {
-			this.monsterTexture = this.app.loader.resources["assets/monsters/angryMonster.png"].texture;
+			this.monsterFrontTexture = this.app.loader.resources["assets/monsters/angryMonster.png"].texture;
+			this.monsterBackTexture = this.app.loader.resources["assets/monsters/angryMonster.png"].texture;
+			this.monsterRightTexture = this.app.loader.resources["assets/monsters/angryMonster.png"].texture;
+			this.monsterLeftTexture = this.app.loader.resources["assets/monsters/angryMonster.png"].texture;
+
 			this.capturedMonsterTexture = 
 				this.app.loader.resources["assets/capturedMonsters/angryMonster.png"].texture;
 
@@ -38,9 +45,12 @@ export default class Monster {
 			this.healthBar.prepareObject(x_pos, y_pos - 12, 48, 8, 0xFF3300, 0xFFFFFF, 15);
 		}
 		else {
-			this.monsterTexture = this.app.loader.resources["assets/monsters/normalMonster.png"].texture;
-			this.capturedMonsterTexture = 
-				this.app.loader.resources["assets/capturedMonsters/normalMonster.png"].texture;
+			this.monsterFrontTexture = this.app.loader.resources["assets/monsters/normal/normalMonsterFront.png"].texture;
+			this.monsterBackTexture = this.app.loader.resources["assets/monsters/normal/normalMonsterBack.png"].texture;
+			this.monsterRightTexture = this.app.loader.resources["assets/monsters/normal/normalMonsterRight.png"].texture;
+			this.monsterLeftTexture = this.app.loader.resources["assets/monsters/normal/normalMonsterLeft.png"].texture;
+
+			this.capturedMonsterTexture = this.app.loader.resources["assets/capturedMonsters/normalMonster.png"].texture;
 			
 			this.deadMonsterTexture0 = this.app.loader.resources["assets/deadMonsters/normalMonster0.png"].texture;
 			this.deadMonsterTexture1 = this.app.loader.resources["assets/deadMonsters/normalMonster1.png"].texture;
@@ -51,7 +61,7 @@ export default class Monster {
 		this.deadMonsterTextureArray = [this.deadMonsterTexture0, this.deadMonsterTexture1,
 			this.deadMonsterTexture2, this.deadMonsterTexture3];
 
-		this.monsterSprite = new PIXI.AnimatedSprite([this.monsterTexture], true);
+		this.monsterSprite = new PIXI.AnimatedSprite([this.monsterFrontTexture], true);
 		this.monsterSprite.animationSpeed = 0.025;
 		this.monsterSprite.loop = false;
 
@@ -175,6 +185,7 @@ export default class Monster {
 			this.timeSinceNewDir = 0.0;
 
 			let randomNumber = Math.random();
+			let monsterTexture;
 			if (randomNumber >= 0 && randomNumber < 0.25) {
 				this.monsterSprite.vx = this.isAngry?4:2;
 				this.monsterSprite.vy = 0;
@@ -190,6 +201,7 @@ export default class Monster {
 			else if (randomNumber >= 0.75 && randomNumber < 1) {
 				this.monsterSprite.vx = 0;
 				this.monsterSprite.vy = this.isAngry?-4:-2;
+				
 			}
 		}
 	}
@@ -198,25 +210,35 @@ export default class Monster {
 		let monsterHitsMapBound = containSpriteInsideContainer(this.monsterSprite, 
 				{x: 0, y: 0, width: 2048, height: 1536}, "revert");
 
-		this.moveMonster();
+		this.moveMonster(true);
 	}
 
-	moveMonster() {
+	moveMonster(updateSprite=false) {
 		if (this.monsterSprite.vx !== 0) {
 			// walking horizontally
 			this.monsterSprite.x += this.monsterSprite.vx;
 			// move healthbar
 			this.healthBar.container.x += this.monsterSprite.vx;
+			if (updateSprite) {
+				let monsterTexture = (this.monsterSprite.vx>0)?this.monsterRightTexture:this.monsterLeftTexture;
+				setTexturesOnlyIfNeeded(this.monsterSprite, [monsterTexture]);
+			}
 		}
 		else if (this.monsterSprite.vy !== 0) {
 			// walking vertically
 			this.monsterSprite.y += this.monsterSprite.vy;
 			// move healthbar
 			this.healthBar.container.y += this.monsterSprite.vy;
+			if (updateSprite) {
+				let monsterTexture = (this.monsterSprite.vy>0)?this.monsterFrontTexture:this.monsterBackTexture;
+				setTexturesOnlyIfNeeded(this.monsterSprite, [monsterTexture]);
+			}
 		}
 		else {
 			// character isn't walking: do nothing
 		}
+
+		
 	}
 
 	twitchMonster(valueX, valueY) {
@@ -316,7 +338,7 @@ export default class Monster {
 				player.ui.addScore(this.isAngry?(2*player.ui.clock.timeText.text):(1*player.ui.clock.timeText.text));
 			} else {
 				// monster escaped
-				setTexturesOnlyIfNeeded(this.monsterSprite, [this.monsterTexture]);
+				setTexturesOnlyIfNeeded(this.monsterSprite, [this.monsterFrontTexture]);
 			}
 		}
 	}

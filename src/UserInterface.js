@@ -79,9 +79,11 @@ export default class UserInterface {
 	prepareClock(x_pos, y_pos, clockTime) {
 		this.clock.prepareObject(x_pos, y_pos, clockTime);
 	}
+
 	initClock() {
 		this.clock.initObject();
 	}
+
 	updateClock(delta) {
 		if(!this.isPaused())
 			this.clock.update(delta);

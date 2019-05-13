@@ -20,15 +20,19 @@ export default class Monster {
 		app.loader.add("assets/deadMonsters/normalMonster3.png");
 	}
 	
-	constructor(app, isAngry) {
+	constructor(app, isAngry, health, speed) {
 		this.app = app;
 		this.isAngry = isAngry;
+		this.health = health;
+		this.speed = speed;
 		this.healthBar = new HealthBar(this.app);
 	}
 	
-	prepareObject(x_pos, y_pos, i) {
+	prepareObject(position, i) {
 		// SETUP monster
 		//console.log("monster" + i);
+		let x_pos = position[0];
+		let y_pos = position[1]; 
 		if (this.isAngry) {
 			this.monsterFrontTexture = this.app.loader.resources["assets/monsters/angryMonster.png"].texture;
 			this.monsterBackTexture = this.app.loader.resources["assets/monsters/angryMonster.png"].texture;
@@ -42,7 +46,7 @@ export default class Monster {
 			this.deadMonsterTexture1 = this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
 			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
 			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
-			this.healthBar.prepareObject(x_pos, y_pos - 12, 48, 8, 0xFF3300, 0xFFFFFF, 15);
+			this.healthBar.prepareObject(x_pos, y_pos - 12, 48, 8, 0xFF3300, 0xFFFFFF, this.health);
 		}
 		else {
 			this.monsterFrontTexture = this.app.loader.resources["assets/monsters/normal/normalMonsterFront.png"].texture;
@@ -56,7 +60,7 @@ export default class Monster {
 			this.deadMonsterTexture1 = this.app.loader.resources["assets/deadMonsters/normalMonster1.png"].texture;
 			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/normalMonster2.png"].texture;
 			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/normalMonster3.png"].texture;
-			this.healthBar.prepareObject(x_pos, y_pos - 12, 32, 8, 0xFF3300, 0xFFFFFF, 10);
+			this.healthBar.prepareObject(x_pos, y_pos - 12, 32, 8, 0xFF3300, 0xFFFFFF, this.health);
 		}
 		this.deadMonsterTextureArray = [this.deadMonsterTexture0, this.deadMonsterTexture1,
 			this.deadMonsterTexture2, this.deadMonsterTexture3];
@@ -187,20 +191,20 @@ export default class Monster {
 			let randomNumber = Math.random();
 			let monsterTexture;
 			if (randomNumber >= 0 && randomNumber < 0.25) {
-				this.monsterSprite.vx = this.isAngry?4:2;
+				this.monsterSprite.vx = this.speed;
 				this.monsterSprite.vy = 0;
 			}
 			else if (randomNumber >= 0.25 && randomNumber < 0.50) {
 				this.monsterSprite.vx = 0;
-				this.monsterSprite.vy = this.isAngry?4:2;
+				this.monsterSprite.vy = this.speed;
 			}
 			else if (randomNumber >= 0.50 && randomNumber < 0.75) {
-				this.monsterSprite.vx = this.isAngry?-4:-2;
+				this.monsterSprite.vx = -this.speed;
 				this.monsterSprite.vy = 0;
 			}
 			else if (randomNumber >= 0.75 && randomNumber < 1) {
 				this.monsterSprite.vx = 0;
-				this.monsterSprite.vy = this.isAngry?-4:-2;
+				this.monsterSprite.vy = -this.speed;
 				
 			}
 		}
@@ -359,7 +363,7 @@ export default class Monster {
 			let randomNumber = Math.random();
 
 			if (randomNumber < superCriticalProb) {
-				this.healthBar.subtractHealth(15);
+				this.healthBar.subtractHealth(9999);
 			} else {
 				// normal hit
 				let randomInt = getRandomArbitraryInt(1, 2);

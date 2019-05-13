@@ -7,6 +7,7 @@ import Monster from "./Monster";
 import Tree from "./Tree";
 import House from "./House";
 import ZSorter from "./ZSorter";
+import WaveOrganizer from "./WaveOrganizer";
 import * as PIXI from "pixi.js";
 //import "pixi-sound";
 
@@ -74,8 +75,9 @@ var blockers = [tree0, house0, house1];
 var hiders = [bush0]
 
 var fog = new Fog(app);
-var zSorter =  new ZSorter(app);
+var zSorter = new ZSorter(app);
 
+var waveOrganizer = new WaveOrganizer(app, zSorter, player);
 
 app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// 3. SETUP AND INITIALIZE OBJECTS
@@ -95,16 +97,6 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	let playerHeight = player.playerSprite.height;
 	player.initObject();
 	zSorter.register(player.playerSprite);
-
-	// setup monsters in the corners
-	m0.prepareObject(100, 100, 0);
-	m1.prepareObject(100, 200, 1);
-	m2.prepareObject(200, 100, 2);
-	m3.prepareObject(200, 200, 3);
-	monsters.forEach(function(m) {
-		m.initObject();
-		zSorter.register(m.monsterSprite);
-	});
 
 	// setup blockers
 	tree0.prepareObject(mapWidth - 100, 100, 0);
@@ -133,14 +125,13 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// initialize UI in the end because its Z ordering is always the greatest
 	player.initUI();
 	
-
-
+	waveOrganizer.startWave(0);
+	waveOrganizer.startWave(1);
+	waveOrganizer.startWave(2);
+	
 	// 4. PUT LOOPS RUNNING
 	player.initLoop();
 
-	monsters.forEach(function(m) {
-		m.initLoop(player);
-	});
 	fog.initLoop(player);
 
 	zSorter.initLoop();

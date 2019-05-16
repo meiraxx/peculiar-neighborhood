@@ -20,6 +20,7 @@ export default class Monster {
 		app.loader.add("assets/deadMonsters/angry/angryMonster1.png");
 		app.loader.add("assets/deadMonsters/angry/angryMonster2.png");
 		app.loader.add("assets/deadMonsters/angry/angryMonster3.png");
+		app.loader.add("assets/deadMonsters/angry/angryMonster4.png");
 		app.loader.add("assets/deadMonsters/normal/normalMonster0.png");
 		app.loader.add("assets/deadMonsters/normal/normalMonster1.png");
 		app.loader.add("assets/deadMonsters/normal/normalMonster2.png");
@@ -52,6 +53,7 @@ export default class Monster {
 			this.deadMonsterTexture1 = this.app.loader.resources["assets/deadMonsters/angry/angryMonster1.png"].texture;
 			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/angry/angryMonster2.png"].texture;
 			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/angry/angryMonster3.png"].texture;
+			this.deadMonsterTexture4 = this.app.loader.resources["assets/deadMonsters/angry/angryMonster4.png"].texture;
 			this.healthBar.prepareObject(x_pos, y_pos - 12, 48, 8, 0xFF3300, 0xFFFFFF, this.health);
 		}
 		else {
@@ -66,10 +68,11 @@ export default class Monster {
 			this.deadMonsterTexture1 = this.app.loader.resources["assets/deadMonsters/normal/normalMonster1.png"].texture;
 			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/normal/normalMonster2.png"].texture;
 			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/normal/normalMonster3.png"].texture;
+			this.deadMonsterTexture4 = this.app.loader.resources["assets/deadMonsters/normal/normalMonster3.png"].texture;
 			this.healthBar.prepareObject(x_pos, y_pos - 12, 32, 8, 0xFF3300, 0xFFFFFF, this.health);
 		}
 		this.deadMonsterTextureArray = [this.deadMonsterTexture0, this.deadMonsterTexture1,
-			this.deadMonsterTexture2, this.deadMonsterTexture3];
+			this.deadMonsterTexture2, this.deadMonsterTexture3, this.deadMonsterTexture4];
 
 		this.monsterSprite = new PIXI.AnimatedSprite([this.monsterFrontTexture], true);
 		this.monsterSprite.animationSpeed = 0.025;

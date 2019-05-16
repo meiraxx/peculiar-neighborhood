@@ -67,4 +67,29 @@ function populatedArray(array) {
 	return (array !== undefined && array.length !== 0);
 }
 
-export {keyboard, getRandomArbitraryFloat, getRandomArbitraryInt, getIntLength, populatedArray};
+function functionScopePreserver(context=undefined, funcName, argsList=undefined) {
+	// yes, I indeed was inspired
+	return function () {
+		let eval_string = "";
+		if (context !== undefined) {
+			eval_string += "context.";
+		}
+
+		eval_string += funcName;
+
+		if (argsList !== undefined) {
+			eval_string += "(";
+			for (var i = 0; i < argsList.length; i++) {
+				eval_string += "argsList[" + i + "]";
+				if (i !== argsList.length-1) {
+					eval_string += ",";
+				}
+			}
+			eval_string += ")";
+		}
+
+		eval(eval_string);
+	};
+}
+
+export {keyboard, getRandomArbitraryFloat, getRandomArbitraryInt, getIntLength, populatedArray, functionScopePreserver};

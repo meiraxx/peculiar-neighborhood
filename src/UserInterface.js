@@ -91,7 +91,7 @@ export default class UserInterface {
 
 	// HEALTHBAR
 	prepareHealthbar(x_pos, y_pos) {
-		this.healthBar.prepareObject(x_pos, y_pos - 6, 64, 8, 0x4CBB17, 0xFFFFFF, 20);
+		this.healthBar.prepareObject(x_pos, y_pos - 6, 64, 8, 0x4CBB17, 0xFFFFFF, 80);
 	}
 
 	initHealthbar() {
@@ -253,7 +253,7 @@ export default class UserInterface {
 	}
 
 	addScore(value) {
-		this.score.addScore(value, this.viewport);
+		this.score.addScore(value);
 	}
 
 	useItem(playerSprite, event) {

@@ -6,18 +6,24 @@ import HealthBar from "./HealthBar";
 
 export default class Monster {
 	static loadResources(app) {
-		app.loader.add("assets/monsters/angryMonster.png");
+		app.loader.add("assets/monsters/angry/angryMonsterFront.png");
+		app.loader.add("assets/monsters/angry/angryMonsterBack.png");
+		app.loader.add("assets/monsters/angry/angryMonsterRight.png");
+		app.loader.add("assets/monsters/angry/angryMonsterLeft.png");
 		app.loader.add("assets/monsters/normal/normalMonsterFront.png");
 		app.loader.add("assets/monsters/normal/normalMonsterBack.png");
 		app.loader.add("assets/monsters/normal/normalMonsterRight.png");
 		app.loader.add("assets/monsters/normal/normalMonsterLeft.png");
 		app.loader.add("assets/capturedMonsters/angryMonster.png");
 		app.loader.add("assets/capturedMonsters/normalMonster.png");
-		app.loader.add("assets/deadMonsters/angryMonster.png");
-		app.loader.add("assets/deadMonsters/normalMonster0.png");
-		app.loader.add("assets/deadMonsters/normalMonster1.png");
-		app.loader.add("assets/deadMonsters/normalMonster2.png");
-		app.loader.add("assets/deadMonsters/normalMonster3.png");
+		app.loader.add("assets/deadMonsters/angry/angryMonster0.png");
+		app.loader.add("assets/deadMonsters/angry/angryMonster1.png");
+		app.loader.add("assets/deadMonsters/angry/angryMonster2.png");
+		app.loader.add("assets/deadMonsters/angry/angryMonster3.png");
+		app.loader.add("assets/deadMonsters/normal/normalMonster0.png");
+		app.loader.add("assets/deadMonsters/normal/normalMonster1.png");
+		app.loader.add("assets/deadMonsters/normal/normalMonster2.png");
+		app.loader.add("assets/deadMonsters/normal/normalMonster3.png");
 	}
 	
 	constructor(app, isAngry, health, speed) {
@@ -34,18 +40,18 @@ export default class Monster {
 		let x_pos = position[0];
 		let y_pos = position[1]; 
 		if (this.isAngry) {
-			this.monsterFrontTexture = this.app.loader.resources["assets/monsters/angryMonster.png"].texture;
-			this.monsterBackTexture = this.app.loader.resources["assets/monsters/angryMonster.png"].texture;
-			this.monsterRightTexture = this.app.loader.resources["assets/monsters/angryMonster.png"].texture;
-			this.monsterLeftTexture = this.app.loader.resources["assets/monsters/angryMonster.png"].texture;
+			this.monsterFrontTexture = this.app.loader.resources["assets/monsters/angry/angryMonsterFront.png"].texture;
+			this.monsterBackTexture = this.app.loader.resources["assets/monsters/angry/angryMonsterBack.png"].texture;
+			this.monsterRightTexture = this.app.loader.resources["assets/monsters/angry/angryMonsterRight.png"].texture;
+			this.monsterLeftTexture = this.app.loader.resources["assets/monsters/angry/angryMonsterLeft.png"].texture;
 
 			this.capturedMonsterTexture = 
 				this.app.loader.resources["assets/capturedMonsters/angryMonster.png"].texture;
 
-			this.deadMonsterTexture0 = this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
-			this.deadMonsterTexture1 = this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
-			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
-			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/angryMonster.png"].texture;
+			this.deadMonsterTexture0 = this.app.loader.resources["assets/deadMonsters/angry/angryMonster0.png"].texture;
+			this.deadMonsterTexture1 = this.app.loader.resources["assets/deadMonsters/angry/angryMonster1.png"].texture;
+			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/angry/angryMonster2.png"].texture;
+			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/angry/angryMonster3.png"].texture;
 			this.healthBar.prepareObject(x_pos, y_pos - 12, 48, 8, 0xFF3300, 0xFFFFFF, this.health);
 		}
 		else {
@@ -56,10 +62,10 @@ export default class Monster {
 
 			this.capturedMonsterTexture = this.app.loader.resources["assets/capturedMonsters/normalMonster.png"].texture;
 			
-			this.deadMonsterTexture0 = this.app.loader.resources["assets/deadMonsters/normalMonster0.png"].texture;
-			this.deadMonsterTexture1 = this.app.loader.resources["assets/deadMonsters/normalMonster1.png"].texture;
-			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/normalMonster2.png"].texture;
-			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/normalMonster3.png"].texture;
+			this.deadMonsterTexture0 = this.app.loader.resources["assets/deadMonsters/normal/normalMonster0.png"].texture;
+			this.deadMonsterTexture1 = this.app.loader.resources["assets/deadMonsters/normal/normalMonster1.png"].texture;
+			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/normal/normalMonster2.png"].texture;
+			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/normal/normalMonster3.png"].texture;
 			this.healthBar.prepareObject(x_pos, y_pos - 12, 32, 8, 0xFF3300, 0xFFFFFF, this.health);
 		}
 		this.deadMonsterTextureArray = [this.deadMonsterTexture0, this.deadMonsterTexture1,
@@ -70,8 +76,8 @@ export default class Monster {
 		this.monsterSprite.loop = false;
 
 		if (this.isAngry) {
-			this.monsterSprite.scale.x = 0.06;
-			this.monsterSprite.scale.y = 0.06;
+			this.monsterSprite.scale.x = 0.15;
+			this.monsterSprite.scale.y = 0.15;
 		}
 		else {
 			this.monsterSprite.scale.x = 0.15;

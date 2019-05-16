@@ -6,3 +6,7 @@ https://gameofbombs.github.io/pixi-bin/index.html?s=flip&f=cards.js&title=Cards
 https://pixijs.download/v5.0.0/docs/PIXI.AnimatedSprite.html
 https://stackoverflow.com/questions/38667990/adding-fadein-transition-to-pixi-sprite
 https://pixijs.io/pixi-sound/examples/sprites.html
+
+
+javascript tutorials:
+http://www.howtocreate.co.uk/referencedvariables.html

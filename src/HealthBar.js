@@ -19,7 +19,7 @@ export default class HealthBar {
         this.container.x = x_pos;
         this.container.y = y_pos;
         this.container.name = "healthbar";
-        this.container._zIndex = Number.MAX_SAFE_INTEGER;
+        this.container._zIndex = Number.MAX_SAFE_INTEGER-1;
 
         // create the max-health rectangle
         let innerBar = getRoundedRectangle(-width/2, 0, width, height, 3, 0x000000);

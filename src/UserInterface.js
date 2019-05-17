@@ -55,11 +55,11 @@ export default class UserInterface {
 		this.prepareCrosshair(x_pos, y_pos);
 		this.prepareMissiles(x_pos, y_pos);
 		this.prepareCardsInfo(x_pos, y_pos);
-		this.prepareClock(viewport.center.x + 222, viewport.center.y - 490, 300.0);
+		this.prepareClock(viewport.center.x + 238, viewport.center.y - 518, 300.0);
 
 		// relative to both player and viewport
 		this.prepareCards(viewport.center.x - 718, viewport.center.y - 108);
-		this.prepareScore(viewport.center.x + 218, viewport.center.y - 518, 
+		this.prepareScore(viewport.center.x - 243, viewport.center.y - 518, 
 			x_pos, y_pos);
 		this.preparePauseScreen(x_pos, viewport.center.y + playerSprite.height/2 - 338);
 	}
@@ -85,8 +85,7 @@ export default class UserInterface {
 	}
 
 	updateClock(delta) {
-		if(!this.isPaused())
-			this.clock.update(delta);
+		this.clock.update(delta);
 	}
 
 	// HEALTHBAR

@@ -74,6 +74,16 @@ function textStyle(choice) {
 		    stroke: '#ff0000',
 		    strokeThickness: 1,
 		});
+	} else if (choice === "pressFText") {
+		textStyle = new PIXI.TextStyle({
+		    fontFamily: 'Courier New',
+		    fontSize: 13,
+		    align : 'right',
+		    //fill: ['#000000'],
+		    fill: ['#cef442'],
+		    stroke: '#ff0000',
+		    strokeThickness: 1,
+		});
 	}
 	return textStyle;
 }

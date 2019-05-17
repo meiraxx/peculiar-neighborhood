@@ -22,10 +22,10 @@ export default class Wave {
 		this.monsters = monsters;
 	}
 
-	startWave(zSorter, player) {
+	startWave(zSorter, player, i) {
 		let counter = 0;
 		/*
-		let positions = 
+		let positions1 = 
 			[
 			[[100, 100], [100, 200], [200, 100], [200, 200]],
 			[[300, 300], [300, 400], [400, 300], [400, 400]],
@@ -33,10 +33,10 @@ export default class Wave {
 			[[900, 900], [900, 1000], [1000, 900], [1000, 1000]],
 			];
 		*/
-		let positions = [[700,700], [700,800], [800,700], [800,800], [750,900]];
+		let positions2 = [[700,700], [700,800], [800,700], [800,800], [750,900]];
 		this.monsters.forEach(function(m) {
-			//m.prepareObject(positions[getRandomArbitraryInt(0,3)][getRandomArbitraryInt(0,3)], counter);
-			m.prepareObject(positions[counter], counter);
+			//m.prepareObject(positions1[getRandomArbitraryInt(0,3)][getRandomArbitraryInt(0,3)], counter);
+			m.prepareObject(positions2[counter], counter, i);
 			m.initObject();
 			zSorter.register(m.monsterSprite);
 			m.initLoop(player);

@@ -14,7 +14,7 @@ export default class Score {
         this.totalContainer._zIndex = Number.MAX_SAFE_INTEGER;
         this.previousValue = 0;
 
-        this.totalScoreText = new PIXI.Text("Score: " + 0, textStyle("totalScoreText"));
+        this.totalScoreText = new PIXI.Text("Reputation: " + 0, textStyle("totalScoreText"));
         this.totalScoreText.resolution = 2;
         this.totalContainer.addChild(this.totalScoreText);
 
@@ -24,7 +24,7 @@ export default class Score {
         this.changeContainer.y = y2_pos;
         this.changeContainer.name = "changeScoreContainer";
         this.changeContainer._zIndex = Number.MAX_SAFE_INTEGER-1;
-        this.scoreChangeText = new PIXI.Text("score +0", textStyle("scoreChangeText"));
+        this.scoreChangeText = new PIXI.Text("rep +0", textStyle("scoreChangeText"));
         this.scoreChangeText.resolution = 2;
         this.scoreChangeText.visible = true;
         this.changeContainer.addChild(this.scoreChangeText);
@@ -39,11 +39,11 @@ export default class Score {
     addScore(value) {
         // score change text
         if (value > 0) {
-            this.scoreChangeText.text = "score +" + value;
+            this.scoreChangeText.text = "rep +" + value;
             this.scoreChangeText.style.fill = 0x00FF00;
             this.scoreChangeText.visible = true;
         } else {
-            this.scoreChangeText.text = "score " + value;
+            this.scoreChangeText.text = "rep " + value;
             this.scoreChangeText.style.fill = 0xFF0000;
             this.scoreChangeText.visible = true;
         }
@@ -54,8 +54,9 @@ export default class Score {
         
         // total score text
         let resultValue = this.previousValue + value;
-        this.totalScoreText.text = "Score: " + resultValue;
-        this.totalScoreText.x = -this.totalScoreText.text.length;
+        this.totalScoreText.text = "Reputation: " + resultValue;
+        console.log(this.totalScoreText.text.length);
+        this.totalScoreText.x = -this.totalScoreText.text.length*2;
         this.totalScoreText.style.fill = (resultValue===0)?0xFFFFFF:(resultValue>0)?0x00FF00:0xFF0000;
         this.previousValue = resultValue;
     }

@@ -12,9 +12,6 @@ export default class TimedEvent {
 		this.oneTimeRan = false;
 	}
 
-	//this.timedEvent = persistentEvent(delta, 2, function() { changeViewMode(myvar); })
-    // timedEvent.oneTimeEvent(delta, time)
-    // timedEvent.startPersistentEvent(delta, repetitionTime, func)
 	runOneTimeEvent(delta) {
 		let eventTime = this.time;
 		this.frameCounter += 1;
@@ -35,11 +32,13 @@ export default class TimedEvent {
 		
 	}
 
-	runEvent(delta) {
-		if (this.type === "persistent") {
-			this.runPersistentEvent(delta);
-		} else if (this.type === "oneTime") {
-			this.runOneTimeEvent(delta);
+	runEvent(player=null, delta) {
+		if (!player.ui.isPaused()) {
+			if (this.type === "persistent") {
+				this.runPersistentEvent(delta);
+			} else if (this.type === "oneTime") {
+				this.runOneTimeEvent(delta);
+			}
 		}
 	}
 

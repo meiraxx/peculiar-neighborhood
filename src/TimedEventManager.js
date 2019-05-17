@@ -9,38 +9,50 @@ export default class TimedEventManager {
 		this.zSorter = zSorter;
 		this.player = player;
 		this.waveOrganizer = new WaveOrganizer(app, zSorter, player);
-		this.timedEvents = []
+		this.defaultTimedEvents = [];
+		this.customTimedEvents = [];
 	}
 
-	createNewEvent(func, type, time) {
+	createNewEvent(array, func, type, time) {
 		let timedEvent = new TimedEvent(this.app, func, type, time);
-		this.timedEvents.push(timedEvent);
+		array.push(timedEvent);
 	}
 
-	createDefaultEvents() {
-		this.createNewEvent(functionScopePreserver(this.waveOrganizer, "startWave", [0]), "oneTime", 2);
-		this.createNewEvent(functionScopePreserver(this.waveOrganizer, "startWave", [1]), "oneTime", 22);
-		this.createNewEvent(functionScopePreserver(this.waveOrganizer, "startWave", [2]), "oneTime", 42);
+	createCustomEvent(func, type, time) {
+		// use "functionScopePreserver" to preserve function context
+		this.createNewEvent(this.customTimedEvents, func, type, time);
 	}
 
-	runDefaultEvents(delta) {
+	createEvents(array) {
+		// wave 0
+		this.createNewEvent(array, functionScopePreserver(this.waveOrganizer, "startWave", [0]), 
+			"oneTime", 2);
+		// wave 1
+		this.createNewEvent(array, functionScopePreserver(this.waveOrganizer, "startWave", [1]), 
+			"oneTime", 32);
+		// wave 2
+		this.createNewEvent(array, functionScopePreserver(this.waveOrganizer, "startWave", [2]), 
+			"oneTime", 62);
+	}
+
+	runEvents(array, player, delta) {
 		// run all events (oneTime and persistent)
-		for (var i = 0; i < this.timedEvents.length; i++) {
-		    if (this.timedEvents[i].oneTimeRan === false) {
-		    	this.timedEvents[i].runEvent(delta);
+		for (var i = 0; i < array.length; i++) {
+		    if (array[i].oneTimeRan === false) {
+		    	array[i].runEvent(player, delta);
 		    }
 		}
 
 		// clean all oneTime events
-		for (var i = 0; i < this.timedEvents.length; i++) {
-		    if (this.timedEvents[i].oneTimeRan === true) {
-		    	this.timedEvents = this.timedEvents.filter(item => item !== this.timedEvents[i]);
+		for (var i = 0; i < array.length; i++) {
+		    if (array[i].oneTimeRan === true) {
+		    	array = array.filter(item => item !== array[i]);
 		    }
 		}
 	}
 
 	initDefaultEventsLoop() {
-		this.createDefaultEvents();
-		this.app.ticker.add(delta => this.runDefaultEvents(delta));
+		this.createEvents(this.defaultTimedEvents);
+		this.app.ticker.add(delta => this.runEvents(this.defaultTimedEvents, this.player, delta));
 	}
 }

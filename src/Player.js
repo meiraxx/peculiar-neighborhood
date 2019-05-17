@@ -302,8 +302,8 @@ export default class Player {
 			    	this.isGrabbing = true;
 					monsters[i].x = this.playerSprite.x;
 					monsters[i].y = this.playerSprite.y;
-					// hide healthbar
-					monsters[i].healthBar.container.visible = false;
+					// hide interaction text ("press F")
+					monsters[i].interactText.visible = false;
 					this.grabbedMonster = monsters[i];
 				}
 			}
@@ -469,15 +469,17 @@ export default class Player {
 	}
 
 	playerLoop(delta) {
-		if (!this.ui.isPaused() && this.playerIsMoving()) {
-			this.handleAllDetainerCollisions();
-			this.handleContainerCollisionsAndMove();
+		if (!this.ui.isPaused()) {
+			if (this.playerIsMoving()) {
+				this.handleAllDetainerCollisions();
+				this.handleContainerCollisionsAndMove();
+			}
+			this.ui.updateCrosshairOnScreen(this.playerSprite);
+			this.ui.updateMissileColliders(delta);
+			this.ui.updateClock(delta);
+			//update zordering pos
+			this.playerSprite.yForZOrdering = this.playerSprite.y + this.playerSprite.height;
 		}
-		this.ui.updateCrosshairOnScreen(this.playerSprite);
-		this.ui.updateMissileColliders(delta);
-		this.ui.updateClock(delta);
-		//update zordering pos
-		this.playerSprite.yForZOrdering = this.playerSprite.y + this.playerSprite.height;
 	}
 
 	handleAllDetainerCollisions() {

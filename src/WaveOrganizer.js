@@ -19,6 +19,6 @@ export default class WaveOrganizer {
 	}
 
 	startWave(i) {
-		this.waves[i].startWave(this.zSorter, this.player);
+		this.waves[i].startWave(this.zSorter, this.player, i);
 	}
 }

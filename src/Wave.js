@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import TimedEvent from "./TimedEvent";
 import Monster from "./Monster";
 import { getRandomArbitraryInt, populatedArray } from "./lib/UtilMethods";
 
@@ -23,7 +24,7 @@ export default class Wave {
 	}
 
 	startWave(zSorter, player, i) {
-		let counter = 0;
+		// start monsters loop
 		/*
 		let positions1 = 
 			[
@@ -34,6 +35,7 @@ export default class Wave {
 			];
 		*/
 		let positions2 = [[700,700], [700,800], [800,700], [800,800], [750,900]];
+		let counter = 0;
 		this.monsters.forEach(function(m) {
 			//m.prepareObject(positions1[getRandomArbitraryInt(0,3)][getRandomArbitraryInt(0,3)], counter);
 			m.prepareObject(positions2[counter], counter, i);

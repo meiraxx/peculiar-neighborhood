@@ -40,9 +40,6 @@ export default class Monster {
 		let x_pos = position[0];
 		let y_pos = position[1];
 
-		this.waveIndex = waveIndex;
-
-
 		if (this.isAngry) {
 			this.monsterFrontTexture = this.app.loader.resources["assets/monsters/angry/angryMonsterFront.png"].texture;
 			this.monsterBackTexture = this.app.loader.resources["assets/monsters/angry/angryMonsterBack.png"].texture;
@@ -57,7 +54,7 @@ export default class Monster {
 			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/angry/angryMonster2.png"].texture;
 			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/angry/angryMonster3.png"].texture;
 			this.deadMonsterTexture4 = this.app.loader.resources["assets/deadMonsters/angry/angryMonster4.png"].texture;
-			this.healthBar.prepareObject(x_pos, y_pos - 12, 48, 8, 0xFF3300, 0xFFFFFF, this.health);
+			this.healthBar.prepareObject(x_pos, y_pos-12, 48, 8, 0xFF3300, 0xFF3300, this.health);
 		}
 		else {
 			this.monsterFrontTexture = this.app.loader.resources["assets/monsters/normal/normalMonsterFront.png"].texture;
@@ -72,7 +69,7 @@ export default class Monster {
 			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/normal/normalMonster2.png"].texture;
 			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/normal/normalMonster3.png"].texture;
 			this.deadMonsterTexture4 = this.app.loader.resources["assets/deadMonsters/normal/normalMonster3.png"].texture;
-			this.healthBar.prepareObject(x_pos, y_pos - 12, 32, 8, 0xFF3300, 0xFFFFFF, this.health);
+			this.healthBar.prepareObject(x_pos, y_pos-12, 32, 8, 0xFF3300, 0xFF3300, this.health);
 		}
 		this.deadMonsterTextureArray = [this.deadMonsterTexture0, this.deadMonsterTexture1,
 			this.deadMonsterTexture2, this.deadMonsterTexture3, this.deadMonsterTexture4];
@@ -80,6 +77,7 @@ export default class Monster {
 		this.monsterSprite = new PIXI.AnimatedSprite([this.monsterFrontTexture], true);
 		this.monsterSprite.animationSpeed = 0.025;
 		this.monsterSprite.loop = false;
+		this.monsterSprite.waveIndex = waveIndex;
 
 		if (this.isAngry) {
 			this.monsterSprite.scale.x = 0.15;
@@ -118,7 +116,9 @@ export default class Monster {
         this.monsterSprite.interactionContainer.y = y_pos - 18;
         this.monsterSprite.interactionContainer.name = "interactionContainer";
         this.monsterSprite.interactionContainer._zIndex = Number.MAX_SAFE_INTEGER - 1;
-        this.monsterSprite.interactText = new PIXI.Text("press F to grab", textStyle("pressFText"));
+        this.monsterSprite.interactText = new PIXI.Text("press F", 
+        	textStyle("Courier New", 13, "right", ["#cef442"], "#ffffff", 1));
+
         this.monsterSprite.interactText.resolution = 2;
         this.monsterSprite.interactText.visible = false;
         this.monsterSprite.interactionContainer.addChild(this.monsterSprite.interactText);
@@ -366,11 +366,12 @@ export default class Monster {
 				setTexturesOnlyIfNeeded(this.monsterSprite, [this.capturedMonsterTexture]);
 				this.stopMonster();
 				this.healthBar.container.visible = false;
+				this.monsterSprite.interactText.text = "press F to grab";
 				this.monsterSprite.interactText.visible = true;
 
 				let timeFactor = +player.ui.clock.timeText.text;
-				let waveFactor = (this.waveIndex+1)*100;
-				let scoreValue = this.isAngry?(2*(timeFactor+waveFactor)):(1*(timeFactor+waveFactor));
+				let waveFactor = this.monsterSprite.waveIndex+1;
+				let scoreValue = this.isAngry?(2*timeFactor*waveFactor):(1*timeFactor*waveFactor);
 				player.ui.addScore(scoreValue);
 			} else {
 				// monster escaped
@@ -411,8 +412,8 @@ export default class Monster {
 
 		if (!this.healthBar.isChanged() && healthValue <= this.healthBar.container.maxHealth/2) {
 			// healthbar color change
-			this.healthBar.changeBarColor(0xffffff);
-			this.healthBar.changeTextColor(0xffffff);
+			this.healthBar.changeBarColor(0xfff600);
+			this.healthBar.changeTextColor(0xfff600);
 		}
 
 		// if health is 0 then monster is dead
@@ -426,13 +427,15 @@ export default class Monster {
 		setTexturesOnlyIfNeeded(this.monsterSprite, this.deadMonsterTextureArray);
 		this.monsterSprite.play();
 		this.monsterSprite.dead = true;
-		console.log(this.monsterSprite.getBounds());
 		this.monsterSprite.vx = 0;
 		this.monsterSprite.vy = 0;
 		let timeFactor = +player.ui.clock.timeText.text;
-		let waveFactor = (this.waveIndex+1)*100;
-		let scoreValue = this.isAngry?(-2*(timeFactor+waveFactor)):(-1*(timeFactor+waveFactor));
+		let waveFactor = this.monsterSprite.waveIndex+1;
+		let scoreValue = this.isAngry?(-2*timeFactor*waveFactor):(-1*timeFactor*waveFactor);
 		player.ui.addScore(scoreValue);
+		this.healthBar.container.visible = false;
+		this.monsterSprite.interactText.text = "press F to\npay respects";
+		this.monsterSprite.interactText.visible = true;
 	}
 
 	isCaptured() {

@@ -51,7 +51,7 @@ export default class UserInterface {
 		this.viewport = viewport;
 
 		// position relative to player
-		this.prepareHealthbar(x_pos - 1, y_pos - 4);
+		this.prepareHealthbar(x_pos, y_pos);
 		this.prepareCrosshair(x_pos, y_pos);
 		this.prepareMissiles(x_pos, y_pos);
 		this.prepareCardsInfo(x_pos, y_pos);
@@ -61,7 +61,8 @@ export default class UserInterface {
 		this.prepareCards(viewport.center.x - 718, viewport.center.y - 108);
 		this.prepareScore(viewport.center.x - 243, viewport.center.y - 518, 
 			x_pos, y_pos);
-		this.preparePauseScreen(x_pos, viewport.center.y + playerSprite.height/2 - 338);
+		this.preparePauseScreen(x_pos, viewport.center.y + playerSprite.height/2 - 338,
+			350, 410);
 	}
 
 	initObject() {
@@ -90,7 +91,7 @@ export default class UserInterface {
 
 	// HEALTHBAR
 	prepareHealthbar(x_pos, y_pos) {
-		this.healthBar.prepareObject(x_pos, y_pos - 6, 64, 8, 0x4CBB17, 0xFFFFFF, 80);
+		this.healthBar.prepareObject(x_pos, y_pos - 6, 64, 8, 0x4CBB17, 0x4CBB17, 80);
 	}
 
 	initHealthbar() {
@@ -116,8 +117,8 @@ export default class UserInterface {
 	}
 
 	// PAUSE
-	preparePauseScreen(x_pos, y_pos) {
-		this.pauseScreen.prepareObject(x_pos, y_pos, 350, 400);
+	preparePauseScreen(x_pos, y_pos, width, height) {
+		this.pauseScreen.prepareObject(x_pos, y_pos, width, height);
 	}
 
 	initPauseScreen() {

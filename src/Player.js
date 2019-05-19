@@ -1,5 +1,6 @@
 import { keyboard } from "./lib/UtilMethods";
-import { setTextureOnlyIfNeeded, containSpriteInsideContainer, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision } from "./lib/PixiUtilMethods";
+import { setTextureOnlyIfNeeded, containSpriteInsideContainer, detainSpriteOutsideDetainer, 
+	checkDynamicIntoDynamicCollision, textStyle } from "./lib/PixiUtilMethods";
 import UserInterface from './UserInterface';
 import * as PIXI from 'pixi.js'
 
@@ -49,21 +50,36 @@ export default class Player {
 		this.playerSprite.yForZOrdering = this.playerSprite.y + this.playerSprite.height;
  		this.playerSprite.name = "player";
  		this.playerSprite.velocity = 3;
+
  		this.isGrabbing = false;
  		this.grabbedMonster = undefined;
- 		this.grabbedMonstersList = [];
+ 		this.interactedMonstersList = [];
 
 		this.viewport.moveTo(x_pos + this.viewport._width/4, y_pos + this.viewport._height/2 + this.playerSprite.height/2);
 		this.viewport.zoom(700);
 
 		// SETUP player UI
 		this.ui.prepareObject(x_pos, y_pos, this.viewport, this.playerSprite);
-
+		// SETUP other player dependant stuff
+		this.waveContainer = new PIXI.Container();
+        this.waveContainer.x = this.playerSprite.x - this.playerSprite.width/2;
+        this.waveContainer.y = this.playerSprite.y - 150;
+        this.waveContainer.name = "waveContainer";
+        this.waveContainer._zIndex = Number.MAX_SAFE_INTEGER-1;
+        this.waveText = new PIXI.Text("Wave i", 
+			textStyle("Courier New", 48, "center", ["#000000", "#cef442", "#000000"], "#000000", 4));
+        this.waveText.resolution = 2;
+        this.waveText.alpha = 0;
+        this.equipText = new PIXI.Text("EQUIP YOUR WEAPON", 
+			textStyle("Comic Sans MS", 18, "center", ["#000000", "#cef442", "#000000"], "#000000", 3));
+        this.equipText.resolution = 2;
+        this.equipText.alpha = 0;
+        this.equipText.x = -this.equipText.text.length;
+        this.equipText.y += 40;
+        this.waveContainer.x = this.playerSprite.x - this.playerSprite.width;// - this.waveText.width/2;
+        this.waveContainer.addChild(this.waveText);
+        this.waveContainer.addChild(this.equipText);
 		// KEY STROKE EVENTS
-		//this.leftKey = keyboard("ArrowLeft");
-		//this.rightKey = keyboard("ArrowRight");
-		//this.downKey = keyboard("ArrowDown");
-		//this.upKey = keyboard("ArrowUp");
 		// walk
 		this.leftKey = keyboard("a");
 		this.rightKey = keyboard("d");
@@ -240,7 +256,7 @@ export default class Player {
 
 		this.fKey.press = () => {
 			if (!this.ui.isPaused()) {
-				this.grabNearestMonster();
+				this.pressFNearestMonster();
 			}
 		};
 		this.fKey.release = () => {
@@ -273,6 +289,7 @@ export default class Player {
 	}
 
 	initObject() {
+		this.app.stage.addChild(this.waveContainer);
 		this.app.stage.addChild(this.playerSprite);
 		console.log("player character initialized");
 	}
@@ -287,38 +304,54 @@ export default class Player {
 		this.ui.initObject();
 	}
 
-	grabNearestMonster() {
+	pressFNearestMonster() {
 		let monsters = this.app.stage.children.filter(child => child.name.indexOf("monster") !== -1);
 
 		if (monsters !== undefined && monsters.length !== 0 && !this.isGrabbing) {
 			for (var i = 0; i < monsters.length; i++) {
-			    if (monsters[i].captured && checkDynamicIntoDynamicCollision(this.playerSprite, monsters[i])
-			    	&& !this.isGrabbing) {
-			    	for (var j = 0; j < this.grabbedMonstersList.length; j++) {
-						if (this.grabbedMonstersList[j]===monsters[i]) {
+				if (monsters[i].dead && !this.isGrabbing && checkDynamicIntoDynamicCollision(this.playerSprite, monsters[i])) {
+					for (var j = 0; j < this.interactedMonstersList.length; j++) {
+						if (this.interactedMonstersList[j]===monsters[i]) {
+							return;
+						}
+					}
+					// hide respects text
+					monsters[i].interactText.visible = false;
+					// give small compensation for paying respects
+					this.ui.addScore(50);
+					// update interacted monster list
+					this.interactedMonstersList.push(monsters[i]);
+				}
+			    else if (monsters[i].captured && !this.isGrabbing && checkDynamicIntoDynamicCollision(this.playerSprite, monsters[i])) {
+			    	for (var j = 0; j < this.interactedMonstersList.length; j++) {
+						if (this.interactedMonstersList[j]===monsters[i]) {
 							return;
 						}
 					}
 			    	this.isGrabbing = true;
 					monsters[i].x = this.playerSprite.x;
 					monsters[i].y = this.playerSprite.y;
-					// hide interaction text ("press F")
+					// hide grab text
 					monsters[i].interactText.visible = false;
 					this.grabbedMonster = monsters[i];
 				}
 			}
 		}
 		else {
-			// get drop-monster points (max: 4 monsters)
-			for (var i = 0; i < this.grabbedMonstersList.length; i++) {
-				if (this.grabbedMonstersList[i]===this.grabbedMonster) {
+			// get drop-monster points
+			for (var i = 0; i < this.interactedMonstersList.length; i++) {
+				if (this.interactedMonstersList[i]===this.grabbedMonster) {
 					return;
 				}
 			}
 			console.log("valid drop");
 			this.isGrabbing = false;
-			this.ui.score.addScore(this.grabbedMonster.isAngry?(2*this.ui.clock.timeText.text):(1*this.ui.clock.timeText.text));
-			this.grabbedMonstersList.push(this.grabbedMonster);
+
+			let timeFactor = +this.ui.clock.timeText.text;
+			let waveFactor = this.grabbedMonster.waveIndex+1;
+			let scoreValue = this.grabbedMonster.isAngry?(2*timeFactor*waveFactor):(1*timeFactor*waveFactor);
+			this.ui.addScore(scoreValue);
+			this.interactedMonstersList.push(this.grabbedMonster);
 			this.grabbedMonster = undefined;
 		}
 	}
@@ -436,6 +469,8 @@ export default class Player {
 			if (this.isGrabbing) {
 				this.grabbedMonster.x += this.playerSprite.vx;
 			}
+			// move other player dependant objects
+			this.waveContainer.x += this.playerSprite.vx;
 		}
 		else if (this.playerSprite.vy !== 0) {
 			// walking vertically
@@ -458,6 +493,8 @@ export default class Player {
 			if (this.isGrabbing) {
 				this.grabbedMonster.y += this.playerSprite.vy;
 			}
+			// move other player dependant objects
+			this.waveContainer.y += this.playerSprite.vy;
 		}
 		else {
 			// character isn't walking: do nothing

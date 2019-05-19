@@ -65,7 +65,7 @@ export default class Clock {
             this.clockSprite.width*2.5, this.clockSprite.height + 4, 4, rectangleClockColor);
 
         // TEXT
-        this.timeText = new PIXI.Text(time, textStyle("timeText"));
+        this.timeText = new PIXI.Text(time, textStyle("Comic Sans MS", 13, "right", ["#000000"], "#ff0000", 1));
         this.timeText.x = this.clockSprite.width*1.4;
         this.timeText.y = this.clockSprite.height/2 - this.timeText.height/2;
         this.timeText.resolution = 2;

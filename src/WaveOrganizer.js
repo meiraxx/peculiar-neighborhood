@@ -2,7 +2,8 @@ import * as PIXI from 'pixi.js';
 import Monster from "./Monster";
 import Wave from "./Wave";
 
-import { getRandomArbitraryInt, populatedArray } from "./lib/UtilMethods";
+import { getRandomArbitraryInt, populatedArray, functionScopePreserver } from "./lib/UtilMethods";
+import { modifyObjectAlpha } from "./lib/PixiUtilMethods";
 
 export default class WaveOrganizer {
 	constructor(app, zSorter, player) {
@@ -21,4 +22,71 @@ export default class WaveOrganizer {
 	startWave(i) {
 		this.waves[i].startWave(this.zSorter, this.player, i);
 	}
+
+	fadeInWaveText(waveIndex, fadeInfactor, speedFactor) {
+		let currentTime = speedFactor;
+		for (var i = 0; i < fadeInfactor; i++) {
+			this.app.timedEventManager.createNewEvent(functionScopePreserver(this, 
+				"increaseWaveTextAlpha", [waveIndex, fadeInfactor]), "oneTime", currentTime);
+			currentTime += speedFactor;
+		}
+	}
+
+	fadeOutWaveText(waveIndex, fadeOutfactor, speedFactor) {
+		let currentTime = speedFactor;
+		for (var i = 0; i < fadeOutfactor; i++) {
+			this.app.timedEventManager.createNewEvent(functionScopePreserver(this, 
+				"decreaseWaveTextAlpha", [waveIndex, fadeOutfactor]), "oneTime", currentTime);
+			currentTime += speedFactor;
+		}
+	}
+
+	decreaseWaveTextAlpha(waveIndex, factor) {
+		this.player.waveText.text = "Wave " + (waveIndex + 1);
+		if (waveIndex===0)
+			modifyObjectAlpha(this.player.equipText, factor, "subtract");
+		modifyObjectAlpha(this.player.waveText, factor, "subtract");
+	}
+
+	increaseWaveTextAlpha(waveIndex, factor) {
+		this.player.waveText.text = "Wave " + (waveIndex + 1);
+		if (waveIndex===0)
+			modifyObjectAlpha(this.player.equipText, factor, "add");
+		modifyObjectAlpha(this.player.waveText, factor, "add");
+	}
+
+	createWaveEvents() {
+		let waveIndex;
+		let fadeInfactor = 4;
+		let fadeOutfactor = 4;
+		let speedFactor = 0.75;
+
+		// wave 0
+		waveIndex = 0;
+		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "fadeInWaveText", 
+			[waveIndex, fadeInfactor, speedFactor]), "oneTime", 1);
+		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "fadeOutWaveText", 
+			[waveIndex, fadeOutfactor, speedFactor]), "oneTime", 5);
+		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "startWave", [waveIndex]), 
+			"oneTime", 2);
+
+		// wave 1
+		waveIndex = 1;
+		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "fadeInWaveText", 
+			[waveIndex, fadeInfactor, speedFactor]), "oneTime", 121);
+		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "fadeOutWaveText", 
+			[waveIndex, fadeOutfactor, speedFactor]), "oneTime", 125);
+		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "startWave", [waveIndex]), 
+			"oneTime", 129);
+
+		// wave 2
+		waveIndex = 2;
+		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "fadeInWaveText", 
+			[waveIndex, fadeInfactor, speedFactor]), "oneTime", 241);
+		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "fadeOutWaveText", 
+			[waveIndex, fadeOutfactor, speedFactor]), "oneTime", 245);
+		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "startWave", [waveIndex]), 
+			"oneTime", 249);
+	}
+
 }

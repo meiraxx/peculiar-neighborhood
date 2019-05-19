@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
-import { textStyle } from "./lib/PixiUtilMethods";
+import { textStyle, modifyObjectAlpha } from "./lib/PixiUtilMethods";
+import { functionScopePreserver } from "./lib/UtilMethods";
 
 export default class Score {
     constructor(app) {
@@ -14,7 +15,9 @@ export default class Score {
         this.totalContainer._zIndex = Number.MAX_SAFE_INTEGER;
         this.previousValue = 0;
 
-        this.totalScoreText = new PIXI.Text("Reputation: " + 0, textStyle("totalScoreText"));
+        this.totalScoreText = new PIXI.Text("Reputation: " + 0, 
+            textStyle("Courier New", 20, "right", ["#000000", "#ffffff", "#000000"], "#000000", 2));
+
         this.totalScoreText.resolution = 2;
         this.totalContainer.addChild(this.totalScoreText);
 
@@ -24,9 +27,11 @@ export default class Score {
         this.changeContainer.y = y2_pos;
         this.changeContainer.name = "changeScoreContainer";
         this.changeContainer._zIndex = Number.MAX_SAFE_INTEGER-1;
-        this.scoreChangeText = new PIXI.Text("rep +0", textStyle("scoreChangeText"));
+        this.scoreChangeText = new PIXI.Text("rep +0", 
+            textStyle("Comic Sans MS", 13, "right", ["#000000", "#ffffff", "#000000"], "#000000", 1));
+
         this.scoreChangeText.resolution = 2;
-        this.scoreChangeText.visible = true;
+        this.scoreChangeText.alpha = 0;
         this.changeContainer.addChild(this.scoreChangeText);
     }
 
@@ -36,28 +41,57 @@ export default class Score {
 		console.log("score initialized");
     }
 
-    addScore(value) {
-        // score change text
+    fadeInScoreChangeText(value, fadeInfactor, speedFactor) {
+        let currentTime = speedFactor;
+        for (var i = 0; i < fadeInfactor; i++) {
+            this.app.timedEventManager.createNewEvent(functionScopePreserver(this, 
+                "increaseScoreChangeTextAlpha", [value, fadeInfactor]), "oneTime", currentTime);
+            currentTime += speedFactor;
+        }
+    }
+
+    fadeOutScoreChangeText(value, fadeOutfactor, speedFactor) {
+        let currentTime = speedFactor;
+        for (var i = 0; i < fadeOutfactor; i++) {
+            this.app.timedEventManager.createNewEvent(functionScopePreserver(this, 
+                "decreaseScoreChangeTextAlpha", [value, fadeOutfactor]), "oneTime", currentTime);
+            currentTime += speedFactor;
+        }
+    }
+
+    decreaseScoreChangeTextAlpha(value, factor) {
+        this.modifyScoreChangeText(value);
+        modifyObjectAlpha(this.scoreChangeText, factor, "subtract");
+    }
+
+    increaseScoreChangeTextAlpha(value, factor) {
+        this.modifyScoreChangeText(value);
+        modifyObjectAlpha(this.scoreChangeText, factor, "add");
+    }
+
+    modifyScoreChangeText(value) {
         if (value > 0) {
             this.scoreChangeText.text = "rep +" + value;
-            this.scoreChangeText.style.fill = 0x00FF00;
-            this.scoreChangeText.visible = true;
+            this.scoreChangeText.style.fill = ["#00ff00"];
         } else {
             this.scoreChangeText.text = "rep " + value;
-            this.scoreChangeText.style.fill = 0xFF0000;
-            this.scoreChangeText.visible = true;
+            this.scoreChangeText.style.fill = ["#ff0000"];
         }
+    }
 
-        //if (this.scoreChangeText.alpha < 1) {
-        //    this.scoreChangeText.alpha += .01;
-        //}
-        
+    addScore(value) {
+        // score change text
+        this.fadeInScoreChangeText(value, 1, 0.1);
+        this.fadeOutScoreChangeText(value, 3, 0.5);
+
         // total score text
         let resultValue = this.previousValue + value;
         this.totalScoreText.text = "Reputation: " + resultValue;
-        console.log(this.totalScoreText.text.length);
+
         this.totalScoreText.x = -this.totalScoreText.text.length*2;
-        this.totalScoreText.style.fill = (resultValue===0)?0xFFFFFF:(resultValue>0)?0x00FF00:0xFF0000;
+        this.totalScoreText.style.fill = (resultValue===0)?["#000000", "#ffffff", "#000000"]:
+            (resultValue>0)?["#007a00", "#00ff00", "#007a00"]:["#99040e", "#ff0000", "#99040e"];
         this.previousValue = resultValue;
     }
+
 }

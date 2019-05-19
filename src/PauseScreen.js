@@ -31,7 +31,8 @@ export default class PauseScreen {
         	width - width/8, height/8, 3, 0x414554);
         this.container.addChild(gamePausedTextRectangle);
         
-        let gamePausedText = new PIXI.Text("GAME PAUSED", textStyle("gamePausedText"));
+        let gamePausedText = new PIXI.Text("GAME PAUSED", textStyle("Courier New", 28, "center", ["#d8c3d0"], "#000000", 2));
+
         // magic values "10" and "-2" because of visual correctness
 		gamePausedText.x = -width/2 + width/16 + gamePausedTextRectangle.width/4 - 10;
 		gamePausedText.y = -height/2 + height/16 + gamePausedTextRectangle.height/4 - 2;
@@ -58,10 +59,11 @@ export default class PauseScreen {
         					"\"F2\": see pistol info\n" +
         					"\"F3\": see netgun info\n" +
         					//"\"F4\": see whistle info\n" +
-        					"\"F\": interact with objects on the map\n" +
+        					"\"F\": interact with objects on \nthe map\n" +
         					"\"P\": pause/unpause game";
 
-        let gameHelpText = new PIXI.Text(gameHelpString, textStyle("gameHelpText"));
+        let gameHelpText = new PIXI.Text(gameHelpString, 
+        	textStyle("Courier New", 16, "left", ["#d8c3d0"], "#000000", 2));
 		gameHelpText.x = -width/2 + width/16 + textInsideContainerDrift;
 		gameHelpText.y = -height/2 + betweenContainersHeight*3 
 			+ gamePausedTextRectangle.height + textInsideContainerDrift;

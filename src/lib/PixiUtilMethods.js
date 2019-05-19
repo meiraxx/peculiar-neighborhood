@@ -1,8 +1,7 @@
 import * as PIXI from 'pixi.js'
-function textStyle(choice) {
+function textStyle(fontFamily, fontSize, align, fill, stroke, strokeThickness) {
 	// test here: https://pixijs.io/pixi-text-style/
-	let textStyle = undefined;
-	// healthbar
+	/*
 	if (choice === "richText") {
 		textStyle = new PIXI.TextStyle({
 		    fontFamily: 'Arial',
@@ -21,71 +20,14 @@ function textStyle(choice) {
 		    wordWrapWidth: 440,
 		});
 	}
-	else if (choice === "healthText") {
-		textStyle = new PIXI.TextStyle({
-		    fontFamily: 'Courier New',
-		    fontSize: 14,
-		    fill: ['#ffffff'],
-		    stroke: '#000000',
-		    strokeThickness: 1,
-		});
-	}
-	else if (choice === "gamePausedText") {
-		textStyle = new PIXI.TextStyle({
-		    fontFamily: 'Courier New',
-		    fontSize: 28,
-		    align : 'center',
-		    fill: ['#d8c3d0'],
-		});
-	}
-	else if (choice === "gameHelpText") {
-		textStyle = new PIXI.TextStyle({
-		    fontFamily: 'Courier New',
-		    fontSize: 14,
-		    align : 'left',
-		    fill: ['#d8c3d0'],
-		});
-	}
-	else if (choice === "totalScoreText") {
-		textStyle = new PIXI.TextStyle({
-		    fontFamily: 'Courier New',
-		    fontSize: 20,
-		    align : 'right',
-		    fill: ['#ffffff'],
-		    stroke: '#000000',
-		    strokeThickness: 2,
-		});
-	}
-	else if (choice === "scoreChangeText") {
-		textStyle = new PIXI.TextStyle({
-		    fontFamily: 'Courier New',
-		    fontSize: 13,
-		    align : 'right',
-		    fill: ['#ffffff'],
-		    stroke: '#000000',
-		    strokeThickness: 1,
-		});
-	} else if (choice === "timeText") {
-		textStyle = new PIXI.TextStyle({
-		    fontFamily: 'Courier New',
-		    fontSize: 13,
-		    align : 'right',
-		    fill: ['#000000'],
-		    stroke: '#ff0000',
-		    strokeThickness: 1,
-		});
-	} else if (choice === "pressFText") {
-		textStyle = new PIXI.TextStyle({
-		    fontFamily: 'Courier New',
-		    fontSize: 13,
-		    align : 'right',
-		    //fill: ['#000000'],
-		    fill: ['#cef442'],
-		    stroke: '#ff0000',
-		    strokeThickness: 1,
-		});
-	}
-	return textStyle;
+	*/
+	return new PIXI.TextStyle({
+	    fontFamily: fontFamily,
+	    fontSize: fontSize,
+	    fill: fill,
+	    stroke: stroke,
+	    strokeThickness: strokeThickness,
+	});
 }
 
 function setTextureOnlyIfNeeded(sprite, newTexture) {
@@ -323,4 +265,28 @@ function applyFilter(elementArray, filter) {
 	
 }
 
-export {textStyle, setTextureOnlyIfNeeded, setTexturesOnlyIfNeeded, getRoundedRectangle, containSpriteInsideContainer, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision, applyFilter};
+function modifyObjectAlpha(pixiObject, alphaFactor, operation) {
+	let alphaDelta = 1/alphaFactor;
+
+	if (operation==="subtract") {
+		let newAlpha = pixiObject.alpha - alphaDelta;
+		if (newAlpha <= 0) {
+			pixiObject.alpha = 0;
+		}
+		else {
+			pixiObject.alpha = newAlpha;
+		}
+	}
+	else if (operation==="add") {
+		let newAlpha = pixiObject.alpha + alphaDelta;
+		if (newAlpha >= 1) {
+			pixiObject.alpha = 1;
+		}
+		else {
+			pixiObject.alpha = newAlpha;
+		}
+	}
+}
+
+export {textStyle, setTextureOnlyIfNeeded, setTexturesOnlyIfNeeded, getRoundedRectangle, containSpriteInsideContainer, 
+	detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision, applyFilter, modifyObjectAlpha};

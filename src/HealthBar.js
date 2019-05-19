@@ -22,22 +22,22 @@ export default class HealthBar {
         this.container._zIndex = Number.MAX_SAFE_INTEGER-1;
 
         // create the max-health rectangle
-        let innerBar = getRoundedRectangle(-width/2, 0, width, height, 3, 0x000000);
+        let innerBar = getRoundedRectangle(-width/2, 0, width, height, 4, 0x000000);
         this.container.addChild(innerBar);
         this.container.innerBar = innerBar;
 
         // create the current-health rectangle with an outline effect
         let diffValue = width/32;
         let outerBar = getRoundedRectangle(-width/2 + diffValue/2, diffValue/2, width - diffValue,
-            height - diffValue, 3, barColorCode);
+            height - diffValue, 4, barColorCode);
         this.container.addChild(outerBar);
         this.container.outerBar = outerBar;
 
-        let style = textStyle("healthText");
-        this.container.valueText = new PIXI.Text(maxHealth, style);
+        this.container.valueText = new PIXI.Text(maxHealth, textStyle("Comic Sans MS", 14, 
+            "center", ["#ffffff"], "#000000", 2));
 
         this.calculateHealthTextX();
-        this.container.valueText.y = -15;
+        this.container.valueText.y = -18;
         this.container.valueText.style.fill = textColorCode;
         this.container.valueText.resolution = 2;
         
@@ -88,7 +88,7 @@ export default class HealthBar {
             oldOutterBar.y,
             oldOutterBar.width,
             oldOutterBar.height,
-            3,
+            4,
             colorcode);
         this.container.removeChild(oldOutterBar);
         this.container.addChild(outerBar);

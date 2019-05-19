@@ -7,6 +7,7 @@ import Monster from "./Monster";
 import Tree from "./Tree";
 import House from "./House";
 import ZSorter from "./ZSorter";
+import WaveOrganizer from "./WaveOrganizer";
 import TimedEventManager from "./TimedEventManager";
 import * as PIXI from "pixi.js";
 //import "pixi-sound";
@@ -77,8 +78,6 @@ var hiders = [bush0]
 var fog = new Fog(app);
 var zSorter = new ZSorter(app);
 
-var timedEventManager = new TimedEventManager(app, zSorter, player);
-
 app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// 3. SETUP AND INITIALIZE OBJECTS
 	// setup background map
@@ -120,15 +119,21 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 
 	//fog is topmost except ui
 	fog.initObject();
+	zSorter.register(fog.fogSprite0);
+	zSorter.register(fog.fogSprite1);
 
+	// timedEventManager
+	app.timedEventManager = new TimedEventManager(app, zSorter, player);
+	var waveOrganizer = new WaveOrganizer(app, zSorter, player);
+	waveOrganizer.createWaveEvents();
+
+	app.ticker.add(delta => app.timedEventManager.runEvents(player, delta));
 
 	// initialize UI in the end because its Z ordering is always the greatest
 	player.initUI();
 	
 	// 4. PUT LOOPS RUNNING
 	player.initLoop();
-
-	timedEventManager.initDefaultEventsLoop();
 
 	fog.initLoop(player);
 

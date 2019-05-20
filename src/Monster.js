@@ -25,6 +25,10 @@ export default class Monster {
 		app.loader.add("assets/deadMonsters/normal/normalMonster1.png");
 		app.loader.add("assets/deadMonsters/normal/normalMonster2.png");
 		app.loader.add("assets/deadMonsters/normal/normalMonster3.png");
+		app.loader.add("assets/deadMonsters/souls/ghostframe0.png");
+		app.loader.add("assets/deadMonsters/souls/ghostframe1.png");
+		app.loader.add("assets/deadMonsters/souls/ghostframe2.png");
+		app.loader.add("assets/deadMonsters/souls/ghostframe3.png");
 	}
 	
 	constructor(app, isAngry, health, speed) {
@@ -74,10 +78,17 @@ export default class Monster {
 		this.deadMonsterTextureArray = [this.deadMonsterTexture0, this.deadMonsterTexture1,
 			this.deadMonsterTexture2, this.deadMonsterTexture3, this.deadMonsterTexture4];
 
+		this.soulLeavingTexture0 = this.app.loader.resources["assets/deadMonsters/souls/ghostframe0.png"].texture;
+		this.soulLeavingTexture1 = this.app.loader.resources["assets/deadMonsters/souls/ghostframe1.png"].texture;
+		this.soulLeavingTexture2 = this.app.loader.resources["assets/deadMonsters/souls/ghostframe2.png"].texture;
+		this.soulLeavingTexture3 = this.app.loader.resources["assets/deadMonsters/souls/ghostframe3.png"].texture;
+		this.soulLeavingTextureArray = [this.soulLeavingTexture0, this.soulLeavingTexture1, 
+			this.soulLeavingTexture2, this.soulLeavingTexture3]
 		this.monsterSprite = new PIXI.AnimatedSprite([this.monsterFrontTexture], true);
 		this.monsterSprite.animationSpeed = 0.025;
 		this.monsterSprite.loop = false;
 		this.monsterSprite.waveIndex = waveIndex;
+		this.monsterSprite.contextClass = this;
 
 		if (this.isAngry) {
 			this.monsterSprite.scale.x = 0.15;
@@ -424,8 +435,7 @@ export default class Monster {
 	}
 
 	killMonster(delta, player) {
-		setTexturesOnlyIfNeeded(this.monsterSprite, this.deadMonsterTextureArray);
-		this.monsterSprite.play();
+		this.playDeadAnimation();
 		this.monsterSprite.dead = true;
 		this.monsterSprite.vx = 0;
 		this.monsterSprite.vy = 0;
@@ -436,6 +446,19 @@ export default class Monster {
 		this.healthBar.container.visible = false;
 		this.monsterSprite.interactText.text = "press F to\npay respects";
 		this.monsterSprite.interactText.visible = true;
+	}
+
+	playDeadAnimation() {
+		setTexturesOnlyIfNeeded(this.monsterSprite, this.deadMonsterTextureArray);
+		this.monsterSprite.play();
+	}
+
+	playLeaveBodyAnimation() {
+		let previousMonsterHeight = this.monsterSprite.height;
+		setTexturesOnlyIfNeeded(this.monsterSprite, this.soulLeavingTextureArray);
+		this.monsterSprite.y = this.monsterSprite.y - this.monsterSprite.height + previousMonsterHeight;
+		this.monsterSprite.animationSpeed = 0.05;
+		this.monsterSprite.play();
 	}
 
 	isCaptured() {

@@ -1,5 +1,5 @@
 import { keyboard } from "./lib/UtilMethods";
-import { setTextureOnlyIfNeeded, containSpriteInsideContainer, detainSpriteOutsideDetainer, 
+import { setTexturesOnlyIfNeeded, setTextureOnlyIfNeeded, containSpriteInsideContainer, detainSpriteOutsideDetainer, 
 	checkDynamicIntoDynamicCollision, textStyle } from "./lib/PixiUtilMethods";
 import UserInterface from './UserInterface';
 import * as PIXI from 'pixi.js'
@@ -317,6 +317,8 @@ export default class Player {
 					}
 					// hide respects text
 					monsters[i].interactText.visible = false;
+					// play ghost animation
+					monsters[i].contextClass.playLeaveBodyAnimation();
 					// give small compensation for paying respects
 					this.ui.addScore(50);
 					// update interacted monster list
@@ -507,10 +509,8 @@ export default class Player {
 
 	playerLoop(delta) {
 		if (!this.ui.isPaused()) {
-			if (this.playerIsMoving()) {
-				this.handleAllDetainerCollisions();
-				this.handleContainerCollisionsAndMove();
-			}
+			this.handleAllDetainerCollisions();
+			this.handleContainerCollisionsAndMove();
 			this.ui.updateCrosshairOnScreen(this.playerSprite);
 			this.ui.updateMissileColliders(delta);
 			this.ui.updateClock(delta);

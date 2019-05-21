@@ -6,6 +6,7 @@ import CardsInfo from "./CardsInfo";
 import Missile from "./Missile";
 import Score from "./Score";
 import Clock from "./Clock";
+import CoolDownClock from "./CoolDownClock";
 import * as PIXI from 'pixi.js'
 
 export default class UserInterface {
@@ -16,6 +17,7 @@ export default class UserInterface {
 		Missile.loadResources(app);
 		CardsInfo.loadResources(app);
 		Clock.loadResources(app);
+		CoolDownClock.loadResources(app);
 	}
 	
 	constructor(app) {
@@ -25,6 +27,7 @@ export default class UserInterface {
 		this.pauseScreen = new PauseScreen(this.app);
 		this.crosshair = new Crosshair(this.app);
 		this.clock = new Clock(this.app);
+		this.pistolCooldown = new CoolDownClock(this.app);
 		// initialize 10 bullet objects (max bullets in screen at the same time)
 		this.shootDirection = new PIXI.Point(0,0);
 		this.currentBullet = 0;
@@ -56,7 +59,7 @@ export default class UserInterface {
 		this.prepareMissiles(x_pos, y_pos);
 		this.prepareCardsInfo(x_pos, y_pos);
 		this.prepareClock(viewport.center.x + 238, viewport.center.y - 518, 300.0);
-
+		this.pistolCooldown.prepareObject(playerSprite.x, playerSprite.y);
 		// relative to both player and viewport
 		this.prepareCards(viewport.center.x - 718, viewport.center.y - 108);
 		this.prepareScore(viewport.center.x - 243, viewport.center.y - 518, 
@@ -73,6 +76,7 @@ export default class UserInterface {
 		this.initCardsInfo();
 		this.initScore();
 		this.initClock();
+		this.pistolCooldown.initObject();
 		// pause screen always in the end
 		this.initPauseScreen();
 	}
@@ -87,6 +91,10 @@ export default class UserInterface {
 
 	updateClock(delta) {
 		this.clock.update(delta);
+	}
+
+	updateCooldown(delta) {
+		this.pistolCooldown.update(delta);
 	}
 
 	// HEALTHBAR
@@ -270,14 +278,29 @@ export default class UserInterface {
 					true);
 				this.currentNet = (this.currentNet + 1) % 10;
 			} else if (this.currentItem === "pistol") {
-				this.bullets[this.currentBullet].go(
-					playerSprite.x + playerSprite.width/2 - this.shootDirection.y * this.bullets[0].sprite.width / 2,
-					playerSprite.y + playerSprite.height/2 + this.shootDirection.x * this.bullets[0].sprite.height / 2,
-					10.0 * this.shootDirection.x,
-					10.0 * this.shootDirection.y,
-					angle,
-					true);
-				this.currentBullet = (this.currentBullet + 1) % 10;
+				if(this.pistolCooldown.sprite.angle > 360) {
+					this.currentBullet = 0;
+				}
+				if(this.currentBullet < 3) {
+					this.bullets[this.currentBullet].go(
+						playerSprite.x + playerSprite.width/2 - this.shootDirection.y * this.bullets[0].sprite.width / 2,
+						playerSprite.y + playerSprite.height/2 + this.shootDirection.x * this.bullets[0].sprite.height / 2,
+						10.0 * this.shootDirection.x,
+						10.0 * this.shootDirection.y,
+						angle,
+						true);
+					this.currentBullet = (this.currentBullet + 1) % 10;
+					this.pistolCooldown.sprite.angle = 0.0;
+					this.pistolCooldown.sprite.visible = false;
+					this.pistolCooldown.speed = 0.0;
+				} else {
+					this.pistolCooldown.sprite.visible = true;
+					this.pistolCooldown.speed = 3.0;
+					
+					// this.app.timedEventManager.createNewEvent(functionScopePreserver(this.pistolCooldown, 
+              		//	  "update", [delta]), "persistent", currentTime);
+					//app.timedEventManager.createEvent
+				}
 			} else if (this.currentItem === "bat") {
 				this.batColliders[this.currentBatCollider].go(
 					playerSprite.x + playerSprite.width/2 - this.shootDirection.y * this.batColliders[0].sprite.width / 2,

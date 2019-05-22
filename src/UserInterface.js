@@ -297,7 +297,8 @@ export default class UserInterface {
 				if(this.netgunCooldown.sprite.angle > 360) {
 					this.currentNet = 0;
 				}
-				if(this.currentNet < 1) {
+				let netLimit = 1;
+				if (this.currentNet < netLimit) {
 					this.nets[this.currentNet].go(
 						playerSprite.x + playerSprite.width/2 - this.shootDirection.y * this.nets[0].sprite.width / 2,
 						playerSprite.y + playerSprite.height/2 + this.shootDirection.x * this.nets[0].sprite.height / 2,
@@ -309,7 +310,8 @@ export default class UserInterface {
 					this.netgunCooldown.sprite.angle = 0.0;
 					this.netgunCooldown.sprite.visible = false;
 					this.netgunCooldown.speed = 0.0;
-				} else {
+				} 
+				if (this.currentNet === netLimit) {
 					this.netgunCooldown.sprite.visible = true;
 					this.netgunCooldown.speed = 4.0;
 				}
@@ -317,7 +319,8 @@ export default class UserInterface {
 				if(this.pistolCooldown.sprite.angle > 360) {
 					this.currentBullet = 0;
 				}
-				if(this.currentBullet < 4) {
+				let bulletLimit = 4;
+				if(this.currentBullet < bulletLimit) {
 					this.bullets[this.currentBullet].go(
 						playerSprite.x + playerSprite.width/2 - this.shootDirection.y * this.bullets[0].sprite.width / 2,
 						playerSprite.y + playerSprite.height/2 + this.shootDirection.x * this.bullets[0].sprite.height / 2,
@@ -329,7 +332,8 @@ export default class UserInterface {
 					this.pistolCooldown.sprite.angle = 0.0;
 					this.pistolCooldown.sprite.visible = false;
 					this.pistolCooldown.speed = 0.0;
-				} else {
+				} 
+				if (this.currentBullet === bulletLimit) {
 					this.pistolCooldown.sprite.visible = true;
 					this.pistolCooldown.speed = 4.0;
 				}

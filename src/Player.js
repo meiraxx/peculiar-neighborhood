@@ -515,6 +515,7 @@ export default class Player {
 			this.ui.updateMissileColliders(delta);
 			this.ui.updateClock(delta);
 			this.ui.pistolCooldown.update(delta, this.playerSprite.position);
+			this.ui.netgunCooldown.update(delta, this.playerSprite.position);
 			//update zordering pos
 			this.playerSprite.yForZOrdering = this.playerSprite.y + this.playerSprite.height;
 		}

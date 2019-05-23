@@ -68,11 +68,15 @@ var m3 = new Monster(app, false);
 var monsters = [m0, m1, m2, m3];
 
 var tree0 = new Tree(app);
-var house0 = new House(app);
-var house1 = new House(app);
+var whiteHouse = new House(app);
+var yellowHouse = new House(app);
+var redHouse = new House(app);
+var purpleHouse = new House(app);
+var greenHouse = new House(app);
+var blueHouse = new House(app);
 var bush0 = new Bush(app);
 
-var blockers = [tree0, house0, house1];
+var blockers = [tree0, whiteHouse, yellowHouse, redHouse, purpleHouse, greenHouse, blueHouse];
 var hiders = [bush0]
 
 var fog = new Fog(app);
@@ -98,10 +102,17 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	zSorter.register(player.playerSprite);
 
 	// setup blockers
-	tree0.prepareObject(mapWidth - 100, 100, 0);
-	house0.prepareObject(100, mapHeight - 300, 0);
-	house1.prepareObject(mapWidth - 200, mapHeight - 200, 1);
-
+	tree0.prepareObject(100, 100, 0);
+	// left-side houses
+	redHouse.prepareObject(100, mapHeight - 600, "red");
+	blueHouse.prepareObject(150, 200, "blue");
+	// middle houses
+	whiteHouse.prepareObject(950, 325, "white");
+	greenHouse.prepareObject(800, mapHeight - 450, "green");
+	// right-side houses
+	yellowHouse.prepareObject(mapWidth - 450, 100, "yellow");
+	purpleHouse.prepareObject(mapWidth - 370, mapHeight - 650, "purple");
+	
 	// setup hiders
 	bush0.prepareObject(10, 400, 0);
 

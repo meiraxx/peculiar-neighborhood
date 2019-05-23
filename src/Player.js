@@ -91,6 +91,8 @@ export default class Player {
 		app.loader.add("assets/character/whistle/back4.png");
 		app.loader.add("assets/character/whistle/right4.png");
 		app.loader.add("assets/character/whistle/left4.png");
+		// DEAD
+		app.loader.add("assets/character/dead/characterFrontDead.png")
 		UserInterface.loadResources(app);
 	}
 
@@ -511,6 +513,8 @@ export default class Player {
 
 		if (monsters !== undefined && monsters.length !== 0 && !this.isGrabbing) {
 			for (var i = 0; i < monsters.length; i++) {
+				//let monstersExtendedBoundingBox = {x: monsters[i].x, y: monsters[i].y,
+				//	width: monsters[i].width*4, height: monsters[i].height*4}
 				if (monsters[i].dead && !this.isGrabbing && checkDynamicIntoDynamicCollision(this.playerSprite, monsters[i])) {
 					for (var j = 0; j < this.interactedMonstersList.length; j++) {
 						if (this.interactedMonstersList[j]===monsters[i]) {
@@ -525,6 +529,7 @@ export default class Player {
 					this.ui.addScore(50);
 					// update interacted monster list
 					this.interactedMonstersList.push(monsters[i]);
+					return;
 				}
 			    else if (monsters[i].captured && !this.isGrabbing && checkDynamicIntoDynamicCollision(this.playerSprite, monsters[i])) {
 			    	for (var j = 0; j < this.interactedMonstersList.length; j++) {
@@ -538,6 +543,7 @@ export default class Player {
 					// hide grab text
 					monsters[i].interactText.visible = false;
 					this.grabbedMonster = monsters[i];
+					return;
 				}
 			}
 		}
@@ -709,7 +715,6 @@ export default class Player {
 			let isResetFrame = (this.playerSprite.currentFrame === 0) || (this.playerSprite.currentFrame === 2)
 				|| (this.playerSprite.currentFrame === 4);
 			if (this.playerSprite.playing && isResetFrame) {
-				console.log(this.playerSprite.currentFrame);
 				this.playerSprite.stop();
 			}
 		}
@@ -751,7 +756,8 @@ export default class Player {
 		// static elements collision
 		if (staticBlockers !== undefined && staticBlockers.length !== 0) {
 			for (var i = 0; i < staticBlockers.length; i++) {
-			    if (detainSpriteOutsideDetainer(this.playerSprite, staticBlockers[i], "stop") !== "none"){
+				let staticBlockersBound = staticBlockers[i].contextClass.getCorrectedBounds(this.playerSprite);
+			    if (detainSpriteOutsideDetainer(this.playerSprite, staticBlockersBound, "stop") !== "none"){
 			    	return;
 			    }
 			}

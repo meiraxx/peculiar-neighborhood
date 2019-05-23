@@ -29,6 +29,13 @@ export default class Monster {
 		app.loader.add("assets/deadMonsters/souls/ghostframe1.png");
 		app.loader.add("assets/deadMonsters/souls/ghostframe2.png");
 		app.loader.add("assets/deadMonsters/souls/ghostframe3.png");
+		// sight
+		app.loader.add("assets/monsterSight/redSight.png");
+		// attacks
+		app.loader.add("assets/monsterAttacks/slime.png");
+		app.loader.add("assets/monsterAttacks/angryMonsterFrontOpen.png");
+		app.loader.add("assets/monsterAttacks/angryMonsterLeftOpen.png");
+		app.loader.add("assets/monsterAttacks/angryMonsterRightOpen.png");
 	}
 	
 	constructor(app, isAngry, health, speed) {
@@ -122,17 +129,26 @@ export default class Monster {
 		this.monsterSprite.isAngry = this.isAngry;
 		this.monsterSprite.yForZOrdering = this.monsterSprite.y + this.monsterSprite.height;
 
+		let randomInt = getRandomArbitraryInt(0, 4);
+        // same as house colors: yellow, red, purple, green, blue
+        let monsterColorsList = ["#fffdd5", "#ffb5b3", "#e5c2ff", "#d0ffde", "#b3dffd"];
+        // corrected because I really can't distinguish some of the above...
+        //let monsterColorsList = ["#f2f229", "#ff003f", "#e5c2ff", "#10c93b", "#5900ff"];
+        this.monsterColor = monsterColorsList[randomInt];
+
 		this.monsterSprite.interactionContainer = new PIXI.Container();
         this.monsterSprite.interactionContainer.x = x_pos - this.monsterSprite.width;
         this.monsterSprite.interactionContainer.y = y_pos - 18;
         this.monsterSprite.interactionContainer.name = "interactionContainer";
         this.monsterSprite.interactionContainer._zIndex = Number.MAX_SAFE_INTEGER - 1;
         this.monsterSprite.interactText = new PIXI.Text("press F", 
-        	textStyle("Courier New", 13, "right", ["#cef442"], "#ffffff", 1));
+        	textStyle("Courier New", 13, "right", [this.monsterColor], this.monsterColor, 1));
 
         this.monsterSprite.interactText.resolution = 2;
         this.monsterSprite.interactText.visible = false;
         this.monsterSprite.interactionContainer.addChild(this.monsterSprite.interactText);
+
+        
 	}
 
 	initObject() {
@@ -379,7 +395,7 @@ export default class Monster {
 				this.healthBar.container.visible = false;
 				this.monsterSprite.interactText.text = "press F to grab";
 				this.monsterSprite.interactText.visible = true;
-
+				console.log(this.monsterColor);
 				let timeFactor = +player.ui.clock.timeText.text;
 				let waveFactor = this.monsterSprite.waveIndex+1;
 				let scoreValue = this.isAngry?(2*timeFactor*waveFactor):(1*timeFactor*waveFactor);
@@ -445,6 +461,7 @@ export default class Monster {
 		player.ui.addScore(scoreValue);
 		this.healthBar.container.visible = false;
 		this.monsterSprite.interactText.text = " press F to\npay respects";
+		console.log(this.monsterColor);
 		this.monsterSprite.interactText.visible = true;
 	}
 

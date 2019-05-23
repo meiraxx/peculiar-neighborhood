@@ -56,7 +56,7 @@ export default class UserInterface {
 
 		// position relative to player
 		this.prepareHealthbar(x_pos, y_pos);
-		this.prepareCrosshair(x_pos, y_pos);
+		this.prepareCrosshair(x_pos + 50, y_pos + 50);
 		this.prepareMissiles(x_pos, y_pos);
 		this.prepareCardsInfo(x_pos, y_pos);
 		this.prepareClock(viewport.center.x + 238, viewport.center.y - 518, 600.0);
@@ -124,7 +124,7 @@ export default class UserInterface {
 
 	// HEALTHBAR
 	prepareHealthbar(x_pos, y_pos) {
-		this.healthBar.prepareObject(x_pos, y_pos - 6, 64, 8, 0x4CBB17, 0x4CBB17, 80);
+		this.healthBar.prepareObject(x_pos+2, y_pos - 12, 64, 8, 0x4CBB17, 0x4CBB17, 80);
 	}
 
 	initHealthbar() {
@@ -297,7 +297,7 @@ export default class UserInterface {
 				if(this.netgunCooldown.sprite.angle > 360) {
 					this.currentNet = 0;
 				}
-				let netLimit = 1;
+				let netLimit = 2;
 				if (this.currentNet < netLimit) {
 					this.nets[this.currentNet].go(
 						playerSprite.x + playerSprite.width/2 - this.shootDirection.y * this.nets[0].sprite.width / 2,
@@ -319,7 +319,7 @@ export default class UserInterface {
 				if(this.pistolCooldown.sprite.angle > 360) {
 					this.currentBullet = 0;
 				}
-				let bulletLimit = 4;
+				let bulletLimit = 6;
 				if(this.currentBullet < bulletLimit) {
 					this.bullets[this.currentBullet].go(
 						playerSprite.x + playerSprite.width/2 - this.shootDirection.y * this.bullets[0].sprite.width / 2,

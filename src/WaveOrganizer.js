@@ -57,9 +57,9 @@ export default class WaveOrganizer {
 
 	createWaveEvents() {
 		let waveIndex;
-		let fadeInfactor = 4;
-		let fadeOutfactor = 4;
-		let speedFactor = 0.75;
+		let fadeInfactor = 3;
+		let fadeOutfactor = 3;
+		let speedFactor = 1;
 
 		// wave 0
 		waveIndex = 0;

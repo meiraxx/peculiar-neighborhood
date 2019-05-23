@@ -471,6 +471,8 @@ export default class Player {
 			this.ui.togglePause();
 		};
 		this.pKey.release = () => {
+			console.log("statistics: ");
+			console.log(this.app.statistics.toString());
 		};
 
 		this.escKey.press = () => {
@@ -561,12 +563,32 @@ export default class Player {
 			let waveFactor = this.grabbedMonster.waveIndex+1;
 			let scoreValue = this.grabbedMonster.isAngry?(2*timeFactor*waveFactor):(1*timeFactor*waveFactor);
 			this.ui.addScore(scoreValue);
+			this.app.statistics.monsterCured();
 			this.interactedMonstersList.push(this.grabbedMonster);
 			this.grabbedMonster = undefined;
 		}
 	}
 
 	updatePlayerSprite() {
+		switch(this.ui.currentItem) {
+			case "none":
+				this.app.statistics.weaponUnequipped();
+				break;
+			case "bat":
+				this.app.statistics.baseballBatEquipped();
+				break;
+			case "pistol":
+				this.app.statistics.gunEquipped();
+				break;
+			case "netgun":
+				this.app.statistics.netgunEquipped();
+				break;
+			case "whistle":
+				this.app.statistics.whistleEquipped();
+				break;
+			default:
+				// do nothing
+		}
 		switch(this.ui.command) {
 			case "left":
 				switch(this.ui.currentItem) {

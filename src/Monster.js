@@ -400,6 +400,7 @@ export default class Monster {
 				let waveFactor = this.monsterSprite.waveIndex+1;
 				let scoreValue = this.isAngry?(2*timeFactor*waveFactor):(1*timeFactor*waveFactor);
 				player.ui.addScore(scoreValue);
+				this.app.statistics.netHit();
 			} else {
 				// monster escaped
 				setTexturesOnlyIfNeeded(this.monsterSprite, [this.monsterFrontTexture]);
@@ -421,7 +422,7 @@ export default class Monster {
 			// be careful not to kill the monsters!
 			let superCriticalProb = 0.00;
 			let randomNumber = Math.random();
-
+			this.app.statistics.bulletHit();
 			if (randomNumber < superCriticalProb) {
 				this.healthBar.subtractHealth(9999);
 			} else {
@@ -433,6 +434,7 @@ export default class Monster {
 		} else if (weapon === "bat") {
 			// bat: 3 dmg
 			this.healthBar.subtractHealth(3);
+			this.app.statistics.baseballBatHit();
 		}
 
 		let healthValue = +this.healthBar.container.valueText.text;
@@ -463,6 +465,7 @@ export default class Monster {
 		this.monsterSprite.interactText.text = " press F to\npay respects";
 		console.log(this.monsterColor);
 		this.monsterSprite.interactText.visible = true;
+		this.app.statistics.monsterKilled();
 	}
 
 	playDeadAnimation() {

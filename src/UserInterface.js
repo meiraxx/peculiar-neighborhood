@@ -52,6 +52,7 @@ export default class UserInterface {
 
 	prepareObject(x_pos, y_pos, viewport, playerSprite) {
 		this.currentItem = "none";
+		this.app.statistics.weaponUnequipped();
 		this.viewport = viewport;
 
 		// position relative to player
@@ -310,6 +311,7 @@ export default class UserInterface {
 					this.netgunCooldown.sprite.angle = 0.0;
 					this.netgunCooldown.sprite.visible = false;
 					this.netgunCooldown.speed = 0.0;
+					this.app.statistics.netShot();
 				} 
 				if (this.currentNet === netLimit) {
 					this.netgunCooldown.sprite.visible = true;
@@ -332,6 +334,7 @@ export default class UserInterface {
 					this.pistolCooldown.sprite.angle = 0.0;
 					this.pistolCooldown.sprite.visible = false;
 					this.pistolCooldown.speed = 0.0;
+					this.app.statistics.bulletShot();
 				} 
 				if (this.currentBullet === bulletLimit) {
 					this.pistolCooldown.sprite.visible = true;
@@ -346,6 +349,7 @@ export default class UserInterface {
 					angle,
 					false);
 				this.currentBatCollider = (this.currentBatCollider + 1) % 10;
+				this.app.statistics.baseballBatBeat();
 			} else if (this.currentItem === "whistle") {
 				// todo: call pet
 			}

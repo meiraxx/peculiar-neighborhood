@@ -68,6 +68,7 @@ export default class HealthBar {
         else {
             this.container.currHealth = 0;
             this.container.outerBar.width = 0;
+            this.app.statistics.playerDied();
         }
         this.calculateHealthTextX();
         this.container.valueText.text = this.container.currHealth;

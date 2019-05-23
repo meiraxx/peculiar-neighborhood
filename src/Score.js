@@ -92,6 +92,7 @@ export default class Score {
         this.totalScoreText.style.fill = (resultValue===0)?["#000000", "#ffffff", "#000000"]:
             (resultValue>0)?["#007a00", "#00ff00", "#007a00"]:["#99040e", "#ff0000", "#99040e"];
         this.previousValue = resultValue;
+        this.app.statistics.setScore(this.previousValue);
     }
 
 }

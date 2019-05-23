@@ -21,6 +21,7 @@ export default class WaveOrganizer {
 
 	startWave(i) {
 		this.waves[i].startWave(this.zSorter, this.player, i);
+		this.app.statistics.waveIncremented();
 	}
 
 	fadeInWaveText(waveIndex, fadeInfactor, speedFactor) {

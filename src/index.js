@@ -9,6 +9,7 @@ import House from "./House";
 import ZSorter from "./ZSorter";
 import WaveOrganizer from "./WaveOrganizer";
 import TimedEventManager from "./TimedEventManager";
+import GameStatistics from "./GameStatistics";
 import * as PIXI from "pixi.js";
 //import "pixi-sound";
 
@@ -81,6 +82,8 @@ var hiders = [bush0]
 
 var fog = new Fog(app);
 var zSorter = new ZSorter(app);
+var statistics = new GameStatistics(app);
+
 
 app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	// 3. SETUP AND INITIALIZE OBJECTS
@@ -149,6 +152,8 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	fog.initLoop(player);
 
 	zSorter.initLoop();
+
+	statistics.initLoop();
 
 });
 

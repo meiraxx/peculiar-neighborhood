@@ -59,7 +59,7 @@ export default class UserInterface {
 		this.prepareCrosshair(x_pos, y_pos);
 		this.prepareMissiles(x_pos, y_pos);
 		this.prepareCardsInfo(x_pos, y_pos);
-		this.prepareClock(viewport.center.x + 238, viewport.center.y - 518, 300.0);
+		this.prepareClock(viewport.center.x + 238, viewport.center.y - 518, 600.0);
 		this.preparePistolCooldown(playerSprite.x, playerSprite.y);
 		this.prepareNetgunCooldown(playerSprite.x, playerSprite.y);
 		// relative to both player and viewport

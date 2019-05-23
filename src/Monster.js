@@ -444,7 +444,7 @@ export default class Monster {
 		let scoreValue = this.isAngry?(-2*timeFactor*waveFactor):(-1*timeFactor*waveFactor);
 		player.ui.addScore(scoreValue);
 		this.healthBar.container.visible = false;
-		this.monsterSprite.interactText.text = "press F to\npay respects";
+		this.monsterSprite.interactText.text = " press F to\npay respects";
 		this.monsterSprite.interactText.visible = true;
 	}
 

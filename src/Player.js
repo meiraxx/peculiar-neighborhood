@@ -1,27 +1,96 @@
 import { keyboard } from "./lib/UtilMethods";
-import { setTexturesOnlyIfNeeded, setTextureOnlyIfNeeded, containSpriteInsideContainer, detainSpriteOutsideDetainer, 
+import { setTexturesOnlyIfNeeded, containSpriteInsideContainer, detainSpriteOutsideDetainer, 
 	checkDynamicIntoDynamicCollision, textStyle } from "./lib/PixiUtilMethods";
 import UserInterface from './UserInterface';
 import * as PIXI from 'pixi.js'
 
 export default class Player {
 	static loadResources(app) {
-		app.loader.add("assets/character/none/characterFront.png");
-		app.loader.add("assets/character/none/characterBack.png");
-		app.loader.add("assets/character/none/characterRight.png");
-		app.loader.add("assets/character/none/characterLeft.png");
-		app.loader.add("assets/character/bat/characterFront.png");
-		app.loader.add("assets/character/bat/characterBack.png");
-		app.loader.add("assets/character/bat/characterRight.png");
-		app.loader.add("assets/character/bat/characterLeft.png");
-		app.loader.add("assets/character/pistol/characterFront.png");
-		app.loader.add("assets/character/pistol/characterBack.png");
-		app.loader.add("assets/character/pistol/characterRight.png");
-		app.loader.add("assets/character/pistol/characterLeft.png");
-		app.loader.add("assets/character/netgun/characterFront.png");
-		app.loader.add("assets/character/netgun/characterBack.png");
-		app.loader.add("assets/character/netgun/characterRight.png");
-		app.loader.add("assets/character/netgun/characterLeft.png");
+		// NONE
+		app.loader.add("assets/character/none/front1.png");
+		app.loader.add("assets/character/none/back1.png");
+		app.loader.add("assets/character/none/right1.png");
+		app.loader.add("assets/character/none/left1.png");
+		app.loader.add("assets/character/none/front2.png");
+		app.loader.add("assets/character/none/back2.png");
+		app.loader.add("assets/character/none/right2.png");
+		app.loader.add("assets/character/none/left2.png");
+		app.loader.add("assets/character/none/front3.png");
+		app.loader.add("assets/character/none/back3.png");
+		app.loader.add("assets/character/none/right3.png");
+		app.loader.add("assets/character/none/left3.png");
+		app.loader.add("assets/character/none/front4.png");
+		app.loader.add("assets/character/none/back4.png");
+		app.loader.add("assets/character/none/right4.png");
+		app.loader.add("assets/character/none/left4.png");
+		// BAT
+		app.loader.add("assets/character/bat/front1.png");
+		app.loader.add("assets/character/bat/back1.png");
+		app.loader.add("assets/character/bat/right1.png");
+		app.loader.add("assets/character/bat/left1.png");
+		app.loader.add("assets/character/bat/front2.png");
+		app.loader.add("assets/character/bat/back2.png");
+		app.loader.add("assets/character/bat/right2.png");
+		app.loader.add("assets/character/bat/left2.png");
+		app.loader.add("assets/character/bat/front3.png");
+		app.loader.add("assets/character/bat/back3.png");
+		app.loader.add("assets/character/bat/right3.png");
+		app.loader.add("assets/character/bat/left3.png");
+		app.loader.add("assets/character/bat/front4.png");
+		app.loader.add("assets/character/bat/back4.png");
+		app.loader.add("assets/character/bat/right4.png");
+		app.loader.add("assets/character/bat/left4.png");
+		// PISTOL
+		app.loader.add("assets/character/pistol/front1.png");
+		app.loader.add("assets/character/pistol/back1.png");
+		app.loader.add("assets/character/pistol/right1.png");
+		app.loader.add("assets/character/pistol/left1.png");
+		app.loader.add("assets/character/pistol/front2.png");
+		app.loader.add("assets/character/pistol/back2.png");
+		app.loader.add("assets/character/pistol/right2.png");
+		app.loader.add("assets/character/pistol/left2.png");
+		app.loader.add("assets/character/pistol/front3.png");
+		app.loader.add("assets/character/pistol/back3.png");
+		app.loader.add("assets/character/pistol/right3.png");
+		app.loader.add("assets/character/pistol/left3.png");
+		app.loader.add("assets/character/pistol/front4.png");
+		app.loader.add("assets/character/pistol/back4.png");
+		app.loader.add("assets/character/pistol/right4.png");
+		app.loader.add("assets/character/pistol/left4.png");
+		// NETGUN
+		app.loader.add("assets/character/netgun/front1.png");
+		app.loader.add("assets/character/netgun/back1.png");
+		app.loader.add("assets/character/netgun/right1.png");
+		app.loader.add("assets/character/netgun/left1.png");
+		app.loader.add("assets/character/netgun/front2.png");
+		app.loader.add("assets/character/netgun/back2.png");
+		app.loader.add("assets/character/netgun/right2.png");
+		app.loader.add("assets/character/netgun/left2.png");
+		app.loader.add("assets/character/netgun/front3.png");
+		app.loader.add("assets/character/netgun/back3.png");
+		app.loader.add("assets/character/netgun/right3.png");
+		app.loader.add("assets/character/netgun/left3.png");
+		app.loader.add("assets/character/netgun/front4.png");
+		app.loader.add("assets/character/netgun/back4.png");
+		app.loader.add("assets/character/netgun/right4.png");
+		app.loader.add("assets/character/netgun/left4.png");
+		// WHISTLE
+		app.loader.add("assets/character/whistle/front1.png");
+		app.loader.add("assets/character/whistle/back1.png");
+		app.loader.add("assets/character/whistle/right1.png");
+		app.loader.add("assets/character/whistle/left1.png");
+		app.loader.add("assets/character/whistle/front2.png");
+		app.loader.add("assets/character/whistle/back2.png");
+		app.loader.add("assets/character/whistle/right2.png");
+		app.loader.add("assets/character/whistle/left2.png");
+		app.loader.add("assets/character/whistle/front3.png");
+		app.loader.add("assets/character/whistle/back3.png");
+		app.loader.add("assets/character/whistle/right3.png");
+		app.loader.add("assets/character/whistle/left3.png");
+		app.loader.add("assets/character/whistle/front4.png");
+		app.loader.add("assets/character/whistle/back4.png");
+		app.loader.add("assets/character/whistle/right4.png");
+		app.loader.add("assets/character/whistle/left4.png");
 		UserInterface.loadResources(app);
 	}
 
@@ -34,13 +103,147 @@ export default class Player {
 	
 	prepareObject(x_pos, y_pos) {
 		// SETUP player
-		let playerFrontTexture = this.app.loader.resources["assets/character/none/characterFront.png"].texture;
-		let playerBackTexture = this.app.loader.resources["assets/character/none/characterBack.png"].texture;
-		let playerRightTexture = this.app.loader.resources["assets/character/none/characterRight.png"].texture;
-		let playerLeftTexture = this.app.loader.resources["assets/character/none/characterLeft.png"].texture;
+		// NONE
+		let playerNoneFrontTexture0 = this.app.loader.resources["assets/character/none/front1.png"].texture;
+		let playerNoneBackTexture0 = this.app.loader.resources["assets/character/none/back1.png"].texture;
+		let playerNoneRightTexture0 = this.app.loader.resources["assets/character/none/right1.png"].texture;
+		let playerNoneLeftTexture0 = this.app.loader.resources["assets/character/none/left1.png"].texture;
+		let playerNoneFrontTexture1 = this.app.loader.resources["assets/character/none/front2.png"].texture;
+		let playerNoneBackTexture1 = this.app.loader.resources["assets/character/none/back2.png"].texture;
+		let playerNoneRightTexture1 = this.app.loader.resources["assets/character/none/right2.png"].texture;
+		let playerNoneLeftTexture1 = this.app.loader.resources["assets/character/none/left2.png"].texture;
+		let playerNoneFrontTexture2 = this.app.loader.resources["assets/character/none/front3.png"].texture;
+		let playerNoneBackTexture2 = this.app.loader.resources["assets/character/none/back3.png"].texture;
+		let playerNoneRightTexture2 = this.app.loader.resources["assets/character/none/right3.png"].texture;
+		let playerNoneLeftTexture2 = this.app.loader.resources["assets/character/none/left3.png"].texture;
+		let playerNoneFrontTexture3 = this.app.loader.resources["assets/character/none/front4.png"].texture;
+		let playerNoneBackTexture3 = this.app.loader.resources["assets/character/none/back4.png"].texture;
+		let playerNoneRightTexture3 = this.app.loader.resources["assets/character/none/right4.png"].texture;
+		let playerNoneLeftTexture3 = this.app.loader.resources["assets/character/none/left4.png"].texture;
+		// BAT
+		let playerBatFrontTexture0 = this.app.loader.resources["assets/character/bat/front1.png"].texture;
+		let playerBatBackTexture0 = this.app.loader.resources["assets/character/bat/back1.png"].texture;
+		let playerBatRightTexture0 = this.app.loader.resources["assets/character/bat/right1.png"].texture;
+		let playerBatLeftTexture0 = this.app.loader.resources["assets/character/bat/left1.png"].texture;
+		let playerBatFrontTexture1 = this.app.loader.resources["assets/character/bat/front2.png"].texture;
+		let playerBatBackTexture1 = this.app.loader.resources["assets/character/bat/back2.png"].texture;
+		let playerBatRightTexture1 = this.app.loader.resources["assets/character/bat/right2.png"].texture;
+		let playerBatLeftTexture1 = this.app.loader.resources["assets/character/bat/left2.png"].texture;
+		let playerBatFrontTexture2 = this.app.loader.resources["assets/character/bat/front3.png"].texture;
+		let playerBatBackTexture2 = this.app.loader.resources["assets/character/bat/back3.png"].texture;
+		let playerBatRightTexture2 = this.app.loader.resources["assets/character/bat/right3.png"].texture;
+		let playerBatLeftTexture2 = this.app.loader.resources["assets/character/bat/left3.png"].texture;
+		let playerBatFrontTexture3 = this.app.loader.resources["assets/character/bat/front4.png"].texture;
+		let playerBatBackTexture3 = this.app.loader.resources["assets/character/bat/back4.png"].texture;
+		let playerBatRightTexture3 = this.app.loader.resources["assets/character/bat/right4.png"].texture;
+		let playerBatLeftTexture3 = this.app.loader.resources["assets/character/bat/left4.png"].texture;
+		// PISTOL
+		let playerPistolFrontTexture0 = this.app.loader.resources["assets/character/pistol/front1.png"].texture;
+		let playerPistolBackTexture0 = this.app.loader.resources["assets/character/pistol/back1.png"].texture;
+		let playerPistolRightTexture0 = this.app.loader.resources["assets/character/pistol/right1.png"].texture;
+		let playerPistolLeftTexture0 = this.app.loader.resources["assets/character/pistol/left1.png"].texture;
+		let playerPistolFrontTexture1 = this.app.loader.resources["assets/character/pistol/front2.png"].texture;
+		let playerPistolBackTexture1 = this.app.loader.resources["assets/character/pistol/back2.png"].texture;
+		let playerPistolRightTexture1 = this.app.loader.resources["assets/character/pistol/right2.png"].texture;
+		let playerPistolLeftTexture1 = this.app.loader.resources["assets/character/pistol/left2.png"].texture;
+		let playerPistolFrontTexture2 = this.app.loader.resources["assets/character/pistol/front3.png"].texture;
+		let playerPistolBackTexture2 = this.app.loader.resources["assets/character/pistol/back3.png"].texture;
+		let playerPistolRightTexture2 = this.app.loader.resources["assets/character/pistol/right3.png"].texture;
+		let playerPistolLeftTexture2 = this.app.loader.resources["assets/character/pistol/left3.png"].texture;
+		let playerPistolFrontTexture3 = this.app.loader.resources["assets/character/pistol/front4.png"].texture;
+		let playerPistolBackTexture3 = this.app.loader.resources["assets/character/pistol/back4.png"].texture;
+		let playerPistolRightTexture3 = this.app.loader.resources["assets/character/pistol/right4.png"].texture;
+		let playerPistolLeftTexture3 = this.app.loader.resources["assets/character/pistol/left4.png"].texture;
+		// NETGUN
+		let playerNetgunFrontTexture0 = this.app.loader.resources["assets/character/netgun/front1.png"].texture;
+		let playerNetgunBackTexture0 = this.app.loader.resources["assets/character/netgun/back1.png"].texture;
+		let playerNetgunRightTexture0 = this.app.loader.resources["assets/character/netgun/right1.png"].texture;
+		let playerNetgunLeftTexture0 = this.app.loader.resources["assets/character/netgun/left1.png"].texture;
+		let playerNetgunFrontTexture1 = this.app.loader.resources["assets/character/netgun/front2.png"].texture;
+		let playerNetgunBackTexture1 = this.app.loader.resources["assets/character/netgun/back2.png"].texture;
+		let playerNetgunRightTexture1 = this.app.loader.resources["assets/character/netgun/right2.png"].texture;
+		let playerNetgunLeftTexture1 = this.app.loader.resources["assets/character/netgun/left2.png"].texture;
+		let playerNetgunFrontTexture2 = this.app.loader.resources["assets/character/netgun/front3.png"].texture;
+		let playerNetgunBackTexture2 = this.app.loader.resources["assets/character/netgun/back3.png"].texture;
+		let playerNetgunRightTexture2 = this.app.loader.resources["assets/character/netgun/right3.png"].texture;
+		let playerNetgunLeftTexture2 = this.app.loader.resources["assets/character/netgun/left3.png"].texture;
+		let playerNetgunFrontTexture3 = this.app.loader.resources["assets/character/netgun/front4.png"].texture;
+		let playerNetgunBackTexture3 = this.app.loader.resources["assets/character/netgun/back4.png"].texture;
+		let playerNetgunRightTexture3 = this.app.loader.resources["assets/character/netgun/right4.png"].texture;
+		let playerNetgunLeftTexture3 = this.app.loader.resources["assets/character/netgun/left4.png"].texture;
+		// WHISTLE
+		let playerWhistleFrontTexture0 = this.app.loader.resources["assets/character/whistle/front1.png"].texture;
+		let playerWhistleBackTexture0 = this.app.loader.resources["assets/character/whistle/back1.png"].texture;
+		let playerWhistleRightTexture0 = this.app.loader.resources["assets/character/whistle/right1.png"].texture;
+		let playerWhistleLeftTexture0 = this.app.loader.resources["assets/character/whistle/left1.png"].texture;
+		let playerWhistleFrontTexture1 = this.app.loader.resources["assets/character/whistle/front2.png"].texture;
+		let playerWhistleBackTexture1 = this.app.loader.resources["assets/character/whistle/back2.png"].texture;
+		let playerWhistleRightTexture1 = this.app.loader.resources["assets/character/whistle/right2.png"].texture;
+		let playerWhistleLeftTexture1 = this.app.loader.resources["assets/character/whistle/left2.png"].texture;
+		let playerWhistleFrontTexture2 = this.app.loader.resources["assets/character/whistle/front3.png"].texture;
+		let playerWhistleBackTexture2 = this.app.loader.resources["assets/character/whistle/back3.png"].texture;
+		let playerWhistleRightTexture2 = this.app.loader.resources["assets/character/whistle/right3.png"].texture;
+		let playerWhistleLeftTexture2 = this.app.loader.resources["assets/character/whistle/left3.png"].texture;
+		let playerWhistleFrontTexture3 = this.app.loader.resources["assets/character/whistle/front4.png"].texture;
+		let playerWhistleBackTexture3 = this.app.loader.resources["assets/character/whistle/back4.png"].texture;
+		let playerWhistleRightTexture3 = this.app.loader.resources["assets/character/whistle/right4.png"].texture;
+		let playerWhistleLeftTexture3 = this.app.loader.resources["assets/character/whistle/left4.png"].texture;
+
+		// NONE
+		this.playerNoneFrontTextureArray = [playerNoneFrontTexture0, playerNoneFrontTexture1,
+			playerNoneFrontTexture2, playerNoneFrontTexture3];
+		this.playerNoneBackTextureArray = [playerNoneBackTexture0, playerNoneBackTexture1,
+			playerNoneBackTexture2, playerNoneBackTexture3];
+		this.playerNoneRightTextureArray = [playerNoneRightTexture0, playerNoneRightTexture1,
+			playerNoneRightTexture2, playerNoneRightTexture3];
+		this.playerNoneLeftTextureArray = [playerNoneLeftTexture0, playerNoneLeftTexture1,
+			playerNoneLeftTexture2, playerNoneLeftTexture3];
+		// BAT
+		this.playerBatFrontTextureArray = [playerBatFrontTexture0, playerBatFrontTexture1,
+			playerBatFrontTexture2, playerBatFrontTexture3];
+		this.playerBatBackTextureArray = [playerBatBackTexture0, playerBatBackTexture1,
+			playerBatBackTexture2, playerBatBackTexture3];
+		this.playerBatRightTextureArray = [playerBatRightTexture0, playerBatRightTexture1,
+			playerBatRightTexture2, playerBatRightTexture3];
+		this.playerBatLeftTextureArray = [playerBatLeftTexture0, playerBatLeftTexture1,
+			playerBatLeftTexture2, playerBatLeftTexture3];
+		// PISTOL
+		this.playerPistolFrontTextureArray = [playerPistolFrontTexture0, playerPistolFrontTexture1,
+			playerPistolFrontTexture2, playerPistolFrontTexture3];
+		this.playerPistolBackTextureArray = [playerPistolBackTexture0, playerPistolBackTexture1,
+			playerPistolBackTexture2, playerPistolBackTexture3];
+		this.playerPistolRightTextureArray = [playerPistolRightTexture0, playerPistolRightTexture1,
+			playerPistolRightTexture2, playerPistolRightTexture3];
+		this.playerPistolLeftTextureArray = [playerPistolLeftTexture0, playerPistolLeftTexture1,
+			playerPistolLeftTexture2, playerPistolLeftTexture3];
+		// NETGUN
+		this.playerNetgunFrontTextureArray = [playerNetgunFrontTexture0, playerNetgunFrontTexture1,
+			playerNetgunFrontTexture2, playerNetgunFrontTexture3];
+		this.playerNetgunBackTextureArray = [playerNetgunBackTexture0, playerNetgunBackTexture1,
+			playerNetgunBackTexture2, playerNetgunBackTexture3];
+		this.playerNetgunRightTextureArray = [playerNetgunRightTexture0, playerNetgunRightTexture1,
+			playerNetgunRightTexture2, playerNetgunRightTexture3];
+		this.playerNetgunLeftTextureArray = [playerNetgunLeftTexture0, playerNetgunLeftTexture1,
+			playerNetgunLeftTexture2, playerNetgunLeftTexture3];
+		// NETGUN
+		this.playerWhistleFrontTextureArray = [playerWhistleFrontTexture0, playerWhistleFrontTexture1,
+			playerWhistleFrontTexture2, playerWhistleFrontTexture3];
+		this.playerWhistleBackTextureArray = [playerWhistleBackTexture0, playerWhistleBackTexture1,
+			playerWhistleBackTexture2, playerWhistleBackTexture3];
+		this.playerWhistleRightTextureArray = [playerWhistleRightTexture0, playerWhistleRightTexture1,
+			playerWhistleRightTexture2, playerWhistleRightTexture3];
+		this.playerWhistleLeftTextureArray = [playerWhistleLeftTexture0, playerWhistleLeftTexture1,
+			playerWhistleLeftTexture2, playerWhistleLeftTexture3];
+
+		// current texture
+		this.playerCurrentTextureArray = this.playerNoneFrontTextureArray;
 		this.ui.command = "down";
 
-		this.playerSprite = new PIXI.Sprite(playerFrontTexture);
+		// https://stackoverflow.com/questions/42696099/pixi-js-animatedsprite-lag-on-first-play
+		this.playerSprite = new PIXI.AnimatedSprite(this.playerCurrentTextureArray);
+		this.playerSprite.animationSpeed = 0.20;
+		this.playerSprite.loop = true;
+
 		this.playerSprite.scale.x = 0.20;
 		this.playerSprite.scale.y = 0.20;
 		this.playerSprite.x = Math.round(x_pos - (this.playerSprite.width/2));
@@ -62,8 +265,8 @@ export default class Player {
 		this.ui.prepareObject(x_pos, y_pos, this.viewport, this.playerSprite);
 		// SETUP other player dependant stuff
 		this.waveContainer = new PIXI.Container();
-        this.waveContainer.x = this.playerSprite.x - this.playerSprite.width/2;
-        this.waveContainer.y = this.playerSprite.y - 150;
+        this.waveContainer.x = this.viewport.center.x - 253;
+        this.waveContainer.y = this.viewport.center.y - 418;
         this.waveContainer.name = "waveContainer";
         this.waveContainer._zIndex = Number.MAX_SAFE_INTEGER-1;
         this.waveText = new PIXI.Text("Wave i", 
@@ -76,7 +279,6 @@ export default class Player {
         this.equipText.alpha = 0;
         this.equipText.x = -this.equipText.text.length;
         this.equipText.y += 40;
-        this.waveContainer.x = this.playerSprite.x - this.playerSprite.width;// - this.waveText.width/2;
         this.waveContainer.addChild(this.waveText);
         this.waveContainer.addChild(this.equipText);
 		// KEY STROKE EVENTS
@@ -363,19 +565,19 @@ export default class Player {
 			case "left":
 				switch(this.ui.currentItem) {
 					case "none":
-						this.playerTexture = this.app.loader.resources["assets/character/none/characterLeft.png"].texture;
+						this.playerCurrentTextureArray = this.playerNoneLeftTextureArray;
 						break;
 					case "bat":
-						this.playerTexture = this.app.loader.resources["assets/character/bat/characterLeft.png"].texture;
+						this.playerCurrentTextureArray = this.playerBatLeftTextureArray;
 						break;
 					case "pistol":
-						this.playerTexture = this.app.loader.resources["assets/character/pistol/characterLeft.png"].texture;
+						this.playerCurrentTextureArray = this.playerPistolLeftTextureArray;
 						break;
 					case "netgun":
-						this.playerTexture = this.app.loader.resources["assets/character/netgun/characterLeft.png"].texture;
+						this.playerCurrentTextureArray = this.playerNetgunLeftTextureArray;
 						break;
 					case "whistle":
-						this.playerTexture = this.app.loader.resources["assets/character/netgun/characterLeft.png"].texture;
+						this.playerCurrentTextureArray = this.playerWhistleLeftTextureArray;
 						break;
 					default:
 						// do nothing
@@ -384,19 +586,19 @@ export default class Player {
 			case "right":
 				switch(this.ui.currentItem) {
 					case "none":
-						this.playerTexture = this.app.loader.resources["assets/character/none/characterRight.png"].texture;
+						this.playerCurrentTextureArray = this.playerNoneRightTextureArray;
 						break;
 					case "bat":
-						this.playerTexture = this.app.loader.resources["assets/character/bat/characterRight.png"].texture;
+						this.playerCurrentTextureArray = this.playerBatRightTextureArray;
 						break;
 					case "pistol":
-						this.playerTexture = this.app.loader.resources["assets/character/pistol/characterRight.png"].texture;
+						this.playerCurrentTextureArray = this.playerPistolRightTextureArray;
 						break;
 					case "netgun":
-						this.playerTexture = this.app.loader.resources["assets/character/netgun/characterRight.png"].texture;
+						this.playerCurrentTextureArray = this.playerNetgunRightTextureArray;
 						break;
 					case "whistle":
-						this.playerTexture = this.app.loader.resources["assets/character/netgun/characterRight.png"].texture;
+						this.playerCurrentTextureArray = this.playerWhistleRightTextureArray;
 						break;
 					default:
 						// do nothing
@@ -405,19 +607,19 @@ export default class Player {
 			case "down":
 				switch(this.ui.currentItem) {
 					case "none":
-						this.playerTexture = this.app.loader.resources["assets/character/none/characterFront.png"].texture;
+						this.playerCurrentTextureArray = this.playerNoneFrontTextureArray;
 						break;
 					case "bat":
-						this.playerTexture = this.app.loader.resources["assets/character/bat/characterFront.png"].texture;
+						this.playerCurrentTextureArray = this.playerBatFrontTextureArray;
 						break;
 					case "pistol":
-						this.playerTexture = this.app.loader.resources["assets/character/pistol/characterFront.png"].texture;
+						this.playerCurrentTextureArray = this.playerPistolFrontTextureArray;
 						break;
 					case "netgun":
-						this.playerTexture = this.app.loader.resources["assets/character/netgun/characterFront.png"].texture;
+						this.playerCurrentTextureArray = this.playerNetgunFrontTextureArray;
 						break;
 					case "whistle":
-						this.playerTexture = this.app.loader.resources["assets/character/netgun/characterFront.png"].texture;
+						this.playerCurrentTextureArray = this.playerWhistleFrontTextureArray;
 						break;
 					default:
 						// do nothing
@@ -426,19 +628,19 @@ export default class Player {
 			case "up":
 				switch(this.ui.currentItem) {
 					case "none":
-						this.playerTexture = this.app.loader.resources["assets/character/none/characterBack.png"].texture;
+						this.playerCurrentTextureArray = this.playerNoneBackTextureArray;
 						break;
 					case "bat":
-						this.playerTexture = this.app.loader.resources["assets/character/bat/characterBack.png"].texture;
+						this.playerCurrentTextureArray = this.playerBatBackTextureArray;
 						break;
 					case "pistol":
-						this.playerTexture = this.app.loader.resources["assets/character/pistol/characterBack.png"].texture;
+						this.playerCurrentTextureArray = this.playerPistolBackTextureArray;
 						break;
 					case "netgun":
-						this.playerTexture = this.app.loader.resources["assets/character/netgun/characterBack.png"].texture;
+						this.playerCurrentTextureArray = this.playerNetgunBackTextureArray;
 						break;
 					case "whistle":
-						this.playerTexture = this.app.loader.resources["assets/character/netgun/characterBack.png"].texture;
+						this.playerCurrentTextureArray = this.playerWhistleBackTextureArray;
 						break;
 					default:
 						// do nothing
@@ -446,11 +648,13 @@ export default class Player {
 			default:
 				// do nothing
 		}
-		setTextureOnlyIfNeeded(this.playerSprite, this.playerTexture);
+		setTexturesOnlyIfNeeded(this.playerSprite, this.playerCurrentTextureArray);
 	}
 
 	movePlayer() {
 		if (this.playerSprite.vx !== 0) {
+			// walking animation
+			this.playerSprite.play();
 			// walking horizontally
 			this.playerSprite.x += this.playerSprite.vx;
 			// camera effect
@@ -475,6 +679,8 @@ export default class Player {
 			this.waveContainer.x += this.playerSprite.vx;
 		}
 		else if (this.playerSprite.vy !== 0) {
+			// walking animation
+			this.playerSprite.play();
 			// walking vertically
 			this.playerSprite.y += this.playerSprite.vy;
 			// camera effect
@@ -500,6 +706,12 @@ export default class Player {
 		}
 		else {
 			// character isn't walking: do nothing
+			let isResetFrame = (this.playerSprite.currentFrame === 0) || (this.playerSprite.currentFrame === 2)
+				|| (this.playerSprite.currentFrame === 4);
+			if (this.playerSprite.playing && isResetFrame) {
+				console.log(this.playerSprite.currentFrame);
+				this.playerSprite.stop();
+			}
 		}
 	}
 

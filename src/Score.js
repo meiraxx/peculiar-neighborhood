@@ -38,7 +38,6 @@ export default class Score {
     initObject() {
         this.app.stage.addChild(this.totalContainer);
         this.app.stage.addChild(this.changeContainer);
-		console.log("score initialized");
     }
 
     fadeInScoreChangeText(value, fadeInfactor, speedFactor) {
@@ -70,7 +69,11 @@ export default class Score {
     }
 
     modifyScoreChangeText(value) {
-        if (value > 0) {
+        if (value === 0) {
+            this.scoreChangeText.text = "rep +" + value;
+            this.scoreChangeText.style.fill = ["#ffffff"];
+        }
+        else if (value > 0) {
             this.scoreChangeText.text = "rep +" + value;
             this.scoreChangeText.style.fill = ["#00ff00"];
         } else {

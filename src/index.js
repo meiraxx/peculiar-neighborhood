@@ -69,6 +69,20 @@ var m3 = new Monster(app, false);
 var monsters = [m0, m1, m2, m3];
 
 var tree0 = new Tree(app);
+var tree1 = new Tree(app);
+var tree2 = new Tree(app);
+var tree3 = new Tree(app);
+var tree4 = new Tree(app);
+var tree5 = new Tree(app);
+var tree6 = new Tree(app);
+var tree7 = new Tree(app);
+var tree8 = new Tree(app);
+var tree9 = new Tree(app);
+var tree10 = new Tree(app);
+var tree11 = new Tree(app);
+var tree12 = new Tree(app);
+var tree13 = new Tree(app);
+
 var whiteHouse = new House(app);
 var yellowHouse = new House(app);
 var redHouse = new House(app);
@@ -77,7 +91,8 @@ var greenHouse = new House(app);
 var blueHouse = new House(app);
 var bush0 = new Bush(app);
 
-var blockers = [tree0, whiteHouse, yellowHouse, redHouse, purpleHouse, greenHouse, blueHouse];
+var blockers = [whiteHouse, yellowHouse, redHouse, purpleHouse, greenHouse, blueHouse,
+				tree0, tree1, tree2, tree3, tree4, tree5, tree6, tree7];
 var hiders = [bush0]
 
 var fog = new Fog(app);
@@ -105,16 +120,33 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	zSorter.register(player.playerSprite);
 
 	// setup blockers
-	tree0.prepareObject(100, 100, 0);
+	// left-side trees
+	tree0.prepareObject(128, 100, 0);
+	tree1.prepareObject(30, 770, 1);
+	tree2.prepareObject(490, 898, 2);
+	tree3.prepareObject(16, 1214, 3);
+	// middle trees
+	tree4.prepareObject(840, 214, 4);
+	tree5.prepareObject(840, 570, 5);
+	tree6.prepareObject(1280, 570, 6);
+	tree7.prepareObject(730, 1230, 7);
+	// right-side trees
+	tree8.prepareObject(1525, 80, 8);
+	tree9.prepareObject(1590, 315, 9);
+	tree10.prepareObject(1930, 385, 10);
+	tree11.prepareObject(1495, 720, 11);
+	tree12.prepareObject(1925, 790, 12);
+	tree13.prepareObject(1510, 1180, 13);
+
 	// left-side houses
-	redHouse.prepareObject(100, mapHeight - 600, "red");
-	blueHouse.prepareObject(150, 200, "blue");
+	redHouse.prepareObject(70, 930, "red");
+	blueHouse.prepareObject(171, 247, "blue");
 	// middle houses
-	whiteHouse.prepareObject(950, 325, "white");
-	greenHouse.prepareObject(800, mapHeight - 450, "green");
+	whiteHouse.prepareObject(940, 310, "white");
+	greenHouse.prepareObject(845, 1110, "green");
 	// right-side houses
-	yellowHouse.prepareObject(mapWidth - 450, 100, "yellow");
-	purpleHouse.prepareObject(mapWidth - 370, mapHeight - 650, "purple");
+	yellowHouse.prepareObject(1650, 75, "yellow");
+	purpleHouse.prepareObject(1635, 950, "purple");
 	
 	// setup hiders
 	bush0.prepareObject(10, 400, 0);

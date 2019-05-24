@@ -23,6 +23,5 @@ export default class Crosshair {
 
     initObject() {
         this.app.stage.addChild(this.sprite);
-		console.log("crosshair initialized");
     }
 }

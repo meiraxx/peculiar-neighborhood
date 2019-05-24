@@ -51,7 +51,6 @@ export default class CardsInfo {
 
 	initObject() {
 		this.app.stage.addChild(this.container);
-		console.log("cards info initialized");
 	}
 
 	toggle(cardInfoName) {

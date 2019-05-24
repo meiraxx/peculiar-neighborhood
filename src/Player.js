@@ -246,8 +246,8 @@ export default class Player {
 		this.playerSprite.animationSpeed = 0.20;
 		this.playerSprite.loop = true;
 
-		this.playerSprite.scale.x = 0.20;
-		this.playerSprite.scale.y = 0.20;
+		this.playerSprite.scale.x = 0.15;
+		this.playerSprite.scale.y = 0.15;
 		this.playerSprite.x = Math.round(x_pos - (this.playerSprite.width/2));
 		this.playerSprite.y = y_pos;
 		this.playerSprite.vx = 0;
@@ -255,13 +255,14 @@ export default class Player {
 		this.playerSprite.yForZOrdering = this.playerSprite.y + this.playerSprite.height;
  		this.playerSprite.name = "player";
  		this.playerSprite.velocity = 3;
-
+ 		this.collisionProperties = this.getCorrectedBoundsAndVelocity();
+ 		this.playerSprite.contextClass = this;
  		this.isGrabbing = false;
  		this.grabbedMonster = undefined;
  		this.interactedMonstersList = [];
 
 		this.viewport.moveTo(x_pos + this.viewport._width/4, y_pos + this.viewport._height/2 + this.playerSprite.height/2);
-		this.viewport.zoom(700);
+		this.viewport.zoom(600);
 
 		// SETUP player UI
 		this.ui.prepareObject(x_pos, y_pos, this.viewport, this.playerSprite);
@@ -320,7 +321,6 @@ export default class Player {
 				this.playerSprite.vx = -this.playerSprite.velocity;
 				this.playerSprite.vy = 0;
 				this.updatePlayerSprite();
-				this.ui.constrainCrosshair(this.ui.command);
 			}
 		};
 		this.leftKey.release = () => {
@@ -335,7 +335,6 @@ export default class Player {
 				this.playerSprite.vx = this.playerSprite.velocity;
 				this.playerSprite.vy = 0;
 				this.updatePlayerSprite();
-				this.ui.constrainCrosshair(this.ui.command);
 			}
 		};
 		this.rightKey.release = () => {
@@ -350,7 +349,6 @@ export default class Player {
 				this.playerSprite.vx = 0;
 				this.playerSprite.vy = this.playerSprite.velocity;
 				this.updatePlayerSprite();
-				this.ui.constrainCrosshair(this.ui.command);
 			}
 		};
 		this.downKey.release = () => {
@@ -365,7 +363,6 @@ export default class Player {
 				this.playerSprite.vx = 0;
 				this.playerSprite.vy = -this.playerSprite.velocity;
 				this.updatePlayerSprite();
-				this.ui.constrainCrosshair(this.ui.command);
 			}
 		};
 		this.upKey.release = () => {
@@ -734,8 +731,7 @@ export default class Player {
 		}
 		else {
 			// character isn't walking: do nothing
-			let isResetFrame = (this.playerSprite.currentFrame === 0) || (this.playerSprite.currentFrame === 2)
-				|| (this.playerSprite.currentFrame === 4);
+			let isResetFrame = (this.playerSprite.currentFrame === 0) || (this.playerSprite.currentFrame === 2);
 			if (this.playerSprite.playing && isResetFrame) {
 				this.playerSprite.stop();
 			}
@@ -748,6 +744,7 @@ export default class Player {
 
 	playerLoop(delta) {
 		if (!this.ui.isPaused()) {
+			this.collisionProperties = this.getCorrectedBoundsAndVelocity();
 			this.handleAllDetainerCollisions();
 			this.handleContainerCollisionsAndMove();
 			this.ui.updateCrosshairOnScreen(this.playerSprite);
@@ -769,7 +766,8 @@ export default class Player {
 		if (monsters !== undefined && monsters.length !== 0) {
 			for (var i = 0; i < monsters.length; i++) {
 			    if (!monsters[i].captured && !monsters[i].dead &&
-			    	detainSpriteOutsideDetainer(this.playerSprite, monsters[i], "stop") !== "none") {
+			    	detainSpriteOutsideDetainer(this.collisionProperties, monsters[i], "stop") !== "none") {
+					this.resetPlayerVelocity();
 					return;
 				}
 			}
@@ -779,7 +777,8 @@ export default class Player {
 		if (staticBlockers !== undefined && staticBlockers.length !== 0) {
 			for (var i = 0; i < staticBlockers.length; i++) {
 				let staticBlockersBound = staticBlockers[i].contextClass.getCorrectedBounds(this.playerSprite);
-			    if (detainSpriteOutsideDetainer(this.playerSprite, staticBlockersBound, "stop") !== "none"){
+			    if (detainSpriteOutsideDetainer(this.collisionProperties, staticBlockersBound, "stop") !== "none"){
+			    	this.resetPlayerVelocity();
 			    	return;
 			    }
 			}
@@ -788,9 +787,24 @@ export default class Player {
 
 	handleContainerCollisionsAndMove() {
 		// map width and map height
-		let playerHitsMapBound = containSpriteInsideContainer(this.playerSprite, 
-				{x: 0, y: 0, width: 2048, height: 1536}, "stop");
+		let mapBounds = {x: 0, y: 0, width: 2048, height: 1536};
+		if (containSpriteInsideContainer(this.collisionProperties, mapBounds, "stop") != "none") {
+			this.resetPlayerVelocity();
+		}
 
 		this.movePlayer();
+	}
+
+	getCorrectedBoundsAndVelocity() {
+		let correction = 25;
+		let canWalkHeight = (7/10)*this.playerSprite.height;
+		return {x: this.playerSprite.x+correction, y: this.playerSprite.y + canWalkHeight, 
+			width: this.playerSprite.width-correction*1.5, height: this.playerSprite.height - canWalkHeight,
+			vx: this.playerSprite.vx, vy: this.playerSprite.vy};
+	}
+
+	resetPlayerVelocity() {
+		this.playerSprite.vx = this.collisionProperties.vx;
+		this.playerSprite.vy = this.collisionProperties.vy;
 	}
 }

@@ -74,7 +74,6 @@ export default class PauseScreen {
 	initObject() {
 		this.container.visible = false;
 		this.app.stage.addChild(this.container);
-		console.log("pause screen initialized");
 	}
 
 	toggle(ui) {

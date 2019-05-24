@@ -69,7 +69,7 @@ export default class WaveOrganizer {
 		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "fadeOutWaveText", 
 			[waveIndex, fadeOutfactor, speedFactor]), "oneTime", 5);
 		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "startWave", [waveIndex]), 
-			"oneTime", 2);
+			"oneTime", 8);
 
 		// wave 1
 		waveIndex = 1;
@@ -78,7 +78,7 @@ export default class WaveOrganizer {
 		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "fadeOutWaveText", 
 			[waveIndex, fadeOutfactor, speedFactor]), "oneTime", 125);
 		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "startWave", [waveIndex]), 
-			"oneTime", 129);
+			"oneTime", 128);
 
 		// wave 2
 		waveIndex = 2;
@@ -87,7 +87,7 @@ export default class WaveOrganizer {
 		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "fadeOutWaveText", 
 			[waveIndex, fadeOutfactor, speedFactor]), "oneTime", 245);
 		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "startWave", [waveIndex]), 
-			"oneTime", 249);
+			"oneTime", 248);
 	}
 
 }

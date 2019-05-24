@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 import UserInterface from './UserInterface';
-import { getRandomArbitraryInt, populatedArray } from "./lib/UtilMethods";
+import { getRandomArbitraryInt, populatedArray, getRandomArbitraryFloat } from "./lib/UtilMethods";
 import { textStyle, containSpriteInsideContainer, setTexturesOnlyIfNeeded, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision, applyFilter } from "./lib/PixiUtilMethods";
 import HealthBar from "./HealthBar";
 
@@ -155,7 +155,6 @@ export default class Monster {
 		this.healthBar.initObject();
 		this.app.stage.addChild(this.monsterSprite);
 		this.app.stage.addChild(this.monsterSprite.interactionContainer);
-		console.log("monster character initialized");
 	}
 
 	initLoop(player) {
@@ -237,7 +236,7 @@ export default class Monster {
 		if(this.timeSinceNewDir > this.newDirTimeStep) {
 			this.timeSinceNewDir = 0.0;
 
-			let randomNumber = Math.random();
+			let randomNumber = getRandomArbitraryFloat(0, 1);
 			let monsterTexture;
 			if (randomNumber >= 0 && randomNumber < 0.25) {
 				this.monsterSprite.vx = this.speed;
@@ -317,7 +316,7 @@ export default class Monster {
 			child.name.indexOf("blocker") !== -1);
 
 		// player/monster collision
-		if(detainSpriteOutsideDetainer(this.monsterSprite, player.playerSprite, "stop") !== "none") {
+		if(detainSpriteOutsideDetainer(this.monsterSprite, player.getCorrectedBoundsAndVelocity(), "stop") !== "none") {
 			return;
 		}
 
@@ -384,7 +383,8 @@ export default class Monster {
 			let doubleHealthValue = (+this.healthBar.container.valueText.text - 1)*2;
 			let maxHealthValue = this.healthBar.container.maxHealth;
 			let escapeProbability = doubleHealthValue/maxHealthValue;
-			let randomNumber = Math.random();
+			let randomNumber = getRandomArbitraryFloat(0, 1);
+			console.log(randomNumber + ">=" + escapeProbability + "?");
 			let monsterCaught = (randomNumber >= escapeProbability);
 			
 			if (monsterCaught) {
@@ -395,7 +395,6 @@ export default class Monster {
 				this.healthBar.container.visible = false;
 				this.monsterSprite.interactText.text = "press F to grab";
 				this.monsterSprite.interactText.visible = true;
-				console.log(this.monsterColor);
 				let timeFactor = +player.ui.clock.timeText.text;
 				let waveFactor = this.monsterSprite.waveIndex+1;
 				let scoreValue = this.isAngry?(2*timeFactor*waveFactor):(1*timeFactor*waveFactor);
@@ -421,7 +420,7 @@ export default class Monster {
 			// pistol: 50% chance 1 dmg, 50% chance 2 dmg, 0% change 9999 dmg
 			// be careful not to kill the monsters!
 			let superCriticalProb = 0.00;
-			let randomNumber = Math.random();
+			let randomNumber = getRandomArbitraryFloat(0, 1);
 			this.app.statistics.bulletHit();
 			if (randomNumber < superCriticalProb) {
 				this.healthBar.subtractHealth(9999);
@@ -463,7 +462,6 @@ export default class Monster {
 		player.ui.addScore(scoreValue);
 		this.healthBar.container.visible = false;
 		this.monsterSprite.interactText.text = " press F to\npay respects";
-		console.log(this.monsterColor);
 		this.monsterSprite.interactText.visible = true;
 		this.app.statistics.monsterKilled();
 	}

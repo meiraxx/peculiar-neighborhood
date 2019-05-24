@@ -48,7 +48,6 @@ export default class HealthBar {
 
     initObject() {
         this.app.stage.addChild(this.container);
-        console.log("healthBar initialized");
     }
 
     calculateHealthTextX() {

@@ -29,7 +29,6 @@ export default class Fog {
 	initObject() {
 		this.app.stage.addChild(this.fogSprite0);
 		this.app.stage.addChild(this.fogSprite1);
-		console.log("fog initialized");
 	}
 
 	initLoop(player) {

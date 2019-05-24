@@ -66,7 +66,6 @@ export default class Cards {
 
     initObject() {
         this.app.stage.addChild(this.container);
-        console.log("cards initialized");
     }
 
     resortCards(batZ, pistolZ, netgunZ, whistleZ) {

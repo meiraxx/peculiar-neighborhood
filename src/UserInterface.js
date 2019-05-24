@@ -53,22 +53,21 @@ export default class UserInterface {
 	prepareObject(x_pos, y_pos, viewport, playerSprite) {
 		this.currentItem = "none";
 		this.app.statistics.weaponUnequipped();
-		this.viewport = viewport;
 
 		// position relative to player
 		this.prepareHealthbar(x_pos, y_pos);
 		this.prepareCrosshair(x_pos + 50, y_pos + 50);
 		this.prepareMissiles(x_pos, y_pos);
 		this.prepareCardsInfo(x_pos, y_pos);
-		this.prepareClock(viewport.center.x + 238, viewport.center.y - 518, 600.0);
 		this.preparePistolCooldown(playerSprite.x, playerSprite.y);
 		this.prepareNetgunCooldown(playerSprite.x, playerSprite.y);
-		// relative to both player and viewport
-		this.prepareCards(viewport.center.x - 718, viewport.center.y - 108);
-		this.prepareScore(viewport.center.x - 243, viewport.center.y - 518, 
-			x_pos, y_pos);
-		this.preparePauseScreen(x_pos, viewport.center.y + playerSprite.height/2 - 338,
-			350, 410);
+		this.preparePauseScreen(x_pos, y_pos + 50, 350, 410);
+		this.prepareClock(playerSprite.x + 430, playerSprite.y - 185, 600.0);
+		this.prepareCards(playerSprite.x - 464, playerSprite.y + 184);
+
+		// relative to viewport
+		this.prepareScore(viewport.center.x - 253, viewport.center.y - 478, x_pos, y_pos);
+		
 	}
 
 	initObject() {
@@ -236,7 +235,7 @@ export default class UserInterface {
 
 			this.shootDirection.x = mousePosOnSphereAroundPlayer.x;
 			this.shootDirection.y = mousePosOnSphereAroundPlayer.y;
-			this.constrainCrosshair(playerMovementDirectionString);
+			//this.constrainCrosshair(playerMovementDirectionString);
 			let length = Math.sqrt(this.shootDirection.x * this.shootDirection.x + this.shootDirection.y * this.shootDirection.y);
 			if(length != 0) {
 				this.shootDirection.x /= length;

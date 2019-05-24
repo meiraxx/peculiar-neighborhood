@@ -12,5 +12,5 @@ NEW TODOS:
 - IN STANDBY: BACKGROUND MAP + ELEMENTS + <press F color>-<house-color> connection (limit score gain between fences);
 - CRITICAL PRIORITY: MONSTER SIGHT (sprite drawn already), MONSTER AWARENESS (excl. point), MONSTER FOLLOW, MONSTER ATTACKS (sprites drawn already - ranged and melee), DEAD PLAYER (sprite drawn already), GAME OVER;
 - WHISTLE ACTION: PET COMES AND GRABS MONSTER;
-- PLAYTEST LOGS: read playtesting plan, implement the formulas and write to a file;
+- PLAYTEST LOGS: player success/failure;
 - DISPLAY BULLETS AND NETS AVAILABLE.

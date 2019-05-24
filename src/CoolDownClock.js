@@ -27,7 +27,6 @@ export default class CoolDownClock {
 
     initObject() {
         this.app.stage.addChild(this.sprite);
-		console.log("cooldown initialized");
     }
 
     update(delta, playerPos) {

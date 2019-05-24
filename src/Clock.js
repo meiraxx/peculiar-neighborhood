@@ -79,7 +79,6 @@ export default class Clock {
 
     initObject() {
         this.app.stage.addChild(this.container);
-        console.log("clock initialized");
     }
   
     update(delta) {

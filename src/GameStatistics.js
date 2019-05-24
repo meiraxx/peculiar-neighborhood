@@ -5,7 +5,7 @@ export default class GameStatistics {
     	this.app = app;
         this.app.statistics = this;
     	this.batUsageTime = 0.0;
-    	this.gunUsageTime = 0.0;
+    	this.pistolUsageTime = 0.0;
         this.netgunUsageTime = 0.0;
         this.whistleUsageTime = 0.0;
         this.currentWeapon = -1;
@@ -32,7 +32,7 @@ export default class GameStatistics {
         switch(this.currentWeapon) {
             case 0: this.batUsageTime += delta* 0.01;
             break;
-            case 1: this.gunUsageTime += delta* 0.01;
+            case 1: this.pistolUsageTime += delta* 0.01;
             break;
             case 2: this.netgunUsageTime += delta* 0.01;
             break;
@@ -45,11 +45,11 @@ export default class GameStatistics {
 
     toString() {
 
-        var totalEquipmentTime = (this.batUsageTime + this.netgunUsageTime + this.gunUsageTime);
+        var totalEquipmentTime = (this.batUsageTime + this.netgunUsageTime + this.pistolUsageTime);
         totalEquipmentTime = totalEquipmentTime == 0.0 ? 1.0 : totalEquipmentTime;
-        var batAccuracy = (this.batHits / (this.baseballBatBeats == 0 ? 1 : this.baseballBatBeats));
-        var gunAccuracy = (this.gunHits / (this.gunShots == 0 ? 1 : this.gunShots));
-        var netgunAccuracy = (this.netgunHits / (this.netgunShots == 0 ? 1 : this.netgunShots));
+        var batAccuracy = (this.batHits / (this.baseballBatBeats == 0 ? 1 : this.baseballBatBeats))*100;
+        var pistolAccuracy = (this.gunHits / (this.gunShots == 0 ? 1 : this.gunShots))*100;
+        var netgunAccuracy = (this.netgunHits / (this.netgunShots == 0 ? 1 : this.netgunShots))*100;
 
         var ret = (this.levelSuccess ? "Success!" : "Fail!") + "\n" +
         (this.playerDead ? "(player died)\n" : "\n") + 
@@ -60,8 +60,8 @@ export default class GameStatistics {
         "   usage time: " + this.batUsageTime.toString() + " seconds, " + ((this.batUsageTime / totalEquipmentTime) * 100.0) .toString() + "%\n"+
         "   accuracy: " + batAccuracy.toString() + "%, used " + this.baseballBatBeats.toString() + " times" + "\n" +
         "pistol:\n"+
-        "   usage time: " + this.gunUsageTime.toString() + " seconds, " + ((this.gunUsageTime / totalEquipmentTime) * 100.0).toString() + "%\n"+
-        "   accuracy: " + gunAccuracy.toString() + "%, used " + this.gunShots.toString() + " times" + "\n" +
+        "   usage time: " + this.pistolUsageTime.toString() + " seconds, " + ((this.pistolUsageTime / totalEquipmentTime) * 100.0).toString() + "%\n"+
+        "   accuracy: " + pistolAccuracy.toString() + "%, used " + this.gunShots.toString() + " times" + "\n" +
         "netgun:\n"+
         "   usage time: " + this.netgunUsageTime.toString() + " seconds, " + ((this.netgunUsageTime / totalEquipmentTime) * 100.0).toString() + "%\n"+
         "   accuracy: " + netgunAccuracy.toString() + "%, used " + this.netgunShots.toString() + " times" + "\n" +

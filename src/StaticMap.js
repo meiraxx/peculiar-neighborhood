@@ -21,7 +21,6 @@ export default class StaticMap {
 
   initObject() {
   	this.app.stage.addChild(this.backgroundSprite);
-    console.log("background initialized");
   }
   
 }

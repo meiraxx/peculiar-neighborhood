@@ -22,7 +22,6 @@ export default class Bush {
 
 	initObject() {
 		this.app.stage.addChild(this.sprite);
-		console.log("bush initialized");
 	}
 
 }

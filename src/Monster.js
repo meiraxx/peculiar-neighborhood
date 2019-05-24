@@ -132,9 +132,11 @@ export default class Monster {
 		let randomInt = getRandomArbitraryInt(0, 4);
         // same as house colors: yellow, red, purple, green, blue
         let monsterColorsList = ["#fffdd5", "#ffb5b3", "#e5c2ff", "#d0ffde", "#b3dffd"];
+        let monsterColorNameList = ["yellow", "red", "purple", "green", "blue"];
         // corrected because I really can't distinguish some of the above...
         //let monsterColorsList = ["#f2f229", "#ff003f", "#e5c2ff", "#10c93b", "#5900ff"];
         this.monsterColor = monsterColorsList[randomInt];
+        this.monsterColorName = monsterColorNameList[randomInt];
 
 		this.monsterSprite.interactionContainer = new PIXI.Container();
         this.monsterSprite.interactionContainer.x = x_pos - this.monsterSprite.width;
@@ -307,6 +309,19 @@ export default class Monster {
 		this.monsterSprite.vy = oldMonsterSpriteVY;
 	}
 
+	checkMonsterInCorrectGarden() {
+		let gardens = this.app.stage.children.filter(child => 
+			child.name.indexOf(this.monsterColorName + "-garden") !== -1);
+		let uniqueGarden = gardens[0];
+
+	    if(checkDynamicIntoDynamicCollision(this.monsterSprite, uniqueGarden.gardenBounds)) {
+	    	console.log(uniqueGarden.name);
+	    	console.log(this.monsterColorName);
+			return true;
+		}
+		return false;
+	}
+
 	handleAllDetainerCollisions(player) {
 		let otherLiveMonsters = this.app.stage.children.filter(child =>
 			child.name !== this.monsterSprite.name && child.name.indexOf("monster") !== -1 &&
@@ -414,6 +429,7 @@ export default class Monster {
 			this.CaptureLoopInited = true;
 		}
 	}
+
 
 	getHarmed(delta, player, weapon) {
 		if (weapon === "pistol") {

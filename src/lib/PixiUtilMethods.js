@@ -50,6 +50,14 @@ function getRoundedRectangle(x_pos, y_pos, width, height, roundFactor, colorcode
 	return roundedRectangle;
 }
 
+function getRectangle(x_pos, y_pos, width, height, colorcode) {
+	let rectangle = new PIXI.Graphics();
+	rectangle.beginFill(colorcode);
+    rectangle.drawRect(x_pos, y_pos, width, height);
+    rectangle.endFill();
+	return rectangle;
+}
+
 function setGraphicsFillColor(graphicsObject, colorcode) {
 	graphicsObject.beginFill(colorcode);
     graphicsObject.endFill();
@@ -288,5 +296,6 @@ function modifyObjectAlpha(pixiObject, alphaFactor, operation) {
 	}
 }
 
-export {textStyle, setTextureOnlyIfNeeded, setTexturesOnlyIfNeeded, getRoundedRectangle, containSpriteInsideContainer, 
-	detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision, applyFilter, modifyObjectAlpha};
+export {textStyle, setTextureOnlyIfNeeded, setTexturesOnlyIfNeeded, getRoundedRectangle, getRectangle,
+	containSpriteInsideContainer, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision, applyFilter,
+	modifyObjectAlpha};

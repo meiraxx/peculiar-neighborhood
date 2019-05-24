@@ -6,6 +6,7 @@ import Viewport from "./lib/viewport";
 import Monster from "./Monster";
 import Tree from "./Tree";
 import House from "./House";
+import Car from "./Car";
 import ZSorter from "./ZSorter";
 import WaveOrganizer from "./WaveOrganizer";
 import TimedEventManager from "./TimedEventManager";
@@ -57,16 +58,11 @@ Bush.loadResources(app);
 Tree.loadResources(app);
 Monster.loadResources(app);
 House.loadResources(app);
+Car.loadResources(app);
 Fog.loadResources(app);
 // 2. CONSTRUCT MAIN OBJECTS
 var staticMap = new StaticMap(app);
 var player = new Player(app, viewport);
-
-var m0 = new Monster(app, true);
-var m1 = new Monster(app, true);
-var m2 = new Monster(app, false);
-var m3 = new Monster(app, false);
-var monsters = [m0, m1, m2, m3];
 
 var tree0 = new Tree(app);
 var tree1 = new Tree(app);
@@ -89,11 +85,28 @@ var redHouse = new House(app);
 var purpleHouse = new House(app);
 var greenHouse = new House(app);
 var blueHouse = new House(app);
-var bush0 = new Bush(app);
 
 var blockers = [whiteHouse, yellowHouse, redHouse, purpleHouse, greenHouse, blueHouse,
-				tree0, tree1, tree2, tree3, tree4, tree5, tree6, tree7];
-var hiders = [bush0]
+				tree0, tree1, tree2, tree3, tree4, tree5, tree6, tree7, tree8, tree9,
+				tree10, tree11, tree12, tree13];
+
+var bush0 = new Bush(app);
+var bush1 = new Bush(app);
+var bush2 = new Bush(app);
+var bush3 = new Bush(app);
+var bush4 = new Bush(app);
+var bush5 = new Bush(app);
+var bush6 = new Bush(app);
+var bush7 = new Bush(app);
+
+var car0 = new Car(app);
+var car1 = new Car(app);
+var car2 = new Car(app);
+var car3 = new Car(app);
+var car4 = new Car(app);
+
+var bushes = [bush0, bush1, bush2, bush3, bush4, bush5, bush6, bush7];
+var cars = [car0, car1, car2, car3, car4];
 
 var fog = new Fog(app);
 var zSorter = new ZSorter(app);
@@ -139,28 +152,45 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	tree13.prepareObject(1510, 1180, 13);
 
 	// left-side houses
-	redHouse.prepareObject(70, 930, "red");
-	blueHouse.prepareObject(171, 247, "blue");
+	blueHouse.prepareObject(70, 930, "blue");
+	redHouse.prepareObject(171, 247, "red");
 	// middle houses
 	whiteHouse.prepareObject(940, 310, "white");
 	greenHouse.prepareObject(845, 1110, "green");
 	// right-side houses
 	yellowHouse.prepareObject(1650, 75, "yellow");
 	purpleHouse.prepareObject(1635, 950, "purple");
-	
-	// setup hiders
-	bush0.prepareObject(10, 400, 0);
 
+	// bushes
+	bush0.prepareObject(121, 473, 0);
+	bush1.prepareObject(400, 1228, 1);
+	bush2.prepareObject(1287, 246, 2);
+	bush3.prepareObject(1215, 640, 3);
+	bush4.prepareObject(740, 1050, 4);
+	bush5.prepareObject(1148, 1368, 5);
+	bush6.prepareObject(1683, 383, 6);
+	bush7.prepareObject(1855, 864, 7);
 
+	// cars
+	car0.prepareObject(292, 50, 0, 3);
+	car1.prepareObject(8, 1422, 1, 1);
+	car2.prepareObject(1085, 975, 2, 2);
+	car3.prepareObject(1518, 438, 3, 3);
+	car4.prepareObject(1863, 1223, 4, 1);
 	// init all and register z ordering
 	blockers.forEach(function(b) {
 		b.initObject();
 		zSorter.register(b.sprite);
 	});
 
-	hiders.forEach(function(h) {
-		h.initObject();
-		zSorter.register(h.sprite);
+	bushes.forEach(function(b) {
+		b.initObject();
+		zSorter.register(b.sprite);
+	});
+
+	cars.forEach(function(c) {
+		c.initObject();
+		zSorter.register(c.sprite);
 	});
 
 	//fog is topmost except ui

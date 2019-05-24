@@ -512,8 +512,6 @@ export default class Player {
 
 		if (monsters !== undefined && monsters.length !== 0 && !this.isGrabbing) {
 			for (var i = 0; i < monsters.length; i++) {
-				//let monstersExtendedBoundingBox = {x: monsters[i].x, y: monsters[i].y,
-				//	width: monsters[i].width*4, height: monsters[i].height*4}
 				if (monsters[i].dead && !this.isGrabbing && checkDynamicIntoDynamicCollision(this.playerSprite, monsters[i])) {
 					for (var j = 0; j < this.interactedMonstersList.length; j++) {
 						if (this.interactedMonstersList[j]===monsters[i]) {
@@ -531,14 +529,11 @@ export default class Player {
 					return;
 				}
 			    else if (monsters[i].captured && !this.isGrabbing && checkDynamicIntoDynamicCollision(this.playerSprite, monsters[i])) {
-			    	for (var j = 0; j < this.interactedMonstersList.length; j++) {
-						if (this.interactedMonstersList[j]===monsters[i]) {
-							return;
-						}
-					}
 			    	this.isGrabbing = true;
 					monsters[i].x = this.playerSprite.x;
 					monsters[i].y = this.playerSprite.y;
+					monsters[i].interactionContainer.x = monsters[i].x - monsters[i].width/2;
+					monsters[i].interactionContainer.y = monsters[i].y - 18;
 					// hide grab text
 					monsters[i].interactText.visible = false;
 					this.grabbedMonster = monsters[i];
@@ -547,21 +542,30 @@ export default class Player {
 			}
 		}
 		else {
+			let interacted = false;
 			// get drop-monster points
 			for (var i = 0; i < this.interactedMonstersList.length; i++) {
 				if (this.interactedMonstersList[i]===this.grabbedMonster) {
-					return;
+					interacted = true;
+					break;
 				}
 			}
-			console.log("valid drop");
 			this.isGrabbing = false;
 
 			let timeFactor = +this.ui.clock.timeText.text;
 			let waveFactor = this.grabbedMonster.waveIndex+1;
 			let scoreValue = this.grabbedMonster.isAngry?(2*timeFactor*waveFactor):(1*timeFactor*waveFactor);
-			this.ui.addScore(scoreValue);
-			this.app.statistics.monsterCured();
-			this.interactedMonstersList.push(this.grabbedMonster);
+			if (!interacted) {
+				if (this.grabbedMonster.contextClass.checkMonsterInCorrectGarden()) {
+					console.log("valid drop");
+					this.ui.addScore(scoreValue);
+					this.app.statistics.monsterCured();
+					this.interactedMonstersList.push(this.grabbedMonster);
+				} else {
+					console.log("invalid drop");
+					this.grabbedMonster.interactText.visible = true;
+				}
+			}
 			this.grabbedMonster = undefined;
 		}
 	}
@@ -699,6 +703,7 @@ export default class Player {
 			// move grabbed monster
 			if (this.isGrabbing) {
 				this.grabbedMonster.x += this.playerSprite.vx;
+				this.grabbedMonster.interactionContainer.x += this.playerSprite.vx;
 			}
 			// move other player dependant objects
 			this.waveContainer.x += this.playerSprite.vx;
@@ -725,6 +730,7 @@ export default class Player {
 			// move grabbed monster
 			if (this.isGrabbing) {
 				this.grabbedMonster.y += this.playerSprite.vy;
+				this.grabbedMonster.interactionContainer.y += this.playerSprite.vy;
 			}
 			// move other player dependant objects
 			this.waveContainer.y += this.playerSprite.vy;

@@ -1,4 +1,6 @@
 import * as PIXI from 'pixi.js'
+import { textStyle, getRoundedRectangle, getIntLength } from "./lib/PixiUtilMethods";
+
 export default class Cards {
 	static loadResources(app) {
         app.loader.add("assets/cards/cardBat.png"); //1
@@ -36,13 +38,25 @@ export default class Cards {
         cardPistolSprite.scale.y = 0.10;
         cardPistolSprite.x = cardBatSprite.x + 30;
         cardPistolSprite.name = "cardPistol";
+        let pistolAmmoText = new PIXI.Text("6/"+String.fromCharCode(8734), textStyle("Comic Sans MS", 120, 
+            "center", ["#000000"], "#000000", 2));
+        cardPistolSprite.addChild(pistolAmmoText);
+        this.pistolAmmoText = pistolAmmoText;
+        pistolAmmoText.x += 400;
+        pistolAmmoText.y += 50;
 
         let cardNetgunSprite = new PIXI.Sprite(cardNetgunTexture);
         cardNetgunSprite.scale.x = 0.10;
         cardNetgunSprite.scale.y = 0.10;
         cardNetgunSprite.x = cardPistolSprite.x + 30;
         cardNetgunSprite.name = "cardNetgun";
-
+        let netgunAmmoText = new PIXI.Text("2/"+String.fromCharCode(8734), textStyle("Comic Sans MS", 120, 
+            "center", ["#000000"], "#000000", 2));
+        cardNetgunSprite.addChild(netgunAmmoText);
+        this.netgunAmmoText = netgunAmmoText;
+        netgunAmmoText.x += 400;
+        netgunAmmoText.y += 50;
+        
         let cardWhistleSprite = new PIXI.Sprite(cardWhistleTexture);
         cardWhistleSprite.scale.x = 0.10;
         cardWhistleSprite.scale.y = 0.10;

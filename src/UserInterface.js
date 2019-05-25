@@ -316,6 +316,7 @@ export default class UserInterface {
 					this.netgunCooldown.sprite.visible = true;
 					this.netgunCooldown.speed = 4.0;
 				}
+				this.cards.netgunAmmoText.text = (netLimit - this.currentNet).toString() + "/" + String.fromCharCode(8734);
 			} else if (this.currentItem === "pistol") {
 				if(this.pistolCooldown.sprite.angle > 360) {
 					this.currentBullet = 0;
@@ -339,6 +340,7 @@ export default class UserInterface {
 					this.pistolCooldown.sprite.visible = true;
 					this.pistolCooldown.speed = 4.0;
 				}
+				this.cards.pistolAmmoText.text = (bulletLimit - this.currentBullet).toString() + "/" + String.fromCharCode(8734);
 			} else if (this.currentItem === "bat") {
 				this.batColliders[this.currentBatCollider].go(
 					playerSprite.x + playerSprite.width/2 - this.shootDirection.y * this.batColliders[0].sprite.width / 2,

@@ -7,6 +7,7 @@ import Monster from "./Monster";
 import Tree from "./Tree";
 import House from "./House";
 import Car from "./Car";
+import Fence from "./Fence";
 import ZSorter from "./ZSorter";
 import WaveOrganizer from "./WaveOrganizer";
 import TimedEventManager from "./TimedEventManager";
@@ -59,6 +60,7 @@ Tree.loadResources(app);
 Monster.loadResources(app);
 House.loadResources(app);
 Car.loadResources(app);
+Fence.loadResources(app);
 Fog.loadResources(app);
 // 2. CONSTRUCT MAIN OBJECTS
 var staticMap = new StaticMap(app);
@@ -105,8 +107,42 @@ var car2 = new Car(app);
 var car3 = new Car(app);
 var car4 = new Car(app);
 
+var hRedFence0 = new Fence(app);
+var hRedFence1 = new Fence(app);
+var hRedFence2 = new Fence(app);
+var hRedFence3 = new Fence(app);
+var vRedFence0 = new Fence(app);
+var vRedFence1 = new Fence(app);
+var vRedFence2 = new Fence(app);
+
+var hBlueFence0 = new Fence(app);
+var hBlueFence1 = new Fence(app);
+var hBlueFence2 = new Fence(app);
+var hBlueFence3 = new Fence(app);
+var hBlueFence4 = new Fence(app);
+var hBlueFence5 = new Fence(app);
+var hBlueFence6 = new Fence(app);
+var hBlueFence7 = new Fence(app);
+var vBlueFence0 = new Fence(app);
+var vBlueFence1 = new Fence(app);
+var vBlueFence2 = new Fence(app);
+var vBlueFence3 = new Fence(app);
+
+var hYellowFence0 = new Fence(app);
+var hYellowFence1 = new Fence(app);
+var hYellowFence2 = new Fence(app);
+var hYellowFence3 = new Fence(app);
+var vYellowFence0 = new Fence(app);
+var vYellowFence1 = new Fence(app);
+var vYellowFence2 = new Fence(app);
+var vYellowFence3 = new Fence(app);
+
 var bushes = [bush0, bush1, bush2, bush3, bush4, bush5, bush6, bush7];
 var cars = [car0, car1, car2, car3, car4];
+var fences = [hRedFence0, hRedFence1, hRedFence2, hRedFence3, vRedFence0, vRedFence1, vRedFence2,
+			hBlueFence0, hBlueFence1, hBlueFence2, hBlueFence3, hBlueFence4, hBlueFence5, hBlueFence6, hBlueFence7,
+			vBlueFence0, vBlueFence1, vBlueFence2, vBlueFence3, vYellowFence0, vYellowFence1, vYellowFence2, vYellowFence3,
+			hYellowFence0, hYellowFence1, hYellowFence2, hYellowFence3];
 
 var fog = new Fog(app);
 var zSorter = new ZSorter(app);
@@ -177,6 +213,41 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	car2.prepareObject(1085, 975, 2, 2);
 	car3.prepareObject(1518, 438, 3, 3);
 	car4.prepareObject(1863, 1223, 4, 1);
+
+	// fences
+	// red
+	hRedFence0.prepareObject(40, 554, 0, "red", "horizontal");
+	hRedFence1.prepareObject(168-11, 554, 1, "red", "horizontal");
+	hRedFence2.prepareObject(296-22, 554, 2, "red", "horizontal");
+	hRedFence3.prepareObject(617-128, 554, 3, "red", "horizontal");
+	vRedFence0.prepareObject(617-11, 554-144+54, 0, "red", "vertical");
+	vRedFence1.prepareObject(617-11, 554-144*2+54+84, 1, "red", "vertical");
+	vRedFence2.prepareObject(617-11, 266-144+54+168, 2, "red", "vertical");
+
+	// blue
+	hBlueFence0.prepareObject(0, 752, 0, "blue", "horizontal");
+	hBlueFence1.prepareObject(128-11, 752, 1, "blue", "horizontal");
+	hBlueFence2.prepareObject(256-22, 752, 2, "blue", "horizontal");
+	hBlueFence3.prepareObject(512-23, 752, 3, "blue", "horizontal");
+	hBlueFence4.prepareObject(0, 1334, 4, "blue", "horizontal");
+	hBlueFence5.prepareObject(128-11, 1334, 5, "blue", "horizontal");
+	hBlueFence6.prepareObject(256-22, 1334, 6, "blue", "horizontal");
+	hBlueFence7.prepareObject(512-23, 1334, 7, "blue", "horizontal");
+	vBlueFence0.prepareObject(617-11, 752, 0, "blue", "vertical");
+	vBlueFence1.prepareObject(617-11, 752+144-84, 1, "blue", "vertical");
+	vBlueFence2.prepareObject(617-11, 1334-144*2+84+54*2+5.5, 2, "blue", "vertical");
+	vBlueFence3.prepareObject(617-11, 1334-144*3+84+54*3+5.5, 3, "blue", "vertical");
+
+	// yellow
+	vYellowFence0.prepareObject(1469, 0, 0, "yellow", "vertical");
+	vYellowFence1.prepareObject(1469, 144-84, 1, "yellow", "vertical");
+	vYellowFence2.prepareObject(1469, 144*2+54+84, 2, "yellow", "vertical");
+	vYellowFence3.prepareObject(1469, 0, 3, "yellow", "vertical");
+	hYellowFence0.prepareObject(1469, 571-54, 0, "yellow", "horizontal");
+	hYellowFence1.prepareObject(1469+128-11, 571-54, 1, "yellow", "horizontal");
+	hYellowFence2.prepareObject(1469+128*2-11*2, 571-54, 2, "yellow", "horizontal");
+	hYellowFence3.prepareObject(1469+128*4-11*4-16.5, 571-54, 3, "yellow", "horizontal");
+
 	// init all and register z ordering
 	blockers.forEach(function(b) {
 		b.initObject();
@@ -191,6 +262,11 @@ app.loader.on("progress", (l,r) => loadProgressHandler(l,r)).load( () => {
 	cars.forEach(function(c) {
 		c.initObject();
 		zSorter.register(c.sprite);
+	});
+
+	fences.forEach(function(f) {
+		f.initObject();
+		zSorter.register(f.sprite);
 	});
 
 	//fog is topmost except ui

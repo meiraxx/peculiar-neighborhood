@@ -18,13 +18,20 @@ export default class Car {
 		this.sprite.scale.y = 1;
 		this.sprite.x = x_pos;
 		this.sprite.y = y_pos;
-		this.sprite.name = "car" + i;
+		this.sprite.name = "blocker-car" + i;
+		this.sprite.contextClass = this;
 		this.sprite.yForZOrdering = this.sprite.y + this.sprite.height;
-
+		this.walkableHeight = 46;
+		this.walkableWidth = 0;
 	}
 
 	initObject() {
 		this.app.stage.addChild(this.sprite);
+	}
+
+	getCorrectedBounds(playerSprite) {
+		return {x: this.sprite.x + this.walkableWidth, y: this.sprite.y + this.walkableHeight, 
+			width: this.sprite.width, height: this.sprite.height - this.walkableHeight};
 	}
 
 }

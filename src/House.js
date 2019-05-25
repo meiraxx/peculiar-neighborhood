@@ -27,7 +27,7 @@ export default class House {
 		this.sprite.scale.y = 1;
 		this.sprite.x = x_pos;
 		this.sprite.y = y_pos;
-		this.sprite.name = "blocker-house" + color;
+		this.sprite.name = "blocker-house-" + color;
 		this.sprite.yForZOrdering = this.sprite.y + this.sprite.height;
 		this.sprite.contextClass = this;
 		this.walkableHeight = 56;

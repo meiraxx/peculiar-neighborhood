@@ -9,8 +9,7 @@ OLD TODOS:
 - Monster "tag teams" other monster if monster has been captured and monster breaks free again
 
 NEW TODOS:
-- Place colored fences around the gardens - Philipp;
-- DISPLAY BULLETS AND NETS AVAILABLE - Philipp;
-- CRITICAL PRIORITY: MONSTER SIGHT (sprite drawn already), MONSTER AWARENESS (excl. point), MONSTER FOLLOW, MONSTER ATTACKS (sprites drawn already - ranged and melee), DEAD PLAYER (sprite drawn already), GAME OVER - Philipp/Joao;
 - WHISTLE ACTION: PET COMES AND GRABS MONSTER - Joao;
+- CRITICAL PRIORITY: MONSTER SIGHT (sprite drawn already), MONSTER AWARENESS (excl. point), MONSTER FOLLOW, MONSTER ATTACKS (sprites drawn already - ranged and melee), DEAD PLAYER (sprite drawn already), GAME OVER - Philipp/Joao;
+- DISPLAY BULLETS AND NETS AVAILABLE - Philipp;
 - PLAYTEST LOGS: player success/failure - Philipp.

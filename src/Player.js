@@ -772,7 +772,7 @@ export default class Player {
 		if (monsters !== undefined && monsters.length !== 0) {
 			for (var i = 0; i < monsters.length; i++) {
 			    if (!monsters[i].captured && !monsters[i].dead &&
-			    	detainSpriteOutsideDetainer(this.collisionProperties, monsters[i], "stop") !== "none") {
+			    	detainSpriteOutsideDetainer(this.collisionProperties, monsters[i].contextClass.getCorrectedBoundsAndVelocity(), "stop") !== "none") {
 					this.resetPlayerVelocity();
 					return;
 				}
@@ -794,7 +794,7 @@ export default class Player {
 	handleContainerCollisionsAndMove() {
 		// map width and map height
 		let mapBounds = {x: 0, y: 0, width: 2048, height: 1536};
-		if (containSpriteInsideContainer(this.collisionProperties, mapBounds, "stop") != "none") {
+		if (containSpriteInsideContainer(this.collisionProperties, mapBounds, "stop") !== "none") {
 			this.resetPlayerVelocity();
 		}
 

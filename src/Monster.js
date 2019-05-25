@@ -96,6 +96,7 @@ export default class Monster {
 		this.monsterSprite.loop = false;
 		this.monsterSprite.waveIndex = waveIndex;
 		this.monsterSprite.contextClass = this;
+		this.collisionProperties = this.getCorrectedBoundsAndVelocity();
 
 		if (this.isAngry) {
 			this.monsterSprite.scale.x = 0.15;
@@ -169,6 +170,7 @@ export default class Monster {
 		if (this.isNotIgnorable()) {
 			if (!player.ui.isPaused()) {
 				this.recalculateDirection(delta);
+				this.collisionProperties = this.getCorrectedBoundsAndVelocity();
 			}
 			this.handleMissileCollisions(delta, player);
 			if (!player.ui.isPaused()) {
@@ -255,7 +257,6 @@ export default class Monster {
 			else if (randomNumber >= 0.75 && randomNumber < 1) {
 				this.monsterSprite.vx = 0;
 				this.monsterSprite.vy = -this.speed;
-				
 			}
 		}
 	}
@@ -331,14 +332,16 @@ export default class Monster {
 			child.name.indexOf("blocker") !== -1);
 
 		// player/monster collision
-		if(detainSpriteOutsideDetainer(this.monsterSprite, player.getCorrectedBoundsAndVelocity(), "stop") !== "none") {
+		if(detainSpriteOutsideDetainer(this.collisionProperties, player.getCorrectedBoundsAndVelocity(), "stop") !== "none") {
+			this.resetMonsterVelocity();
 			return;
 		}
 
 		// monster/monster collision
 		if (populatedArray(otherLiveMonsters)) {
 			for (var i = 0; i < otherLiveMonsters.length; i++) {
-			    if(detainSpriteOutsideDetainer(this.monsterSprite, otherLiveMonsters[i], "stop") !== "none") {
+			    if(detainSpriteOutsideDetainer(this.collisionProperties, otherLiveMonsters[i], "stop") !== "none") {
+			    	this.resetMonsterVelocity();
 			    	return;
 				}
 			}
@@ -347,7 +350,8 @@ export default class Monster {
 		// static elements collision
 		if (populatedArray(staticBlockers)) {
 			for (var i = 0; i < staticBlockers.length; i++) {
-			    if(detainSpriteOutsideDetainer(this.monsterSprite, staticBlockers[i], "revert") !== "none") {
+			    if(detainSpriteOutsideDetainer(this.collisionProperties, staticBlockers[i], "revert") !== "none") {
+					this.resetMonsterVelocity();
 					return;
 				}
 			}
@@ -361,6 +365,11 @@ export default class Monster {
 	stopMonster() {
 		this.monsterSprite.vx = 0;
 		this.monsterSprite.vy = 0;
+	}
+
+	resetMonsterVelocity() {
+		this.monsterSprite.vx = this.collisionProperties.vx;
+		this.monsterSprite.vy = this.collisionProperties.vy;
 	}
 
 	animatedCapture(delta, player) {
@@ -501,5 +510,13 @@ export default class Monster {
 
 	isDead() {
 		return this.monsterSprite.dead;
+	}
+
+	getCorrectedBoundsAndVelocity() {
+		let correction = 0;
+		let canWalkHeight = (5/10)*this.monsterSprite.height;
+		return {x: this.monsterSprite.x+correction, y: this.monsterSprite.y + canWalkHeight, 
+			width: this.monsterSprite.width-correction*1.5, height: this.monsterSprite.height - canWalkHeight,
+			vx: this.monsterSprite.vx, vy: this.monsterSprite.vy};
 	}
 }

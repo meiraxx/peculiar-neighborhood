@@ -41,6 +41,7 @@ export default class Wave {
 			m.prepareObject(positions2[counter], counter, i);
 			m.initObject();
 			zSorter.register(m.monsterSprite);
+			zSorter.register(m.sightField);
 			m.initLoop(player);
 			counter += 1;
 		});

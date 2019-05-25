@@ -42,8 +42,8 @@ export default class Cards {
             "center", ["#000000"], "#000000", 2));
         cardPistolSprite.addChild(pistolAmmoText);
         this.pistolAmmoText = pistolAmmoText;
-        pistolAmmoText.x += 400;
-        pistolAmmoText.y += 50;
+        pistolAmmoText.x = 400;
+        pistolAmmoText.y = 50;
 
         let cardNetgunSprite = new PIXI.Sprite(cardNetgunTexture);
         cardNetgunSprite.scale.x = 0.10;
@@ -54,8 +54,8 @@ export default class Cards {
             "center", ["#000000"], "#000000", 2));
         cardNetgunSprite.addChild(netgunAmmoText);
         this.netgunAmmoText = netgunAmmoText;
-        netgunAmmoText.x += 400;
-        netgunAmmoText.y += 50;
+        netgunAmmoText.x = 400;
+        netgunAmmoText.y = 50;
         
         let cardWhistleSprite = new PIXI.Sprite(cardWhistleTexture);
         cardWhistleSprite.scale.x = 0.10;

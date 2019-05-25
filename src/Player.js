@@ -756,8 +756,8 @@ export default class Player {
 			this.ui.updateCrosshairOnScreen(this.playerSprite);
 			this.ui.updateMissileColliders(delta);
 			this.ui.updateClock(delta);
-			this.ui.pistolCooldown.update(delta, this.playerSprite.position);
-			this.ui.netgunCooldown.update(delta, this.playerSprite.position);
+			this.ui.updatePistolCooldown(delta, this);
+			this.ui.updateNetgunCooldown(delta, this);
 			//update zordering pos
 			this.playerSprite.yForZOrdering = this.playerSprite.y + this.playerSprite.height;
 		}
@@ -801,12 +801,19 @@ export default class Player {
 		this.movePlayer();
 	}
 
-	getCorrectedBoundsAndVelocity() {
+	getCorrectedBoundsAndVelocity(only_x=false) {
 		let correction = 25;
 		let canWalkHeight = (7/10)*this.playerSprite.height;
-		return {x: this.playerSprite.x+correction, y: this.playerSprite.y + canWalkHeight, 
-			width: this.playerSprite.width-correction*1.5, height: this.playerSprite.height - canWalkHeight,
-			vx: this.playerSprite.vx, vy: this.playerSprite.vy};
+		if (!only_x) {
+			return {x: this.playerSprite.x+correction, y: this.playerSprite.y + canWalkHeight, 
+				width: this.playerSprite.width-correction*1.5, height: this.playerSprite.height - canWalkHeight,
+				vx: this.playerSprite.vx, vy: this.playerSprite.vy};
+		} else {
+			return {x: this.playerSprite.x+correction, y: this.playerSprite.y, 
+				width: this.playerSprite.width-correction*1.5, height: this.playerSprite.height,
+				vx: this.playerSprite.vx, vy: this.playerSprite.vy};
+		}
+		
 	}
 
 	resetPlayerVelocity() {

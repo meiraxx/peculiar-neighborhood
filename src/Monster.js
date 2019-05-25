@@ -57,11 +57,6 @@ export default class Monster {
 		let x_pos = position[0];
 		let y_pos = position[1];
 
-
-		
-		let sightTex = this.app.loader.resources["assets/monsterSight/redSight.png"].texture;
-        this.sightField = new PIXI.Sprite(sightTex);
-
 		if (this.isAngry) {
 			this.monsterFrontTexture = this.app.loader.resources["assets/monsters/angry/angryMonsterFront.png"].texture;
 			this.monsterBackTexture = this.app.loader.resources["assets/monsters/angry/angryMonsterBack.png"].texture;
@@ -109,16 +104,6 @@ export default class Monster {
 		this.monsterSprite.contextClass = this;
 		this.collisionProperties = this.getCorrectedBoundsAndVelocity();
 
-		
-        this.sightField.visible = false;
-        this.sightField.pivot.x = this.sightField.width / 2;
-        this.sightField.pivot.y = this.sightField.height / 2;
-        this.sightField.scale.x = 0.1;
-        this.sightField.scale.y = 0.1;
-        this.sightField.x = this.monsterSprite.width / 2;
-        this.sightField.y = this.monsterSprite.height;
-        this.monsterSprite.addChild( this.sightField);
-        this.sightField._zIndex = this.monsterSprite._zIndex - 1;
 		if (this.isAngry) {
 			this.monsterSprite.scale.x = 0.15;
 			this.monsterSprite.scale.y = 0.15;
@@ -132,7 +117,7 @@ export default class Monster {
 		this.monsterSprite.y = y_pos;
 		this.monsterSprite.vx = 0;
 		this.monsterSprite.vy = 0;
-		this.monsterSprite.name = "monster" + monsterIndex;
+		this.monsterSprite.name = "monster-" + waveIndex + "-" + monsterIndex;
 		this.monsterSprite.captured = false;
 		this.monsterSprite.dead = false;
 		this.monsterSprite.grabbed = false;
@@ -146,11 +131,15 @@ export default class Monster {
 		this.totalTwitchCounter = 0;
 		this.animationDone = false;
 
+		this.frameCounter = 0;
+		// 3 to 6 seconds
+		this.sightPeriod = getRandomArbitraryInt(3,6);
+		console.log(this.sightPeriod);
 		// hack to be able to move healthbar when finding children
 		this.monsterSprite.healthBar = this.healthBar;
 		this.monsterSprite.isAngry = this.isAngry;
 		this.monsterSprite.yForZOrdering = this.monsterSprite.y + this.monsterSprite.height;
-
+		this.monsterSprite._zIndex = Number.MAX_SAFE_INTEGER - 3;
 		let randomInt = getRandomArbitraryInt(0, 4);
         // same as house colors: yellow, red, purple, green, blue
         let monsterColorsList = ["#fffdd5", "#ffb5b3", "#e5c2ff", "#d0ffde", "#b3dffd"];
@@ -172,14 +161,26 @@ export default class Monster {
         this.monsterSprite.interactText.visible = false;
         this.monsterSprite.interactionContainer.addChild(this.monsterSprite.interactText);
 
-        
-       
-        
+        let sightTex = this.app.loader.resources["assets/monsterSight/redSight.png"].texture;
+        this.sightField = new PIXI.Sprite(sightTex);
+        this.sightField.name = "sightField-" + waveIndex + "-" + monsterIndex;
+        this.sightField.visible = false;
+        this.sightField.pivot.x = this.sightField.width / 2;
+        this.sightField.pivot.y = this.sightField.height / 2;
+
+        this.sightField.pivot.x;
+        this.sightField.scale.x = 0;
+        this.sightField.scale.y = 0;
+        this.sightField.x = this.monsterSprite.x + this.monsterSprite.width/2;
+        this.sightField.y = this.monsterSprite.y + this.monsterSprite.height/2;
+        //this.monsterSprite.addChild(this.sightField);
+        this.sightField._zIndex = this.monsterSprite._zIndex - 1;  
 	}
 
 	initObject() {
 		this.healthBar.initObject();
 		this.app.stage.addChild(this.monsterSprite);
+		this.app.stage.addChild(this.sightField);
 		this.app.stage.addChild(this.monsterSprite.interactionContainer);
 	}
 
@@ -199,38 +200,46 @@ export default class Monster {
 			}
 			this.handleMissileCollisions(delta, player);
 			if (!player.ui.isPaused()) {
-				this.handleAllDetainerCollisions(player)
+				this.changeMonsterState(delta, player);
+				this.handleAllDetainerCollisions(player);
 				this.handleContainerCollisionsAndMove();
-			}
-			if (!player.ui.isPaused()) {
-				if(this.state == MonsterState.SNIFFLING) {
-					if(this.sightField.scale.x < 10.0) {
-						this.sightField.visible = true;
-						this.sightField.scale.x += 0.1;
-						this.sightField.scale.y += 0.1;	
-						if(checkDynamicIntoDynamicCollision(this.sightField,player.playerSprite)) {
-							console.log("spotted player!");
-						}
-					} else {
-						this.sightField.scale.x = 0.1;
-						this.sightField.scale.y = 0.1;
-						this.sightField.visible = false;
-						this.state = MonsterState.MOVING;
-
-					}
-				} else if(this.state == MonsterState.MOVING) {
-					if(Math.random() > 0.999) {
-						console.log("sniff!");
-						this.state = MonsterState.SNIFFLING;
-						this.monsterSprite.vx = 0;
-						this.monsterSprite.vy = 0;
-
-					}
-				}
 			}
 		}
 		//update z ordering
 		this.monsterSprite.yForZOrdering = this.monsterSprite.y + this.monsterSprite.height;
+	}
+
+	changeMonsterState(delta, player) {
+		if(this.state === MonsterState.SNIFFLING) {
+			if(this.sightField.scale.x < 2.0) {
+				this.sightField.visible = true;
+				this.sightField.scale.x += 0.02;
+				this.sightField.scale.y += 0.02;
+				this.sightField.alpha -= 0.01;
+			} else {
+				this.sightField.scale.x = 0;
+				this.sightField.scale.y = 0;
+				this.sightField.visible = false;
+				this.sightField.alpha = 1;
+				this.frameCounter = 0;
+				this.state = MonsterState.MOVING;
+			}
+
+			if(checkDynamicIntoDynamicCollision(this.getSightFieldCorrectedBounds(), 
+				player.getCorrectedBoundsAndVelocity(true))) {
+				console.log("spotted player!");
+			}
+			
+		} else if(this.state === MonsterState.MOVING) {
+			this.frameCounter += 1;
+			let passedTime = (this.frameCounter/this.app.ticker.integerFPS);
+			if(passedTime > this.sightPeriod) {
+				//console.log("sniff!");
+				this.state = MonsterState.SNIFFLING;
+				this.monsterSprite.vx = 0;
+				this.monsterSprite.vy = 0;
+			}
+		}
 	}
 
 	handleMissileCollisions(delta, player) {
@@ -331,6 +340,7 @@ export default class Monster {
 				let monsterTexture = (this.monsterSprite.vx>0)?this.monsterRightTexture:this.monsterLeftTexture;
 				setTexturesOnlyIfNeeded(this.monsterSprite, [monsterTexture]);
 			}
+			this.sightField.x += this.monsterSprite.vx;
 		}
 		else if (this.monsterSprite.vy !== 0) {
 			// walking vertically
@@ -343,6 +353,7 @@ export default class Monster {
 				let monsterTexture = (this.monsterSprite.vy>0)?this.monsterFrontTexture:this.monsterBackTexture;
 				setTexturesOnlyIfNeeded(this.monsterSprite, [monsterTexture]);
 			}
+			this.sightField.y += this.monsterSprite.vy;
 		}
 		else {
 			// character isn't walking: do nothing
@@ -570,4 +581,10 @@ export default class Monster {
 			width: this.monsterSprite.width-correction*1.5, height: this.monsterSprite.height - canWalkHeight,
 			vx: this.monsterSprite.vx, vy: this.monsterSprite.vy};
 	}
+
+	getSightFieldCorrectedBounds() {
+		return {x: this.sightField.x - this.sightField.pivot.x, y: this.sightField.y - this.sightField.pivot.y,
+				width: this.sightField.width, height: this.sightField.height};
+	}
+
 }

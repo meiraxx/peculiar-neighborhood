@@ -99,11 +99,11 @@ export default class UserInterface {
 
 	// Cooldowns
 	preparePistolCooldown(x_pos, y_pos) {
-		this.pistolCooldown.prepareObject(x_pos, y_pos);
+		this.pistolCooldown.prepareObject(x_pos, y_pos, "pistol");
 	}
 
 	prepareNetgunCooldown(x_pos, y_pos) {
-		this.netgunCooldown.prepareObject(x_pos, y_pos);
+		this.netgunCooldown.prepareObject(x_pos, y_pos, "netgun");
 	}
 
 	initPistolCooldown() {
@@ -114,12 +114,12 @@ export default class UserInterface {
 		this.netgunCooldown.initObject();
 	}
 
-	updatePistolCooldown(delta) {
-		this.pistolCooldown.update(delta);
+	updatePistolCooldown(delta, player) {
+		this.pistolCooldown.update(delta, player);
 	}
 
-	updateNetgunCooldown(delta) {
-		this.netgunCooldown.update(delta);
+	updateNetgunCooldown(delta, player) {
+		this.netgunCooldown.update(delta, player);
 	}
 
 	// HEALTHBAR
@@ -294,8 +294,9 @@ export default class UserInterface {
 			let angle = Math.acos(this.shootDirection.y);
 			angle *= this.shootDirection.x > 0.0 ? -1 : 1;
 			if (this.currentItem === "netgun") {
-				if(this.netgunCooldown.sprite.angle > 360) {
+				if(this.netgunCooldown.reloaded && this.netgunCooldown.sprite.angle > 360) {
 					this.currentNet = 0;
+					this.netgunCooldown.reloaded = false;
 				}
 				let netLimit = 2;
 				if (this.currentNet < netLimit) {
@@ -318,8 +319,9 @@ export default class UserInterface {
 				}
 				this.cards.netgunAmmoText.text = (netLimit - this.currentNet).toString() + "/" + String.fromCharCode(8734);
 			} else if (this.currentItem === "pistol") {
-				if(this.pistolCooldown.sprite.angle > 360) {
+				if(this.pistolCooldown.reloaded && this.pistolCooldown.sprite.angle > 360) {
 					this.currentBullet = 0;
+					this.pistolCooldown.reloaded = false;
 				}
 				let bulletLimit = 6;
 				if(this.currentBullet < bulletLimit) {
@@ -341,6 +343,8 @@ export default class UserInterface {
 					this.pistolCooldown.speed = 4.0;
 				}
 				this.cards.pistolAmmoText.text = (bulletLimit - this.currentBullet).toString() + "/" + String.fromCharCode(8734);
+				console.log(this.currentBullet);
+				console.log(this.cards.pistolAmmoText.text);
 			} else if (this.currentItem === "bat") {
 				this.batColliders[this.currentBatCollider].go(
 					playerSprite.x + playerSprite.width/2 - this.shootDirection.y * this.batColliders[0].sprite.width / 2,

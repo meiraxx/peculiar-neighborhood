@@ -4,6 +4,11 @@ import { getRandomArbitraryInt, populatedArray, getRandomArbitraryFloat } from "
 import { textStyle, containSpriteInsideContainer, setTexturesOnlyIfNeeded, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision, applyFilter } from "./lib/PixiUtilMethods";
 import HealthBar from "./HealthBar";
 
+const MonsterState = {
+	MOVING: 'moving',
+	SNIFFLING : 'sniffling'
+}
+
 export default class Monster {
 	static loadResources(app) {
 		app.loader.add("assets/monsters/angry/angryMonsterFront.png");
@@ -44,12 +49,18 @@ export default class Monster {
 		this.health = health;
 		this.speed = speed;
 		this.healthBar = new HealthBar(this.app);
+		this.state = MonsterState.MOVING;
 	}
 	
 	prepareObject(position, monsterIndex, waveIndex) {
 		// SETUP monster
 		let x_pos = position[0];
 		let y_pos = position[1];
+
+
+		
+		let sightTex = this.app.loader.resources["assets/monsterSight/redSight.png"].texture;
+        this.sightField = new PIXI.Sprite(sightTex);
 
 		if (this.isAngry) {
 			this.monsterFrontTexture = this.app.loader.resources["assets/monsters/angry/angryMonsterFront.png"].texture;
@@ -98,6 +109,16 @@ export default class Monster {
 		this.monsterSprite.contextClass = this;
 		this.collisionProperties = this.getCorrectedBoundsAndVelocity();
 
+		
+        this.sightField.visible = false;
+        this.sightField.pivot.x = this.sightField.width / 2;
+        this.sightField.pivot.y = this.sightField.height / 2;
+        this.sightField.scale.x = 0.1;
+        this.sightField.scale.y = 0.1;
+        this.sightField.x = this.monsterSprite.width / 2;
+        this.sightField.y = this.monsterSprite.height;
+        this.monsterSprite.addChild( this.sightField);
+        this.sightField._zIndex = this.monsterSprite._zIndex - 1;
 		if (this.isAngry) {
 			this.monsterSprite.scale.x = 0.15;
 			this.monsterSprite.scale.y = 0.15;
@@ -152,6 +173,8 @@ export default class Monster {
         this.monsterSprite.interactionContainer.addChild(this.monsterSprite.interactText);
 
         
+       
+        
 	}
 
 	initObject() {
@@ -169,13 +192,41 @@ export default class Monster {
 	monsterLoop(delta, player) {
 		if (this.isNotIgnorable()) {
 			if (!player.ui.isPaused()) {
-				this.recalculateDirection(delta);
+				if(this.state == MonsterState.MOVING) {
+					this.recalculateDirection(delta);
+				}
 				this.collisionProperties = this.getCorrectedBoundsAndVelocity();
 			}
 			this.handleMissileCollisions(delta, player);
 			if (!player.ui.isPaused()) {
 				this.handleAllDetainerCollisions(player)
 				this.handleContainerCollisionsAndMove();
+			}
+			if (!player.ui.isPaused()) {
+				if(this.state == MonsterState.SNIFFLING) {
+					if(this.sightField.scale.x < 10.0) {
+						this.sightField.visible = true;
+						this.sightField.scale.x += 0.1;
+						this.sightField.scale.y += 0.1;	
+						if(checkDynamicIntoDynamicCollision(this.sightField,player.playerSprite)) {
+							console.log("spotted player!");
+						}
+					} else {
+						this.sightField.scale.x = 0.1;
+						this.sightField.scale.y = 0.1;
+						this.sightField.visible = false;
+						this.state = MonsterState.MOVING;
+
+					}
+				} else if(this.state == MonsterState.MOVING) {
+					if(Math.random() > 0.999) {
+						console.log("sniff!");
+						this.state = MonsterState.SNIFFLING;
+						this.monsterSprite.vx = 0;
+						this.monsterSprite.vy = 0;
+
+					}
+				}
 			}
 		}
 		//update z ordering

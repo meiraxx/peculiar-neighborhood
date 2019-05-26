@@ -1,6 +1,6 @@
-import { keyboard } from "./lib/UtilMethods";
+import { keyboard, populatedArray, functionScopePreserver } from "./lib/UtilMethods";
 import { setTexturesOnlyIfNeeded, containSpriteInsideContainer, detainSpriteOutsideDetainer, 
-	checkDynamicIntoDynamicCollision, textStyle } from "./lib/PixiUtilMethods";
+	checkDynamicIntoDynamicCollision, textStyle, applyFilter, modifyObjectAlpha } from "./lib/PixiUtilMethods";
 import UserInterface from './UserInterface';
 import * as PIXI from 'pixi.js'
 
@@ -92,7 +92,7 @@ export default class Player {
 		app.loader.add("assets/character/whistle/right4.png");
 		app.loader.add("assets/character/whistle/left4.png");
 		// DEAD
-		app.loader.add("assets/character/dead/characterFrontDead.png")
+		app.loader.add("assets/character/dead/characterSideDeath.png")
 		UserInterface.loadResources(app);
 	}
 
@@ -284,6 +284,20 @@ export default class Player {
         this.equipText.y += 40;
         this.waveContainer.addChild(this.waveText);
         this.waveContainer.addChild(this.equipText);
+
+        this.frontTextContainer = new PIXI.Container();
+        this.frontTextContainer.x = this.viewport.center.x - 433;
+        this.frontTextContainer.y = this.viewport.center.y - 318;
+        this.frontTextContainer._zIndex = Number.MAX_SAFE_INTEGER - 1;
+        this.frontTextContainer.name = "frontTextContainer";
+ 		this.frontText = new PIXI.Text("ANYTHING", 
+			textStyle("Courier New", 100, "center", ["#000000", "#ffffff", "#000000"], "#000000", 4));
+ 		this.frontText.resolution = 2;
+        this.frontText.alpha = 0;
+        this.frontText.name = "frontText";
+        this.frontText._zIndex = Number.MAX_SAFE_INTEGER - 1;
+        this.frontTextContainer.addChild(this.frontText);
+
 		// KEY STROKE EVENTS
 		// walk
 		this.leftKey = keyboard("a");
@@ -424,7 +438,7 @@ export default class Player {
 		};
 
 		this.f1Key.press = () => {
-			if (!this.ui.pauseScreen.container.visible) {
+			if (!this.ui.isPaused()) {
 				this.ui.toggleCardsInfo("cardBatInfo");
 			}
 		};
@@ -432,7 +446,7 @@ export default class Player {
 		};
 
 		this.f2Key.press = () => {
-			if (!this.ui.pauseScreen.container.visible) {
+			if (!this.ui.isPaused()) {
 				this.ui.toggleCardsInfo("cardPistolInfo");
 			}
 		};
@@ -440,7 +454,7 @@ export default class Player {
 		};
 
 		this.f3Key.press = () => {
-			if (!this.ui.pauseScreen.container.visible) {
+			if (!this.ui.isPaused()) {
 				this.ui.toggleCardsInfo("cardNetgunInfo");
 			}
 		};
@@ -448,7 +462,7 @@ export default class Player {
 		};
 
 		this.f4Key.press = () => {
-			if (!this.ui.pauseScreen.container.visible) {
+			if (!this.ui.isPaused()) {
 				this.ui.toggleCardsInfo("cardWhistleInfo");
 			}
 		};
@@ -468,8 +482,6 @@ export default class Player {
 			this.ui.togglePause();
 		};
 		this.pKey.release = () => {
-			console.log("statistics: ");
-			console.log(this.app.statistics.toString());
 		};
 
 		this.escKey.press = () => {
@@ -493,6 +505,7 @@ export default class Player {
 
 	initObject() {
 		this.app.stage.addChild(this.waveContainer);
+		this.app.stage.addChild(this.frontTextContainer);
 		this.app.stage.addChild(this.playerSprite);
 		console.log("player character initialized");
 	}
@@ -707,6 +720,7 @@ export default class Player {
 			}
 			// move other player dependant objects
 			this.waveContainer.x += this.playerSprite.vx;
+			this.frontTextContainer.x += this.playerSprite.vx;
 		}
 		else if (this.playerSprite.vy !== 0) {
 			// walking animation
@@ -734,6 +748,7 @@ export default class Player {
 			}
 			// move other player dependant objects
 			this.waveContainer.y += this.playerSprite.vy;
+			this.frontTextContainer.y += this.playerSprite.vy;
 		}
 		else {
 			// character isn't walking: do nothing
@@ -751,6 +766,7 @@ export default class Player {
 	playerLoop(delta) {
 		if (!this.ui.isPaused()) {
 			this.collisionProperties = this.getCorrectedBoundsAndVelocity();
+			this.handleMissileCollisions();
 			this.handleAllDetainerCollisions();
 			this.handleContainerCollisionsAndMove();
 			this.ui.updateCrosshairOnScreen(this.playerSprite);
@@ -760,6 +776,72 @@ export default class Player {
 			this.ui.updateNetgunCooldown(delta, this);
 			//update zordering pos
 			this.playerSprite.yForZOrdering = this.playerSprite.y + this.playerSprite.height;
+		}
+	}
+
+	gameOver(status) {
+		// apply filter to all except dead player
+		let otherElements = this.app.stage.children.filter(child => 
+			child.name !== this.playerSprite.name && child.name !== this.frontTextContainer.name);
+		applyFilter(otherElements, "night");
+
+		// Game Over Text
+		this.frontText.text = "GAME OVER";
+		this.frontText.alpha = 1;
+
+		if (status === "failure") {
+			this.frontText.style.fill = ["#ff3310", "#ffffff", "#ff3310"];
+			this.app.statistics.failLevel();
+		} else if (status === "success") {
+			this.frontText.style.fill = ["#33ff10", "#ffffff", "#33ff10"];
+			this.app.statistics.successLevel();
+		}
+
+		this.ui.speciallyPaused = true;
+		this.ui.printStatistics();
+		console.log("Game Over.");
+	}
+
+	killPlayer() {
+		let playerDeadFrontTexture0 = this.app.loader.resources["assets/character/dead/characterSideDeath.png"].texture;
+		this.playerCurrentTextureArray = [playerDeadFrontTexture0];
+		this.ui.healthBar.container.visible = false;
+		setTexturesOnlyIfNeeded(this.playerSprite, this.playerCurrentTextureArray);
+		this.gameOver("failure");
+	}
+
+	getHarmed(dmg_source) {
+		if (dmg_source === "slime") {
+			this.ui.healthBar.subtractHealth(3);
+		}
+
+		let healthValue = +this.ui.healthBar.container.valueText.text;
+
+		if (!this.ui.healthBar.isChanged() && healthValue <= this.ui.healthBar.container.maxHealth/4) {
+			// healthbar color change
+			this.ui.healthBar.changeBarColor(0xff0000);
+			this.ui.healthBar.changeTextColor(0xff0000);
+		}
+
+		// if health is 0 then monster is dead
+		if (healthValue === 0) {
+			this.killPlayer();
+		}
+	}
+
+	handleMissileCollisions() {
+		let allActiveSlimeColliders = this.app.stage.children.filter(child => 
+			child.name.indexOf("greenSlimeCollider") !== -1 && child.active === true);
+		if (populatedArray(allActiveSlimeColliders)) {
+			for (var i = 0; i < allActiveSlimeColliders.length; i++) {
+				if (checkDynamicIntoDynamicCollision(this.getCorrectedBoundsAndVelocity(true), allActiveSlimeColliders[i])) {
+			    	// make slime invisible
+			    	allActiveSlimeColliders[i].active = false;
+			    	// harm monster
+					this.getHarmed("slime");
+				}
+			}
+			return;
 		}
 	}
 

@@ -1,8 +1,8 @@
-import * as PIXI from 'pixi.js'
-import UserInterface from './UserInterface';
+import * as PIXI from 'pixi.js';
 import { getRandomArbitraryInt, populatedArray, getRandomArbitraryFloat } from "./lib/UtilMethods";
 import { textStyle, containSpriteInsideContainer, setTexturesOnlyIfNeeded, detainSpriteOutsideDetainer, checkDynamicIntoDynamicCollision, applyFilter } from "./lib/PixiUtilMethods";
 import HealthBar from "./HealthBar";
+import Missile from "./Missile";
 
 const MonsterState = {
 	MOVING: 'moving',
@@ -36,8 +36,7 @@ export default class Monster {
 		app.loader.add("assets/deadMonsters/souls/ghostframe3.png");
 		// sight
 		app.loader.add("assets/monsterSight/redSight.png");
-		// attacks
-		app.loader.add("assets/monsterAttacks/slime.png");
+		// melee attacks
 		app.loader.add("assets/monsterAttacks/angryMonsterFrontOpen.png");
 		app.loader.add("assets/monsterAttacks/angryMonsterLeftOpen.png");
 		app.loader.add("assets/monsterAttacks/angryMonsterRightOpen.png");
@@ -50,8 +49,32 @@ export default class Monster {
 		this.speed = speed;
 		this.healthBar = new HealthBar(this.app);
 		this.state = MonsterState.MOVING;
+		this.slimes = [];
+		this.currentSlime = 0;
+		this.shootDirection = new PIXI.Point(0,0);
+		for (var i = 10; i >= 0; i--) {
+			this.slimes.push(new Missile(app,"greenSlimeCollider"));
+		}
 	}
 	
+	prepareMissiles(x_pos, y_pos) {
+ 		for (var i = 10; i >= 0; i--) {
+			this.slimes[i].prepareObject(x_pos, y_pos, i);
+		}
+	}
+
+	initMissiles() {
+		for (var i = 10; i >= 0; i--) {
+			this.slimes[i].initObject();
+		}
+	}
+
+	updateMissileColliders(delta) {
+		for (var i = this.slimes.length - 1; i >= 0; i--) {
+			this.slimes[i].update(delta, 1600);
+		}
+	}
+
 	prepareObject(position, monsterIndex, waveIndex) {
 		// SETUP monster
 		let x_pos = position[0];
@@ -131,10 +154,11 @@ export default class Monster {
 		this.totalTwitchCounter = 0;
 		this.animationDone = false;
 
-		this.frameCounter = 0;
+		this.frameCounter1 = 0;
+		this.slimeFrameCounter = 0;
 		// 3 to 6 seconds
 		this.sightPeriod = getRandomArbitraryInt(3,6);
-		console.log(this.sightPeriod);
+
 		// hack to be able to move healthbar when finding children
 		this.monsterSprite.healthBar = this.healthBar;
 		this.monsterSprite.isAngry = this.isAngry;
@@ -174,11 +198,14 @@ export default class Monster {
         this.sightField.x = this.monsterSprite.x + this.monsterSprite.width/2;
         this.sightField.y = this.monsterSprite.y + this.monsterSprite.height/2;
         //this.monsterSprite.addChild(this.sightField);
-        this.sightField._zIndex = this.monsterSprite._zIndex - 1;  
+        this.sightField._zIndex = this.monsterSprite._zIndex - 4;  
+
+        this.prepareMissiles(this.monsterSprite.x, this.monsterSprite.y);
 	}
 
 	initObject() {
 		this.healthBar.initObject();
+		this.initMissiles();
 		this.app.stage.addChild(this.monsterSprite);
 		this.app.stage.addChild(this.sightField);
 		this.app.stage.addChild(this.monsterSprite.interactionContainer);
@@ -201,6 +228,7 @@ export default class Monster {
 			this.handleMissileCollisions(delta, player);
 			if (!player.ui.isPaused()) {
 				this.changeMonsterState(delta, player);
+				this.updateMissileColliders(delta);
 				this.handleAllDetainerCollisions(player);
 				this.handleContainerCollisionsAndMove();
 			}
@@ -209,32 +237,71 @@ export default class Monster {
 		this.monsterSprite.yForZOrdering = this.monsterSprite.y + this.monsterSprite.height;
 	}
 
-	changeMonsterState(delta, player) {
-		if(this.state === MonsterState.SNIFFLING) {
-			if(this.sightField.scale.x < 2.0) {
-				this.sightField.visible = true;
-				this.sightField.scale.x += 0.02;
-				this.sightField.scale.y += 0.02;
-				this.sightField.alpha -= 0.01;
-			} else {
-				this.sightField.scale.x = 0;
-				this.sightField.scale.y = 0;
-				this.sightField.visible = false;
-				this.sightField.alpha = 1;
-				this.frameCounter = 0;
-				this.state = MonsterState.MOVING;
-			}
+	sniffle(player) {
+		let sightScope = this.isAngry?2.0:3.0;
+		if(this.sightField.scale.x < sightScope) {
+			this.sightField.visible = true;
+			this.sightField.scale.x += sightScope/100;
+			this.sightField.scale.y += sightScope/100;
+			this.sightField.alpha -= 0.01;
+		} else {
+			this.sightField.scale.x = 0;
+			this.sightField.scale.y = 0;
+			this.sightField.visible = false;
+			this.sightField.alpha = 1;
+			this.frameCounter1 = 0;
+			this.state = MonsterState.MOVING;
+		}
+		return checkDynamicIntoDynamicCollision(this.getSightFieldCorrectedBounds(), player.getCorrectedBoundsAndVelocity(true));
+	}
 
-			if(checkDynamicIntoDynamicCollision(this.getSightFieldCorrectedBounds(), 
-				player.getCorrectedBoundsAndVelocity(true))) {
-				console.log("spotted player!");
+	calculatePlayerDirection(player) {
+		this.shootDirection.x = (player.playerSprite.x/window.screen.availWidth) - 0.5;
+		this.shootDirection.y = (player.playerSprite.y/window.screen.availHeight) - 0.5;
+		let length = Math.sqrt(this.shootDirection.x * this.shootDirection.x + this.shootDirection.y * this.shootDirection.y);
+		if(length !== 0) {
+			this.shootDirection.x /= length;
+			this.shootDirection.y /= length;
+		}
+	}
+
+	shootSlime(player) {
+		this.calculatePlayerDirection(player);
+		let angle = Math.acos(this.shootDirection.y) * (this.shootDirection.x > 0.0 ? -1 : 1);
+		this.slimes[this.currentSlime].go(
+			//player.playerSprite.x + player.playerSprite.width/2 - this.shootDirection.y * this.slimes[0].sprite.width / 2,
+			//player.playerSprite.y + player.playerSprite.height/2 + this.shootDirection.x * this.slimes[0].sprite.height / 2,
+			this.monsterSprite.x + this.monsterSprite.width/2 - this.shootDirection.y * this.slimes[0].sprite.width / 2,
+			this.monsterSprite.y + this.monsterSprite.height/2 + this.shootDirection.x * this.slimes[0].sprite.height / 2,
+			10.0 * this.shootDirection.x,
+			10.0 * this.shootDirection.y,
+			angle,
+			true);
+		this.currentSlime = (this.currentSlime + 1) % 10;
+	}
+
+	changeMonsterState(delta, player) {
+		//this.shootSlime(player);
+		if(this.state === MonsterState.SNIFFLING) {
+			let playerSpotted = this.sniffle(player);
+			if(playerSpotted) {
+				// player spotted
+				// NORMAL MONSTER: SHOOT HIM
+				if (!this.isAngry) {
+					console.log(this.slimeFrameCounter);
+					//let halfFPS = this.app.ticker.integerFPS/2;
+					// shoot 0.5 second spaced slimes
+					if(this.slimeFrameCounter%30 === 0) {
+						this.shootSlime(player);
+					}
+					this.slimeFrameCounter += 1;
+				}
 			}
-			
 		} else if(this.state === MonsterState.MOVING) {
-			this.frameCounter += 1;
-			let passedTime = (this.frameCounter/this.app.ticker.integerFPS);
+			this.frameCounter1 += 1;
+			let passedTime = (this.frameCounter1/this.app.ticker.integerFPS);
 			if(passedTime > this.sightPeriod) {
-				//console.log("sniff!");
+				this.slimeFrameCounter = 0;
 				this.state = MonsterState.SNIFFLING;
 				this.monsterSprite.vx = 0;
 				this.monsterSprite.vy = 0;
@@ -301,7 +368,6 @@ export default class Monster {
 			this.timeSinceNewDir = 0.0;
 
 			let randomNumber = getRandomArbitraryFloat(0, 1);
-			let monsterTexture;
 			if (randomNumber >= 0 && randomNumber < 0.25) {
 				this.monsterSprite.vx = this.speed;
 				this.monsterSprite.vy = 0;
@@ -378,8 +444,6 @@ export default class Monster {
 		let uniqueGarden = gardens[0];
 
 	    if(checkDynamicIntoDynamicCollision(this.monsterSprite, uniqueGarden.gardenBounds)) {
-	    	console.log(uniqueGarden.name);
-	    	console.log(this.monsterColorName);
 			return true;
 		}
 		return false;
@@ -440,7 +504,7 @@ export default class Monster {
 		if (!this.animationDone) {
 			this.timeSinceTwitch += delta;
 			setTexturesOnlyIfNeeded(this.monsterSprite, [this.capturedMonsterTexture]);
-			player.ui.paused = true;
+			player.ui.speciallyPaused = true;
 			applyFilter(otherElements, "darken");
 			
 			if(this.timeSinceTwitch > this.newTwitchDirTime) {
@@ -461,7 +525,7 @@ export default class Monster {
 		}
 
 		if (this.totalTwitchCounter === 16) {
-			player.ui.paused = false;
+			player.ui.speciallyPaused = false;
 			this.totalTwitchCounter = 0;
 			this.animationDone = true;
 			applyFilter(otherElements, "reset");
@@ -470,7 +534,6 @@ export default class Monster {
 			let maxHealthValue = this.healthBar.container.maxHealth;
 			let escapeProbability = doubleHealthValue/maxHealthValue;
 			let randomNumber = getRandomArbitraryFloat(0, 1);
-			console.log(randomNumber + ">=" + escapeProbability + "?");
 			let monsterCaught = (randomNumber >= escapeProbability);
 			
 			if (monsterCaught) {
@@ -479,6 +542,7 @@ export default class Monster {
 				setTexturesOnlyIfNeeded(this.monsterSprite, [this.capturedMonsterTexture]);
 				this.stopMonster();
 				this.healthBar.container.visible = false;
+				this.sightField.alpha = 0;
 				this.monsterSprite.interactText.text = "press F to grab";
 				this.monsterSprite.interactText.visible = true;
 				let timeFactor = +player.ui.clock.timeText.text;
@@ -548,6 +612,7 @@ export default class Monster {
 		let scoreValue = this.isAngry?(-2*timeFactor*waveFactor):(-1*timeFactor*waveFactor);
 		player.ui.addScore(scoreValue);
 		this.healthBar.container.visible = false;
+		this.sightField.alpha = 0;
 		this.monsterSprite.interactText.text = " press F to\npay respects";
 		this.monsterSprite.interactText.visible = true;
 		this.app.statistics.monsterKilled();

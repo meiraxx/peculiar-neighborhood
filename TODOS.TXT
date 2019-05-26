@@ -10,5 +10,4 @@ OLD TODOS:
 
 NEW TODOS:
 - WHISTLE ACTION: PET COMES AND GRABS MONSTER - Joao;
-- CRITICAL PRIORITY: MONSTER SIGHT (sprite drawn already), MONSTER AWARENESS (excl. point), MONSTER FOLLOW, MONSTER ATTACKS (sprites drawn already - ranged and melee), DEAD PLAYER (sprite drawn already), GAME OVER - Philipp/Joao;
-- PLAYTEST LOGS: player success/failure - Philipp.
+- CRITICAL PRIORITY: MONSTERS FOLLOW, MONSTERS ATTACK PLAYER (targeted) - Philipp/Joao;

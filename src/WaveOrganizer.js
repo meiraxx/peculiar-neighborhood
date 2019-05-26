@@ -14,6 +14,7 @@ export default class WaveOrganizer {
 		// n_normal, hp_normal, speed_normal, n_angry, hp_angry, speed_angry
 		this.waves = [
 			new Wave(this.app, 1, 10, 2, 0, 15, 2),
+			//new Wave(this.app, 3, 10, 2, 2, 15, 2),
 			new Wave(this.app, 3, 15, 2, 2, 20, 2),
 			new Wave(this.app, 3, 20, 2, 2, 25, 2)
 		]

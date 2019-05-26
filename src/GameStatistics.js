@@ -137,6 +137,10 @@ export default class GameStatistics {
         this.levelSuccess = true;
     }
     
+    failLevel() {
+        this.levelSuccess = false;
+    }
+
     playerDied() {
         this.playerDead = true;
     }

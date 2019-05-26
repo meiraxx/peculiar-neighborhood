@@ -4,6 +4,7 @@ export default class Missile {
 	static loadResources(app) {
 		app.loader.add("assets/missiles/bullet.png");
 		app.loader.add("assets/missiles/net.png");
+		app.loader.add("assets/missiles/slime.png");
 	}
 	
 	constructor(app, typeName) {
@@ -18,8 +19,9 @@ export default class Missile {
 		} else if(this.typeName === "bulletCollider") {
 			tex = this.app.loader.resources["assets/missiles/bullet.png"].texture;
 		} else if (this.typeName === "batCollider") {
-			//tex = PIXI.Texture.EMPTY;
 			tex = this.app.loader.resources["assets/missiles/bullet.png"].texture;
+		} else if (this.typeName === "greenSlimeCollider") {
+			tex = this.app.loader.resources["assets/missiles/slime.png"].texture;
 		}
 		
 		this.sprite = new PIXI.Sprite(tex);
@@ -35,6 +37,9 @@ export default class Missile {
 		} else if (this.typeName === "batCollider") {
 			this.sprite.scale.x = 0.4;
 			this.sprite.scale.y = 0.4;
+		} else if (this.typeName === "greenSlimeCollider") {
+			this.sprite.scale.x = 0.1;
+			this.sprite.scale.y = 0.1;
 		}
 
 		this.sprite.name = this.typeName + i;
@@ -75,4 +80,12 @@ export default class Missile {
 		}
 	}
 
+	slimeUpdate(maxRange) {
+		this.sprite.x += this.sprite.vx;
+		this.sprite.y += this.sprite.vy;
+		this.currentRange += Math.sqrt(this.sprite.vx * this.sprite.vx + this.sprite.vy * this.sprite.vy);
+		if(this.currentRange > maxRange) {
+			this.reset();
+		}
+	}
 }

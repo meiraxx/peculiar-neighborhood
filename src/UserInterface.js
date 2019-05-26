@@ -37,7 +37,7 @@ export default class UserInterface {
 		this.bullets = [];
 		this.nets = [];
 		this.batColliders = [];
-		this.paused = false;
+		this.speciallyPaused = false;
 		this.currentClicks = 0;
 		this.clickerLimit = 4;
 
@@ -159,14 +159,23 @@ export default class UserInterface {
 	}
 
 	togglePause() {
-		this.pauseScreen.toggle(this);
+		if (!this.speciallyPaused) {
+			this.pauseScreen.toggle(this);
+		}
+		if (this.isPaused()) {
+			this.printStatistics();
+		}
 	}
 
 	isPaused() {
 		return (this.pauseScreen.container.visible || this.cardsInfo.displayed) ||
-			this.paused;
+			this.speciallyPaused;
 	}
 
+	printStatistics() {
+		console.log("#########################\nStatistics:\n"+ this.app.statistics.toString() 
+			+ "\n#########################");
+	}
 
 	// bullets & nets
 	prepareMissiles(x_pos, y_pos) {
@@ -241,7 +250,6 @@ export default class UserInterface {
 				this.shootDirection.x /= length;
 				this.shootDirection.y /= length;
 			}
-			
 		}
 	}
 
@@ -343,8 +351,6 @@ export default class UserInterface {
 					this.pistolCooldown.speed = 4.0;
 				}
 				this.cards.pistolAmmoText.text = (bulletLimit - this.currentBullet).toString() + "/" + String.fromCharCode(8734);
-				console.log(this.currentBullet);
-				console.log(this.cards.pistolAmmoText.text);
 			} else if (this.currentItem === "bat") {
 				this.batColliders[this.currentBatCollider].go(
 					playerSprite.x + playerSprite.width/2 - this.shootDirection.y * this.batColliders[0].sprite.width / 2,

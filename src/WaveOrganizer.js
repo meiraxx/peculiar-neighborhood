@@ -13,7 +13,7 @@ export default class WaveOrganizer {
 		
 		// n_normal, hp_normal, speed_normal, n_angry, hp_angry, speed_angry
 		this.waves = [
-			new Wave(this.app, 1, 10, 2, 0, 15, 2),
+			new Wave(this.app, 3, 10, 2, 2, 15, 2),
 			//new Wave(this.app, 3, 10, 2, 2, 15, 2),
 			new Wave(this.app, 3, 15, 2, 2, 20, 2),
 			new Wave(this.app, 3, 20, 2, 2, 25, 2)
@@ -70,25 +70,25 @@ export default class WaveOrganizer {
 		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "fadeOutWaveText", 
 			[waveIndex, fadeOutfactor, speedFactor]), "oneTime", 5);
 		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "startWave", [waveIndex]), 
-			"oneTime", 2);
+			"oneTime", 6);
 
 		// wave 1
 		waveIndex = 1;
 		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "fadeInWaveText", 
-			[waveIndex, fadeInfactor, speedFactor]), "oneTime", 121);
+			[waveIndex, fadeInfactor, speedFactor]), "oneTime", 91);
 		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "fadeOutWaveText", 
-			[waveIndex, fadeOutfactor, speedFactor]), "oneTime", 125);
+			[waveIndex, fadeOutfactor, speedFactor]), "oneTime", 95);
 		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "startWave", [waveIndex]), 
-			"oneTime", 128);
+			"oneTime", 96);
 
 		// wave 2
 		waveIndex = 2;
 		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "fadeInWaveText", 
-			[waveIndex, fadeInfactor, speedFactor]), "oneTime", 241);
+			[waveIndex, fadeInfactor, speedFactor]), "oneTime", 181);
 		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "fadeOutWaveText", 
-			[waveIndex, fadeOutfactor, speedFactor]), "oneTime", 245);
+			[waveIndex, fadeOutfactor, speedFactor]), "oneTime", 185);
 		this.app.timedEventManager.createNewEvent(functionScopePreserver(this, "startWave", [waveIndex]), 
-			"oneTime", 248);
+			"oneTime", 186);
 	}
 
 }

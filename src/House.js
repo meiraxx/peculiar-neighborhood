@@ -46,17 +46,17 @@ export default class House {
 		// WHITE RECT - 1: (809, 194), 2: (809, 773), 3: (1429, 773), 4: (1429, 194)
 		// Width: 620, Height: 579
 		if (this.color === "red") {
-			this.gardenRectangle = getRectangle(40, 40, 577, 567, 0xffb5b3);
+			this.gardenRectangle = getRectangle(35, 35, 582, 572, 0xffb5b3);
 			this.gardenRectangle.name = "red-garden";
-			this.gardenRectangle.gardenBounds = {x: 40, y: 40, width: 577, height: 567}
+			this.gardenRectangle.gardenBounds = {x: 35, y: 35, width: 582, height: 572}
 		} else if (this.color === "blue") {
 			this.gardenRectangle = getRectangle(0, 800, 617, 583, 0xb3dffd);
 			this.gardenRectangle.name = "blue-garden";
 			this.gardenRectangle.gardenBounds = {x: 0, y: 800, width: 617, height: 583}
 		} else if (this.color === "green") {
-			this.gardenRectangle = getRectangle(657, 965, 619, 530, 0xd0ffde);
+			this.gardenRectangle = getRectangle(657, 965, 623, 530, 0xd0ffde);
 			this.gardenRectangle.name = "green-garden";
-			this.gardenRectangle.gardenBounds = {x: 657, y: 965, width: 619, height: 530}
+			this.gardenRectangle.gardenBounds = {x: 657, y: 965, width: 623, height: 530}
 		} else if (this.color === "yellow") {
 			this.gardenRectangle = getRectangle(1469, 0, 578, 571, 0xfffdd5);
 			this.gardenRectangle.name = "yellow-garden";
@@ -66,10 +66,11 @@ export default class House {
 			this.gardenRectangle.name = "purple-garden";
 			this.gardenRectangle.gardenBounds = {x: 1469, y: 764, width: 578, height: 579}
 		} else if (this.color === "white") {
-			this.gardenRectangle = getRectangle(809, 194, 620, 579, 0xeff0f4);
+			this.gardenRectangle = getRectangle(804, 196, 625, 577, 0xeff0f4);
 			this.gardenRectangle.name = "white-garden";
-			this.gardenRectangle.gardenBounds = {x: 809, y: 194, width: 620, height: 579}
+			this.gardenRectangle.gardenBounds = {x: 804, y: 196, width: 625, height: 577}
 		}
+		this.gardenRectangle.visible = true;
 	}
 
 	initObject() {

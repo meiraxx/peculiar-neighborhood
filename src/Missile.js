@@ -4,7 +4,8 @@ export default class Missile {
 	static loadResources(app) {
 		app.loader.add("assets/missiles/bullet.png");
 		app.loader.add("assets/missiles/net.png");
-		app.loader.add("assets/missiles/slime.png");
+		app.loader.add("assets/missiles/slime1.png");
+		app.loader.add("assets/missiles/slime2.png");
 	}
 	
 	constructor(app, typeName) {
@@ -20,8 +21,10 @@ export default class Missile {
 			tex = this.app.loader.resources["assets/missiles/bullet.png"].texture;
 		} else if (this.typeName === "batCollider") {
 			tex = this.app.loader.resources["assets/missiles/bullet.png"].texture;
-		} else if (this.typeName === "greenSlimeCollider") {
-			tex = this.app.loader.resources["assets/missiles/slime.png"].texture;
+		} else if (this.typeName === "greenSlimeCollider1") {
+			tex = this.app.loader.resources["assets/missiles/slime1.png"].texture;
+		} else if (this.typeName === "greenSlimeCollider2") {
+			tex = this.app.loader.resources["assets/missiles/slime2.png"].texture;
 		}
 		
 		this.sprite = new PIXI.Sprite(tex);
@@ -37,7 +40,10 @@ export default class Missile {
 		} else if (this.typeName === "batCollider") {
 			this.sprite.scale.x = 0.4;
 			this.sprite.scale.y = 0.4;
-		} else if (this.typeName === "greenSlimeCollider") {
+		} else if (this.typeName === "greenSlimeCollider1") {
+			this.sprite.scale.x = 0.1;
+			this.sprite.scale.y = 0.1;
+		} else if (this.typeName === "greenSlimeCollider2") {
 			this.sprite.scale.x = 0.1;
 			this.sprite.scale.y = 0.1;
 		}

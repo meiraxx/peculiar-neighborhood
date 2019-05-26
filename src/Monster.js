@@ -53,8 +53,14 @@ export default class Monster {
 		this.slimes = [];
 		this.currentSlime = 0;
 		this.shootDirection = new PIXI.Point(0,0);
-		for (var i = 10; i >= 0; i--) {
-			this.slimes.push(new Missile(app,"greenSlimeCollider"));
+		if (!this.isAngry) {
+			for (var i = 10; i >= 0; i--) {
+				this.slimes.push(new Missile(app,"greenSlimeCollider1"));
+			}
+		} else {
+			for (var i = 10; i >= 0; i--) {
+				this.slimes.push(new Missile(app,"greenSlimeCollider2"));
+			}
 		}
 	}
 	
@@ -71,8 +77,14 @@ export default class Monster {
 	}
 
 	updateMissileColliders(delta) {
-		for (var i = this.slimes.length - 1; i >= 0; i--) {
-			this.slimes[i].update(delta, 1600);
+		if (!this.isAngry) {
+			for (var i = this.slimes.length - 1; i >= 0; i--) {
+				this.slimes[i].update(delta, 1600);
+			}
+		} else {
+			for (var i = this.slimes.length - 1; i >= 0; i--) {
+				this.slimes[i].update(delta, 50);
+			}
 		}
 	}
 
@@ -95,6 +107,10 @@ export default class Monster {
 			this.deadMonsterTexture2 = this.app.loader.resources["assets/deadMonsters/angry/angryMonster2.png"].texture;
 			this.deadMonsterTexture3 = this.app.loader.resources["assets/deadMonsters/angry/angryMonster3.png"].texture;
 			this.deadMonsterTexture4 = this.app.loader.resources["assets/deadMonsters/angry/angryMonster4.png"].texture;
+			
+			this.angryMonsterBiteFrontTexture0 = this.app.loader.resources["assets/monsterAttacks/angryMonsterFrontOpen.png"].texture;
+			this.angryMonsterBiteRightTexture0 = this.app.loader.resources["assets/monsterAttacks/angryMonsterRightOpen.png"].texture;
+			this.angryMonsterBiteLeftTexture0 = this.app.loader.resources["assets/monsterAttacks/angryMonsterLeftOpen.png"].texture;
 			this.healthBar.prepareObject(x_pos, y_pos-12, 48, 8, 0xFF3300, 0xFF3300, this.health);
 		}
 		else {
@@ -114,6 +130,10 @@ export default class Monster {
 		}
 		this.deadMonsterTextureArray = [this.deadMonsterTexture0, this.deadMonsterTexture1,
 			this.deadMonsterTexture2, this.deadMonsterTexture3, this.deadMonsterTexture4];
+
+		this.angryMonsterBiteFrontTextureArray = [this.monsterFrontTexture, this.angryMonsterBiteFrontTexture0];
+		this.angryMonsterBiteRightTextureArray = [this.monsterRightTexture, this.angryMonsterBiteRightTexture0];
+		this.angryMonsterBiteLeftTextureArray = [this.monsterLeftTexture, this.angryMonsterBiteLeftTexture0];
 
 		this.soulLeavingTexture0 = this.app.loader.resources["assets/deadMonsters/souls/ghostframe0.png"].texture;
 		this.soulLeavingTexture1 = this.app.loader.resources["assets/deadMonsters/souls/ghostframe1.png"].texture;
@@ -164,8 +184,8 @@ export default class Monster {
 		// hack to be able to move healthbar when finding children
 		this.monsterSprite.healthBar = this.healthBar;
 		this.monsterSprite.isAngry = this.isAngry;
-		this.monsterSprite.yForZOrdering = this.monsterSprite.y + this.monsterSprite.height;
-		this.monsterSprite._zIndex = Number.MAX_SAFE_INTEGER - 3;
+		this.monsterSprite.yForZOrdering  = this.monsterSprite.y + this.monsterSprite.height;
+
 		let randomInt = getRandomArbitraryInt(0, 4);
         // same as house colors: yellow, red, purple, green, blue
         let monsterColorsList = ["#fffdd5", "#ffb5b3", "#e5c2ff", "#d0ffde", "#b3dffd"];
@@ -233,6 +253,8 @@ export default class Monster {
 				this.updateMissileColliders(delta);
 				this.handleAllDetainerCollisions(player);
 				this.handleContainerCollisionsAndMove();
+			} else {
+				this.monsterSprite.stop();
 			}
 		}
 		//update z ordering
@@ -240,7 +262,7 @@ export default class Monster {
 	}
 
 	sniffle(player) {
-		let sightScope = this.isAngry?2.0:3.0;
+		let sightScope = this.isAngry?4.0:3.0;
 		if(this.sightField.scale.x < sightScope) {
 			this.sightField.visible = true;
 			this.sightField.scale.x += sightScope/100;
@@ -271,42 +293,38 @@ export default class Monster {
 		this.calculatePlayerDirection(player);
 		let angle = Math.acos(this.shootDirection.y) * (this.shootDirection.x > 0.0 ? -1 : 1);
 		this.slimes[this.currentSlime].go(
-			//player.playerSprite.x + player.playerSprite.width/2 - this.shootDirection.y * this.slimes[0].sprite.width / 2,
-			//player.playerSprite.y + player.playerSprite.height/2 + this.shootDirection.x * this.slimes[0].sprite.height / 2,
 			this.monsterSprite.x + this.monsterSprite.width/2 - this.shootDirection.y * this.slimes[0].sprite.width / 2,
 			this.monsterSprite.y + this.monsterSprite.height/2 + this.shootDirection.x * this.slimes[0].sprite.height / 2,
 			10.0 * this.shootDirection.x,
 			10.0 * this.shootDirection.y,
 			angle,
-			true);
+			this.isAngry?false:true);
 		this.currentSlime = (this.currentSlime + 1) % 10;
 	}
 
 	changeMonsterState(delta, player) {
-		//this.shootSlime(player);
 		if(this.state === MonsterState.SNIFFLING) {
 			let playerSpotted = this.sniffle(player);
 			if(playerSpotted) {
 				// player spotted
 				// NORMAL MONSTER: SHOOT HIM
 				if (!this.isAngry) {
-					console.log(this.slimeFrameCounter);
 					//let halfFPS = this.app.ticker.integerFPS/2;
 					// shoot 0.5 second spaced slimes
 					if(this.slimeFrameCounter % 20 === 0) {
 						this.shootSlime(player);
-					} else if(MonsterState.MOVING && this.slimeFrameCounter > 130) { //animation ended 
-						//end sniffle
-						this.state = MonsterState.HUNTING;
-						this.sightField.scale.x = 0;
-						this.sightField.scale.y = 0;
-						this.sightField.visible = false;
-						this.sightField.alpha = 1;
-						this.frameCounter1 = 0;
 					}
 					this.slimeFrameCounter += 1;
+				} else {
+					//end sniffle
+					console.log("Angry monster spotted player");
+					this.state = MonsterState.HUNTING;
+					this.sightField.scale.x = 0;
+					this.sightField.scale.y = 0;
+					this.sightField.visible = false;
+					this.sightField.alpha = 1;
+					this.frameCounter1 = 0;
 				}
-				
 			}
 		} else if(this.state === MonsterState.MOVING) {
 			this.frameCounter1 += 1;
@@ -320,7 +338,12 @@ export default class Monster {
 		} else if(this.state == MonsterState.HUNTING) {
 			this.frameCounter1 += 1;
 			let passedTime = (this.frameCounter1/this.app.ticker.integerFPS);
+			if(this.slimeFrameCounter % 60 === 0) {
+				this.shootSlime(player);
+			}
+			this.slimeFrameCounter += 1;
 			if(passedTime > this.huntPeriod) {
+				// finished hunting
 				this.frameCounter1 = 0;
 				this.slimeFrameCounter = 0;
 				this.state = MonsterState.MOVING;
@@ -408,17 +431,33 @@ export default class Monster {
 				}
 			}
 		} else if (this.state == MonsterState.HUNTING) {
+			let speedBoost = 1.6;
 			//simply run after the player (fails when obstacles are in between)
 			let dX = player.playerSprite.x + (player.playerSprite.width / 2) - (this.monsterSprite.x + (this.monsterSprite.width / 2));
 			let dY = player.playerSprite.y + player.playerSprite.height - (this.monsterSprite.y + this.monsterSprite.height);
 			this.huntDirection = this.frameCounter1 % 20 == 0 ? ! this.huntDirection : this.huntDirection;
 			if((Math.abs(dX) > Math.abs(dY)  && this.huntDirection )|| Math.abs(dY) < this.speed) {
-				this.monsterSprite.vx = dX < 0.0 ? -this.speed : this.speed;
+				this.monsterSprite.vx = dX < 0.0 ? -this.speed*speedBoost : this.speed*speedBoost;
 				this.monsterSprite.vy = 0;
 			} else {
-				this.monsterSprite.vy = dY < 0.0 ? -this.speed : this.speed;
+				this.monsterSprite.vy = dY < 0.0 ? -this.speed*speedBoost : this.speed*speedBoost;
 				this.monsterSprite.vx = 0;
 			}
+
+			// hunting player
+			this.monsterSprite.animationSpeed = 0.1;
+			this.monsterSprite.loop = true;
+			if (this.monsterSprite.vy > 0) {
+				setTexturesOnlyIfNeeded(this.monsterSprite, this.angryMonsterBiteFrontTextureArray);
+			} else if (this.monsterSprite.vy < 0) {
+				setTexturesOnlyIfNeeded(this.monsterSprite, [this.monsterBackTexture]);
+			} else if (this.monsterSprite.vx > 0) {
+				setTexturesOnlyIfNeeded(this.monsterSprite, this.angryMonsterBiteRightTextureArray);
+			} else if (this.monsterSprite.vx < 0) {
+				setTexturesOnlyIfNeeded(this.monsterSprite, this.angryMonsterBiteLeftTextureArray);
+			}
+
+			this.monsterSprite.play();
 		}
 	}
 
@@ -426,7 +465,11 @@ export default class Monster {
 		let monsterHitsMapBound = containSpriteInsideContainer(this.monsterSprite, 
 				{x: 0, y: 0, width: 2048, height: 1536}, "revert");
 
-		this.moveMonster(true);
+		if (this.state === MonsterState.HUNTING) {
+			this.moveMonster(false);
+		} else {
+			this.moveMonster(true);
+		}
 	}
 
 	moveMonster(updateSprite=false) {
@@ -654,6 +697,8 @@ export default class Monster {
 	}
 
 	playDeadAnimation() {
+		this.monsterSprite.animationSpeed = 0.025;
+		this.monsterSprite.loop = false;
 		setTexturesOnlyIfNeeded(this.monsterSprite, this.deadMonsterTextureArray);
 		this.monsterSprite.play();
 	}
@@ -663,6 +708,7 @@ export default class Monster {
 		setTexturesOnlyIfNeeded(this.monsterSprite, this.soulLeavingTextureArray);
 		this.monsterSprite.y = this.monsterSprite.y - this.monsterSprite.height + previousMonsterHeight;
 		this.monsterSprite.animationSpeed = 0.05;
+		this.monsterSprite.loop = false;
 		this.monsterSprite.play();
 	}
 

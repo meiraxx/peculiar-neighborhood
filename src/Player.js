@@ -811,8 +811,12 @@ export default class Player {
 	}
 
 	getHarmed(dmg_source) {
-		if (dmg_source === "slime") {
+		if (dmg_source === "slime1") {
 			this.ui.healthBar.subtractHealth(3);
+		}
+
+		if (dmg_source === "slime2") {
+			this.ui.healthBar.subtractHealth(5);
 		}
 
 		let healthValue = +this.ui.healthBar.container.valueText.text;
@@ -838,7 +842,12 @@ export default class Player {
 			    	// make slime invisible
 			    	allActiveSlimeColliders[i].active = false;
 			    	// harm monster
-					this.getHarmed("slime");
+			    	if (allActiveSlimeColliders[i].name.indexOf("greenSlimeCollider1") !== -1) {
+			    		this.getHarmed("slime1");
+			    	} else if (allActiveSlimeColliders[i].name.indexOf("greenSlimeCollider2") !== -1) {
+			    		this.getHarmed("slime2");
+			    	}
+					
 				}
 			}
 			return;
@@ -902,4 +911,17 @@ export default class Player {
 		this.playerSprite.vx = this.collisionProperties.vx;
 		this.playerSprite.vy = this.collisionProperties.vy;
 	}
+	/*
+	petFetchMonster() {
+		let dX = player.playerSprite.x + (player.playerSprite.width / 2) - (this.monsterSprite.x + (this.monsterSprite.width / 2));
+		let dY = player.playerSprite.y + player.playerSprite.height - (this.monsterSprite.y + this.monsterSprite.height);
+		this.huntDirection = this.frameCounter1 % 20 == 0 ? ! this.huntDirection : this.huntDirection;
+		if((Math.abs(dX) > Math.abs(dY)  && this.huntDirection )|| Math.abs(dY) < this.speed) {
+			this.monsterSprite.vx = dX < 0.0 ? -this.speed : this.speed;
+			this.monsterSprite.vy = 0;
+		} else {
+			this.monsterSprite.vy = dY < 0.0 ? -this.speed : this.speed;
+			this.monsterSprite.vx = 0;
+		}
+	}*/
 }

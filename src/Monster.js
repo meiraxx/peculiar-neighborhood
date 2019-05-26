@@ -6,7 +6,8 @@ import Missile from "./Missile";
 
 const MonsterState = {
 	MOVING: 'moving',
-	SNIFFLING : 'sniffling'
+	SNIFFLING : 'sniffling',
+	HUNTING: 'hunting'
 }
 
 export default class Monster {
@@ -158,7 +159,8 @@ export default class Monster {
 		this.slimeFrameCounter = 0;
 		// 3 to 6 seconds
 		this.sightPeriod = getRandomArbitraryInt(3,6);
-
+		this.huntPeriod = getRandomArbitraryInt(8,12);
+		this.huntDirection = 0; //starts hunt in x direction
 		// hack to be able to move healthbar when finding children
 		this.monsterSprite.healthBar = this.healthBar;
 		this.monsterSprite.isAngry = this.isAngry;
@@ -220,8 +222,8 @@ export default class Monster {
 	monsterLoop(delta, player) {
 		if (this.isNotIgnorable()) {
 			if (!player.ui.isPaused()) {
-				if(this.state == MonsterState.MOVING) {
-					this.recalculateDirection(delta);
+				if(this.state == MonsterState.MOVING || this.state == MonsterState.HUNTING) {
+					this.recalculateDirection(delta, player);
 				}
 				this.collisionProperties = this.getCorrectedBoundsAndVelocity();
 			}
@@ -293,9 +295,18 @@ export default class Monster {
 					// shoot 0.5 second spaced slimes
 					if(this.slimeFrameCounter%30 === 0) {
 						this.shootSlime(player);
+					} else if(MonsterState.MOVING) { //animation ended 
+						//end sniffle
+						this.state = MonsterState.HUNTING;
+						this.sightField.scale.x = 0;
+						this.sightField.scale.y = 0;
+						this.sightField.visible = false;
+						this.sightField.alpha = 1;
+						this.frameCounter1 = 0;
 					}
 					this.slimeFrameCounter += 1;
 				}
+				
 			}
 		} else if(this.state === MonsterState.MOVING) {
 			this.frameCounter1 += 1;
@@ -303,6 +314,16 @@ export default class Monster {
 			if(passedTime > this.sightPeriod) {
 				this.slimeFrameCounter = 0;
 				this.state = MonsterState.SNIFFLING;
+				this.monsterSprite.vx = 0;
+				this.monsterSprite.vy = 0;
+			}
+		} else if(this.state == MonsterState.HUNTING) {
+			this.frameCounter1 += 1;
+			let passedTime = (this.frameCounter1/this.app.ticker.integerFPS);
+			if(passedTime > this.huntPeriod) {
+				this.frameCounter1 = 0;
+				this.slimeFrameCounter = 0;
+				this.state = MonsterState.MOVING;
 				this.monsterSprite.vx = 0;
 				this.monsterSprite.vy = 0;
 			}
@@ -362,27 +383,41 @@ export default class Monster {
 		}
 	}
 
-	recalculateDirection(delta) {
-		this.timeSinceNewDir += delta;
-		if(this.timeSinceNewDir > this.newDirTimeStep) {
-			this.timeSinceNewDir = 0.0;
+	recalculateDirection(delta,player) {
+		if(this.state == MonsterState.MOVING) {
+			this.timeSinceNewDir += delta;
+			if(this.timeSinceNewDir > this.newDirTimeStep) {
+				this.timeSinceNewDir = 0.0;
 
-			let randomNumber = getRandomArbitraryFloat(0, 1);
-			if (randomNumber >= 0 && randomNumber < 0.25) {
-				this.monsterSprite.vx = this.speed;
+				let randomNumber = getRandomArbitraryFloat(0, 1);
+				if (randomNumber >= 0 && randomNumber < 0.25) {
+					this.monsterSprite.vx = this.speed;
+					this.monsterSprite.vy = 0;
+				}
+				else if (randomNumber >= 0.25 && randomNumber < 0.50) {
+					this.monsterSprite.vx = 0;
+					this.monsterSprite.vy = this.speed;
+				}
+				else if (randomNumber >= 0.50 && randomNumber < 0.75) {
+					this.monsterSprite.vx = -this.speed;
+					this.monsterSprite.vy = 0;
+				}
+				else if (randomNumber >= 0.75 && randomNumber < 1) {
+					this.monsterSprite.vx = 0;
+					this.monsterSprite.vy = -this.speed;
+				}
+			}
+		} else if (this.state == MonsterState.HUNTING) {
+			//simply run after the player (fails when obstacles are in between)
+			let dX = player.playerSprite.x + (player.playerSprite.width / 2) - (this.monsterSprite.x + (this.monsterSprite.width / 2));
+			let dY = player.playerSprite.y + player.playerSprite.height - (this.monsterSprite.y + this.monsterSprite.height);
+			this.huntDirection = this.frameCounter1 % 20 == 0 ? ! this.huntDirection : this.huntDirection;
+			if((Math.abs(dX) > Math.abs(dY)  && this.huntDirection )|| Math.abs(dY) < this.speed) {
+				this.monsterSprite.vx = dX < 0.0 ? -this.speed : this.speed;
 				this.monsterSprite.vy = 0;
-			}
-			else if (randomNumber >= 0.25 && randomNumber < 0.50) {
+			} else {
+				this.monsterSprite.vy = dY < 0.0 ? -this.speed : this.speed;
 				this.monsterSprite.vx = 0;
-				this.monsterSprite.vy = this.speed;
-			}
-			else if (randomNumber >= 0.50 && randomNumber < 0.75) {
-				this.monsterSprite.vx = -this.speed;
-				this.monsterSprite.vy = 0;
-			}
-			else if (randomNumber >= 0.75 && randomNumber < 1) {
-				this.monsterSprite.vx = 0;
-				this.monsterSprite.vy = -this.speed;
 			}
 		}
 	}

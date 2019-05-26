@@ -77,7 +77,7 @@ export default class House {
 		this.app.stage.addChild(this.gardenRectangle);
 	}
 
-	getCorrectedBounds(playerSprite) {
+	getCorrectedBounds() {
 		return {x: this.sprite.x + this.walkableWidth, y: this.sprite.y + this.walkableHeight, 
 			width: this.sprite.width, height: this.sprite.height - this.walkableHeight};
 	}

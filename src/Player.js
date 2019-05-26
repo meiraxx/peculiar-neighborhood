@@ -864,7 +864,7 @@ export default class Player {
 		// static elements collision
 		if (staticBlockers !== undefined && staticBlockers.length !== 0) {
 			for (var i = 0; i < staticBlockers.length; i++) {
-				let staticBlockersBound = staticBlockers[i].contextClass.getCorrectedBounds(this.playerSprite);
+				let staticBlockersBound = staticBlockers[i].contextClass.getCorrectedBounds();
 			    if (detainSpriteOutsideDetainer(this.collisionProperties, staticBlockersBound, "stop") !== "none"){
 			    	this.resetPlayerVelocity();
 			    	return;

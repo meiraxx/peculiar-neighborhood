@@ -293,9 +293,9 @@ export default class Monster {
 					console.log(this.slimeFrameCounter);
 					//let halfFPS = this.app.ticker.integerFPS/2;
 					// shoot 0.5 second spaced slimes
-					if(this.slimeFrameCounter%30 === 0) {
+					if(this.slimeFrameCounter % 20 === 0) {
 						this.shootSlime(player);
-					} else if(MonsterState.MOVING) { //animation ended 
+					} else if(MonsterState.MOVING && this.slimeFrameCounter > 130) { //animation ended 
 						//end sniffle
 						this.state = MonsterState.HUNTING;
 						this.sightField.scale.x = 0;

@@ -29,7 +29,7 @@ export default class Car {
 		this.app.stage.addChild(this.sprite);
 	}
 
-	getCorrectedBounds(playerSprite) {
+	getCorrectedBounds() {
 		return {x: this.sprite.x + this.walkableWidth, y: this.sprite.y + this.walkableHeight, 
 			width: this.sprite.width, height: this.sprite.height - this.walkableHeight};
 	}

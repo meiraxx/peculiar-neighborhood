@@ -501,7 +501,7 @@ export default class Monster {
 		// monster/monster collision
 		if (populatedArray(otherLiveMonsters)) {
 			for (var i = 0; i < otherLiveMonsters.length; i++) {
-			    if(detainSpriteOutsideDetainer(this.collisionProperties, otherLiveMonsters[i], "stop") !== "none") {
+			    if(detainSpriteOutsideDetainer(this.collisionProperties, otherLiveMonsters[i].contextClass.getCorrectedBoundsAndVelocity(), "stop") !== "none") {
 			    	this.resetMonsterVelocity();
 			    	return;
 				}
@@ -511,7 +511,7 @@ export default class Monster {
 		// static elements collision
 		if (populatedArray(staticBlockers)) {
 			for (var i = 0; i < staticBlockers.length; i++) {
-			    if(detainSpriteOutsideDetainer(this.collisionProperties, staticBlockers[i], "revert") !== "none") {
+			    if(detainSpriteOutsideDetainer(this.collisionProperties, staticBlockers[i].contextClass.getCorrectedBounds(), "revert") !== "none") {
 					this.resetMonsterVelocity();
 					return;
 				}

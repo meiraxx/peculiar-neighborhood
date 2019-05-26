@@ -258,8 +258,8 @@ export default class Monster {
 	}
 
 	calculatePlayerDirection(player) {
-		this.shootDirection.x = (player.playerSprite.x/window.screen.availWidth) - 0.5;
-		this.shootDirection.y = (player.playerSprite.y/window.screen.availHeight) - 0.5;
+		this.shootDirection.x = player.playerSprite.x + (player.playerSprite.width / 2) - (this.monsterSprite.x  + this.monsterSprite.width / 2);
+		this.shootDirection.y = player.playerSprite.y + (player.playerSprite.height/ 2) - (this.monsterSprite.y  + this.monsterSprite.height / 2);
 		let length = Math.sqrt(this.shootDirection.x * this.shootDirection.x + this.shootDirection.y * this.shootDirection.y);
 		if(length !== 0) {
 			this.shootDirection.x /= length;

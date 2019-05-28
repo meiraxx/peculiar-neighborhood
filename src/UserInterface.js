@@ -3,6 +3,7 @@ import Cards from "./Cards";
 import PauseScreen from "./PauseScreen";
 import Crosshair from "./Crosshair";
 import CardsInfo from "./CardsInfo";
+import Minimap from "./Minimap";
 import Missile from "./Missile";
 import Score from "./Score";
 import Clock from "./Clock";
@@ -18,6 +19,7 @@ export default class UserInterface {
 		CardsInfo.loadResources(app);
 		Clock.loadResources(app);
 		CoolDownClock.loadResources(app);
+		Minimap.loadResources(app);
 	}
 	
 	constructor(app) {
@@ -29,6 +31,7 @@ export default class UserInterface {
 		this.clock = new Clock(this.app);
 		this.pistolCooldown = new CoolDownClock(this.app);
 		this.netgunCooldown = new CoolDownClock(this.app);
+		this.minimap = new Minimap(this.app);
 		// initialize 10 bullet objects (max bullets in screen at the same time)
 		this.shootDirection = new PIXI.Point(0,0);
 		this.currentBullet = 0;
@@ -64,6 +67,7 @@ export default class UserInterface {
 		this.preparePauseScreen(x_pos, y_pos + 50, 350, 410);
 		this.prepareClock(playerSprite.x + 430, playerSprite.y - 185, 600.0);
 		this.prepareCards(playerSprite.x - 464, playerSprite.y + 184);
+		this.prepareMinimap(playerSprite.x + 330, playerSprite.y + 192);
 
 		// relative to viewport
 		this.prepareScore(viewport.center.x - 253, viewport.center.y - 478, x_pos, y_pos);
@@ -80,6 +84,7 @@ export default class UserInterface {
 		this.initClock();
 		this.initPistolCooldown();
 		this.initNetgunCooldown();
+		this.initMinimap();
 		// pause screen always in the end
 		this.initPauseScreen();
 	}
@@ -149,6 +154,15 @@ export default class UserInterface {
 		this.cards.highlightCard(card);
 	}
 
+	// MINIMAP
+	prepareMinimap(x_pos, y_pos) {
+		this.minimap.prepareObject(x_pos, y_pos);
+	}
+
+	initMinimap() {
+		this.minimap.initObject();
+	}
+	
 	// PAUSE
 	preparePauseScreen(x_pos, y_pos, width, height) {
 		this.pauseScreen.prepareObject(x_pos, y_pos, width, height);

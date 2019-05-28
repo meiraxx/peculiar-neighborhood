@@ -188,7 +188,7 @@ export default class Monster {
 
 		let randomInt = getRandomArbitraryInt(0, 4);
         // same as house colors: yellow, red, purple, green, blue
-        let monsterColorsList = ["#fffdd5", "#ffb5b3", "#e5c2ff", "#d0ffde", "#b3dffd"];
+        let monsterColorsList = ["#fffdd5", "#ffb5b3", "#e5c2ff", "#b4ffb3", "#b3dffd"];
         let monsterColorNameList = ["yellow", "red", "purple", "green", "blue"];
         // corrected because I really can't distinguish some of the above...
         //let monsterColorsList = ["#f2f229", "#ff003f", "#e5c2ff", "#10c93b", "#5900ff"];
@@ -250,13 +250,13 @@ export default class Monster {
 			this.handleMissileCollisions(delta, player);
 			if (!player.ui.isPaused()) {
 				this.changeMonsterState(delta, player);
-				this.updateMissileColliders(delta);
 				this.handleAllDetainerCollisions(player);
 				this.handleContainerCollisionsAndMove();
 			} else {
 				this.monsterSprite.stop();
 			}
 		}
+		this.updateMissileColliders(delta);
 		//update z ordering
 		this.monsterSprite.yForZOrdering = this.monsterSprite.y + this.monsterSprite.height;
 	}
@@ -311,7 +311,7 @@ export default class Monster {
 				if (!this.isAngry) {
 					//let halfFPS = this.app.ticker.integerFPS/2;
 					// shoot 0.5 second spaced slimes
-					if(this.slimeFrameCounter % 20 === 0) {
+					if(this.slimeFrameCounter % 30 === 0) {
 						this.shootSlime(player);
 					}
 					this.slimeFrameCounter += 1;
@@ -338,7 +338,7 @@ export default class Monster {
 		} else if(this.state == MonsterState.HUNTING) {
 			this.frameCounter1 += 1;
 			let passedTime = (this.frameCounter1/this.app.ticker.integerFPS);
-			if(this.slimeFrameCounter % 60 === 0) {
+			if(this.slimeFrameCounter % 50 === 0) {
 				this.shootSlime(player);
 			}
 			this.slimeFrameCounter += 1;
@@ -552,14 +552,24 @@ export default class Monster {
 		}
 
 		// static elements collision
-		if (populatedArray(staticBlockers)) {
+		if (this.state === MonsterState.HUNTING) {
 			for (var i = 0; i < staticBlockers.length; i++) {
-			    if(detainSpriteOutsideDetainer(this.collisionProperties, staticBlockers[i].contextClass.getCorrectedBounds(), "revert") !== "none") {
+			    if(detainSpriteOutsideDetainer(this.collisionProperties, staticBlockers[i].contextClass.getCorrectedBounds(), "stop") !== "none") {
 					this.resetMonsterVelocity();
 					return;
 				}
 			}
+		} else {
+			if (populatedArray(staticBlockers)) {
+				for (var i = 0; i < staticBlockers.length; i++) {
+				    if(detainSpriteOutsideDetainer(this.collisionProperties, staticBlockers[i].contextClass.getCorrectedBounds(), "revert") !== "none") {
+						this.resetMonsterVelocity();
+						return;
+					}
+				}
+			}
 		}
+		
 	}
 
 	isNotIgnorable() {

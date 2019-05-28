@@ -54,7 +54,7 @@ export default class House {
 			this.gardenRectangle.name = "blue-garden";
 			this.gardenRectangle.gardenBounds = {x: 0, y: 800, width: 617, height: 583}
 		} else if (this.color === "green") {
-			this.gardenRectangle = getRectangle(657, 965, 623, 530, 0xd0ffde);
+			this.gardenRectangle = getRectangle(657, 965, 623, 530, 0xb4ffb3);
 			this.gardenRectangle.name = "green-garden";
 			this.gardenRectangle.gardenBounds = {x: 657, y: 965, width: 623, height: 530}
 		} else if (this.color === "yellow") {
@@ -70,7 +70,7 @@ export default class House {
 			this.gardenRectangle.name = "white-garden";
 			this.gardenRectangle.gardenBounds = {x: 804, y: 196, width: 625, height: 577}
 		}
-		this.gardenRectangle.visible = true;
+		this.gardenRectangle.visible = false;
 	}
 
 	initObject() {

@@ -316,7 +316,7 @@ function animate(time) {
 }
 animate(performance.now());
 
-/*
+
 let music = document.createElement("audio");
 music.src = "assets/soundtrack.mp3";
 music.setAttribute("preload", "auto");
@@ -326,4 +326,6 @@ music.style.display = "none";
 music.volume = 0.4;
 document.body.appendChild(music);
 music.play();
-*/
+
+//var audio = new Audio('audio_file.mp3');
+//audio.play();

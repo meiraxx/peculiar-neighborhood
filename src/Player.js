@@ -277,7 +277,7 @@ export default class Player {
         this.waveText.resolution = 2;
         this.waveText.alpha = 0;
         this.equipText = new PIXI.Text("EQUIP YOUR WEAPON", 
-			textStyle("Comic Sans MS", 18, "center", ["#000000", "#cef442", "#000000"], "#000000", 3));
+			textStyle("Comic Sans MS", 18, "center", ["#cef442", "#ff0042", "#cef442"], "#000000", 3));
         this.equipText.resolution = 2;
         this.equipText.alpha = 0;
         this.equipText.x = -this.equipText.text.length;
@@ -713,6 +713,8 @@ export default class Player {
 			this.ui.score.totalContainer.x += this.playerSprite.vx;
 			this.ui.score.changeContainer.x += this.playerSprite.vx;
 			this.ui.clock.container.x += this.playerSprite.vx;
+			// move minimap
+			this.ui.minimap.container.x += this.playerSprite.vx;
 			// move grabbed monster
 			if (this.isGrabbing) {
 				this.grabbedMonster.x += this.playerSprite.vx;
@@ -741,6 +743,8 @@ export default class Player {
 			this.ui.score.totalContainer.y += this.playerSprite.vy;
 			this.ui.score.changeContainer.y += this.playerSprite.vy;
 			this.ui.clock.container.y += this.playerSprite.vy;
+			// move minimap
+			this.ui.minimap.container.y += this.playerSprite.vy;
 			// move grabbed monster
 			if (this.isGrabbing) {
 				this.grabbedMonster.y += this.playerSprite.vy;

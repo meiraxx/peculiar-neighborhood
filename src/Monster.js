@@ -161,7 +161,7 @@ export default class Monster {
 		this.monsterSprite.y = y_pos;
 		this.monsterSprite.vx = 0;
 		this.monsterSprite.vy = 0;
-		this.monsterSprite.name = "monster-" + waveIndex + "-" + monsterIndex;
+		this.monsterSprite.name = "monster" + waveIndex + monsterIndex;
 		this.monsterSprite.captured = false;
 		this.monsterSprite.dead = false;
 		this.monsterSprite.grabbed = false;
@@ -209,7 +209,7 @@ export default class Monster {
 
         let sightTex = this.app.loader.resources["assets/monsterSight/redSight.png"].texture;
         this.sightField = new PIXI.Sprite(sightTex);
-        this.sightField.name = "sightField-" + waveIndex + "-" + monsterIndex;
+        this.sightField.name = "sightField" + waveIndex + monsterIndex;
         this.sightField.visible = false;
         this.sightField.pivot.x = this.sightField.width / 2;
         this.sightField.pivot.y = this.sightField.height / 2;

@@ -40,7 +40,7 @@ export default class CoolDownClock {
             if (this.item === "pistol") {
                 player.ui.cards.pistolAmmoText.text = "6/"+String.fromCharCode(8734);
             } else if (this.item === "netgun") {
-                player.ui.cards.pistolAmmoText.text = "2/"+String.fromCharCode(8734);
+                player.ui.cards.netgunAmmoText.text = "2/"+String.fromCharCode(8734);
             }
             
             this.sprite.visible = false;

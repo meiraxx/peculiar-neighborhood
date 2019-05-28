@@ -99,7 +99,7 @@ export default class GameStatistics {
     }
 
     setScore(score) {
-        this.score += score;
+        this.score = score;
     }
 
     baseballBatBeat() {

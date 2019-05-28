@@ -438,7 +438,7 @@ export default class Player {
 		};
 
 		this.f1Key.press = () => {
-			if (!this.ui.isPaused()) {
+			if (!this.ui.pauseScreen.container.visible) {
 				this.ui.toggleCardsInfo("cardBatInfo");
 			}
 		};
@@ -446,7 +446,7 @@ export default class Player {
 		};
 
 		this.f2Key.press = () => {
-			if (!this.ui.isPaused()) {
+			if (!this.ui.pauseScreen.container.visible) {
 				this.ui.toggleCardsInfo("cardPistolInfo");
 			}
 		};
@@ -454,7 +454,7 @@ export default class Player {
 		};
 
 		this.f3Key.press = () => {
-			if (!this.ui.isPaused()) {
+			if (!this.ui.pauseScreen.container.visible) {
 				this.ui.toggleCardsInfo("cardNetgunInfo");
 			}
 		};
@@ -462,7 +462,7 @@ export default class Player {
 		};
 
 		this.f4Key.press = () => {
-			if (!this.ui.isPaused()) {
+			if (!this.pauseScreen.container.visible) {
 				this.ui.toggleCardsInfo("cardWhistleInfo");
 			}
 		};

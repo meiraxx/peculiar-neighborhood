@@ -462,7 +462,7 @@ export default class Player {
 		};
 
 		this.f4Key.press = () => {
-			if (!this.pauseScreen.container.visible) {
+			if (!this.ui.pauseScreen.container.visible) {
 				this.ui.toggleCardsInfo("cardWhistleInfo");
 			}
 		};

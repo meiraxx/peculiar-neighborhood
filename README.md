@@ -1,9 +1,20 @@
-# GDMTechPrototype
-
-uses nodejs, babel.
-
-to install dependencies on your local machine(as the node_modules folder is excluded from this repo):
+# Peculiar Neighborhood  
+## Dependencies  
+  - nodejs  
+  - babeljs  
+  - webpack  
+  - pixijs  
+  
+## Setup  
+```sh
 npm install
-
-current build command:
+```  
+  
+## Build  
+```sh
 npm run build
+```  
+
+## Start  
+Just open "index.html" file with your favorite browser :)  
+  
